@@ -1,0 +1,147 @@
+# GUI
+gui.titles.cancel=Cancel
+gui.titles.confirm=Confirm
+gui.titles.random=Random
+gui.titles.none=None
+
+# Keybindings
+keybind.titles.category=Titles
+keybind.titles.openTitleSelection=Open Title Selection Screen
+
+# Achievements
+achievement.zombieSlayer=Zombie Slayer
+achievement.zombieSlayer.desc=Kill 10 Zombies
+achievement.zombieHunter=Zombie Hunter
+achievement.zombieHunter.desc=Kill 25 Zombies
+achievement.zombieBane=Zombie Bane
+achievement.zombieBane.desc=Kill 75 Zombies
+achievement.zombieNemesis=Zombie Nemesis
+achievement.zombieNemesis.desc=Kill 100 Zombies
+achievement.zombieExecutioner=Zombie Executioner
+achievement.zombieExecutioner.desc=Kill 200 Skeletons
+
+achievement.skeletonSlayer=Skeleton Slayer
+achievement.skeletonSlayer.desc=Kill 10 Skeletons
+achievement.skeletonHunter=Skeleton Hunter
+achievement.skeletonHunter.desc=Kill 25 Skeletons
+achievement.skeletonBane=Skeleton Bane
+achievement.skeletonBane.desc=Kill 75 Skeletons
+achievement.skeletonNemesis=Skeleton Nemesis
+achievement.skeletonNemesis.desc=Kill 100 Skeletons
+achievement.skeletonExecutioner=Skeleton Executioner
+achievement.skeletonExecutioner.desc=Kill 200 Skeletons
+
+achievement.creeperSlayer=Creeper Slayer
+achievement.creeperSlayer.desc=Kill 10 Creepers
+achievement.creeperHunter=Creeper Hunter
+achievement.creeperHunter.desc=Kill 25 Creepers
+achievement.creeperBane=Creeper Bane
+achievement.creeperBane.desc=Kill 75 Creepers
+achievement.creeperNemesis=Creeper Nemesis
+achievement.creeperNemesis.desc=Kill 100 Creepers
+achievement.creeperExecutioner=Creeper Executioner
+achievement.creeperExecutioner.desc=Kill 200 Creepers
+
+achievement.spiderSlayer=Spider Slayer
+achievement.spiderSlayer.desc=Kill 10 Spiders
+achievement.spiderHunter=Spider Hunter
+achievement.spiderHunter.desc=Kill 25 Spiders
+achievement.spiderBane=Spider Bane
+achievement.spiderBane.desc=Kill 75 Spiders
+achievement.spiderNemesis=Spider Nemesis
+achievement.spiderNemesis.desc=Kill 100 Spiders
+achievement.spiderExecutioner=Spider Executioner
+achievement.spiderExecutioner.desc=Kill 200 Spiders
+
+achievement.blazeSlayer=Blaze Slayer
+achievement.blazeSlayer.desc=Kill 10 Blazes
+achievement.blazeHunter=Blaze Hunter
+achievement.blazeHunter.desc=Kill 25 Blazes
+achievement.blazeBane=Blaze Bane
+achievement.blazeBane.desc=Kill 75 Blazes
+achievement.blazeNemesis=Blaze Nemesis
+achievement.blazeNemesis.desc=Kill 100 Blazes
+achievement.blazeExecutioner=Blaze Executioner
+achievement.blazeExecutioner.desc=Kill 200 Blazes
+
+achievement.endermanSlayer=Enderman Slayer
+achievement.endermanSlayer.desc=Kill 10 Endermen
+achievement.endermanHunter=Enderman Hunter
+achievement.endermanHunter.desc=Kill 25 Endermen
+achievement.endermanBane=Enderman Bane
+achievement.endermanBane.desc=Kill 75 Endermen
+achievement.endermanNemesis=Enderman Nemesis
+achievement.endermanNemesis.desc=Kill 100 Endermen
+achievement.endermanExecutioner=Enderman Executioner
+achievement.endermanExecutioner.desc=Kill 200 Endermen
+
+# Titles
+#unique
+title.Aurilux=the Paladin
+title.Azanor=the Grand Thaumaturge
+title.Dinnerbone=the Inverted
+title.Direwolf20=the DireNoob
+title.Grumm=the Inverted
+title.Jadedcat=the Mapmaker
+title.Pahimar=the PahiNoob
+title.Soaryn=the Xy-mage
+title.VivaDaylight3=the Myrmecologist
+#common
+title.kind=the Kind
+title.brave=the Brave
+title.bold=the Bold
+title.sly=the Sly
+title.chickenHerder=the Chicken Herder
+title.explorer=the Explorer
+title.noob=the Noob
+title.newb=the Newb
+title.dogLover=the Dog Lover
+title.catLover=the Cat Lover
+title.hardy=the Hardy
+title.beautiful=the Beautiful
+title.amateur=the Amateur
+#uncommon
+title.enchanter=the Enchanter
+title.generous=the Generous
+#rare
+title.marksman=the Marksman
+#epic
+title.cartographer=the Cartographer
+title.witherslayer=the Witherslayer
+title.dragonslayer=the Dragonslayer
+#sequential
+title.zombieSlayer=the Zombie Slayer
+title.zombieHunter=the Zombie Hunter
+title.ZombieBane=the Bane of Zombies
+title.zombieNemesis=the Nemesis of Zombies
+title.zombieExecutor=the Executioner of the Risen
+
+title.skeletonSlayer=the Skeleton Slayer
+title.skeletonHunter=the Skeleton Hunter
+title.skeletonBane=the Bane of Skeletons
+title.skeletonNemesis=the Nemesis of Skeletons
+title.skeletonExecutor=the Executioner of the Hollow
+
+title.creeperSlayer=the Creeper Slayer
+title.creeperHunter=the Creeper Hunter
+title.creeperBane=the Bane of Creepers
+title.creeperNemesis=the Nemesis of Creepers
+title.creeperExecutor=the Executioner of the Ruiners
+
+title.spiderSlayer=the Spider Slayer
+title.spiderHunter=the Spider Hunter
+title.spiderBane=the Bane of Spiders
+title.spiderNemesis=the Nemesis of Spiders
+title.spiderExecutor=the Executioner of the Webweavers
+
+title.blazeSlayer=the Blaze Slayer
+title.blazeHunter=the Blaze Hunter
+title.blazeBane=the Bane of Blazes
+title.blazeNemesis=the Nemesis of Blazes
+title.blazeExecutor=the Executioner of the Smoldering
+
+title.endermanSlayer=the Enderman Slayer
+title.endermanHunter=the Enderman Hunter
+title.endermanBane=the Bane of Endermen
+title.endermanNemesis=the Nemesis of Endermen
+title.endermanExecutor=the Executioner of the Outsiders
