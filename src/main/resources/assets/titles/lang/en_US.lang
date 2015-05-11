@@ -1,3 +1,7 @@
+# Misc
+misc.titles.unlocked=%s has unlocked the title %s{%s}
+misc.titles.unlockError=There is no title attached to achievement %s. No title was unlocked.
+
 # GUI
 gui.titles.cancel=Cancel
 gui.titles.confirm=Confirm
@@ -80,12 +84,16 @@ achievement.endermanExecutioner.desc=Kill 200 Endermen
 title.Aurilux=the Paladin
 title.Azanor=the Grand Thaumaturge
 title.Dinnerbone=the Inverted
-title.Direwolf20=the DireNoob
+title.Direwolf20=the DireDerp
+title.Dr_Mr_Boss=the Glowstone Ghost
 title.Grumm=the Inverted
-title.Jadedcat=the Mapmaker
+title.Jadedcat=the Cartographer
+title.Notch=the Creator
 title.Pahimar=the PahiNoob
 title.Soaryn=the Xy-mage
 title.VivaDaylight3=the Myrmecologist
+title.WayOfTime=the Sanguimagus
+title.XCompWiz=the Stranger
 #common
 title.kind=the Kind
 title.brave=the Brave
@@ -106,7 +114,7 @@ title.generous=the Generous
 #rare
 title.marksman=the Marksman
 #epic
-title.cartographer=the Cartographer
+title.cartographer=the Wayfarer
 title.witherslayer=the Witherslayer
 title.dragonslayer=the Dragonslayer
 #sequential
@@ -114,34 +122,34 @@ title.zombieSlayer=the Zombie Slayer
 title.zombieHunter=the Zombie Hunter
 title.ZombieBane=the Bane of Zombies
 title.zombieNemesis=the Nemesis of Zombies
-title.zombieExecutor=the Executioner of the Risen
+title.zombieExecutioner=the Executioner of the Risen
 
 title.skeletonSlayer=the Skeleton Slayer
 title.skeletonHunter=the Skeleton Hunter
 title.skeletonBane=the Bane of Skeletons
 title.skeletonNemesis=the Nemesis of Skeletons
-title.skeletonExecutor=the Executioner of the Hollow
+title.skeletonExecutioner=the Executioner of the Hollow
 
 title.creeperSlayer=the Creeper Slayer
 title.creeperHunter=the Creeper Hunter
 title.creeperBane=the Bane of Creepers
 title.creeperNemesis=the Nemesis of Creepers
-title.creeperExecutor=the Executioner of the Ruiners
+title.creeperExecutioner=the Executioner of the Ruiners
 
 title.spiderSlayer=the Spider Slayer
 title.spiderHunter=the Spider Hunter
 title.spiderBane=the Bane of Spiders
 title.spiderNemesis=the Nemesis of Spiders
-title.spiderExecutor=the Executioner of the Webweavers
+title.spiderExecutioner=the Executioner of the Webweavers
 
 title.blazeSlayer=the Blaze Slayer
 title.blazeHunter=the Blaze Hunter
 title.blazeBane=the Bane of Blazes
 title.blazeNemesis=the Nemesis of Blazes
-title.blazeExecutor=the Executioner of the Smoldering
+title.blazeExecutioner=the Executioner of the Smoldering
 
 title.endermanSlayer=the Enderman Slayer
 title.endermanHunter=the Enderman Hunter
 title.endermanBane=the Bane of Endermen
 title.endermanNemesis=the Nemesis of Endermen
-title.endermanExecutor=the Executioner of the Outsiders
+title.endermanExecutioner=the Executioner of the Outsiders

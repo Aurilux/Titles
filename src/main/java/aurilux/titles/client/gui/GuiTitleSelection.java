@@ -1,6 +1,5 @@
 package aurilux.titles.client.gui;
 
-import aurilux.titles.api.TitlesApi;
 import aurilux.titles.client.core.Keybindings;
 import aurilux.titles.common.core.TitleInfo;
 import aurilux.titles.common.core.Titles;
@@ -46,8 +45,9 @@ public class GuiTitleSelection extends GuiScreen {
     public GuiTitleSelection(EntityPlayer player) {
         this.player = player;
         page = 0;
-        playerTitles = TitlesApi.getPlayerTitles(player.getCommandSenderName());
-        temporaryTitle = TitlesApi.getSelectedTitle(player.getCommandSenderName());
+        //TODO Combine the player earned title + common titles here maybe even just make a function that does it
+        playerTitles = Titles.proxy.titlesByPlayer.get(player.getCommandSenderName());
+        temporaryTitle = Titles.proxy.selectedTitles.get(player.getCommandSenderName());
     }
 
     @Override
@@ -64,14 +64,16 @@ public class GuiTitleSelection extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float f) {
         super.drawScreen(mouseX, mouseY, f);
         String displayString = player.getCommandSenderName();
-        if(temporaryTitle != null) {
+        if (temporaryTitle != null && !temporaryTitle.equals(TitleInfo.NULL_TITLE)) {
             displayString += ", " + temporaryTitle.getFormattedTitle();
         }
         this.drawCenteredString(this.fontRendererObj, displayString, this.width / 2, guiTop - 5, 0xFFFFFF);
     }
 
     public void exitScreen(boolean update) {
-        if (update) Titles.network.sendToServer(new PacketTitleSelection(temporaryTitle));
+        if (update) {
+            Titles.network.sendToServer(new PacketTitleSelection(temporaryTitle));
+        }
         mc.displayGuiScreen(null);
     }
 
@@ -85,7 +87,7 @@ public class GuiTitleSelection extends GuiScreen {
             case NEXT_PAGE : page++; updateButtonList(); break;
             case LAST_PAGE : page = (int) Math.ceil(playerTitles.size() / 12); updateButtonList(); break;
             case RANDOM_BUTTON : temporaryTitle = playerTitles.get(player.worldObj.rand.nextInt(playerTitles.size())); updateButtonList(); break;
-            case NONE_BUTTON : temporaryTitle = null; updateButtonList(); break;
+            case NONE_BUTTON : temporaryTitle = TitleInfo.NULL_TITLE; updateButtonList(); break;
             default : temporaryTitle = playerTitles.get(button.id + (page * maxPerPage)); updateButtonList();
         }
     }

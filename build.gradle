@@ -26,6 +26,16 @@ repositories {
     }
 }
 
+ext.priv = parseConfig(file('private.properties'))
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
 apply plugin: 'forge'
 apply plugin: 'idea'
 
@@ -34,6 +44,7 @@ dependencies {
     // I don't have to specify NEI.. because gradle magic. aka: transitive dependency resolution
     // This means that NEI and its dependencies will get loaded automatically
     compile "mcp.mobius.waila:Waila:1.5.9_1.7.10"
+    compile project(":ArdentCore")
 }
 
 //Adds my custom core library mod to the list of module dependencies. Every time I refresh the idea workspace with the
@@ -43,8 +54,6 @@ idea.module.iml {
         module.dependencies.add(new org.gradle.plugins.ide.idea.model.ModuleDependency('ArdentCore', 'COMPILE'))
     }
 }
-
-ext.priv = parseConfig(file('private.properties'))
 
 //Current version of my mod. Gets appended to the end of the jar name
 version = "1.0.0"
@@ -71,14 +80,6 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
     }
 }
 

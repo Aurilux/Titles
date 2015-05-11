@@ -1,6 +1,5 @@
 package aurilux.titles.common.core;
 
-import net.minecraft.item.EnumRarity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
@@ -13,18 +12,18 @@ import net.minecraft.util.StatCollector;
  * File Created @ [13 Mar 2015]
  */
 public class TitleInfo {
+    public static final TitleInfo NULL_TITLE = new TitleInfo("null", EnumTitleRarity.unique);
     public String titleId;
-    public EnumRarity titleRarity;
+    public EnumTitleRarity titleRarity;
 
-    public TitleInfo(String name, EnumRarity rarity) {
+    public TitleInfo() {}
+
+    public TitleInfo(String name, EnumTitleRarity rarity) {
         titleId = name;
         titleRarity = rarity;
     }
 
     public EnumChatFormatting getTitleColor() {
-        if (titleRarity == null) {
-            return EnumChatFormatting.BLUE;
-        }
         return titleRarity.rarityColor;
     }
 
@@ -32,7 +31,13 @@ public class TitleInfo {
         return getTitleColor() + StatCollector.translateToLocal("title." + titleId);
     }
 
+    @Override
     public String toString() {
-        return titleId + ", " + (titleRarity == null ? "null" : titleRarity.rarityName);
+        return titleId + "," + titleRarity.rarityName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof TitleInfo && ((TitleInfo) o).titleId.equals(this.titleId) && ((TitleInfo) o).titleRarity.equals(this.titleRarity);
     }
 }

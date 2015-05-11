@@ -2,20 +2,14 @@ package aurilux.titles.common.core;
 
 import aurilux.ardentcore.common.init.ModVersionChecker;
 import aurilux.ardentcore.common.mod.AssetWrapper;
-import aurilux.titles.common.handler.TitleHandler;
+import aurilux.ardentcore.common.mod.NetworkWrapper;
 import aurilux.titles.common.init.ModAchievements;
-import aurilux.titles.common.packets.PacketTitleSelection;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +30,7 @@ public class Titles {
 
     public static final AssetWrapper assets = new AssetWrapper(MOD_ID.toLowerCase());
     public static final Logger logger = LogManager.getLogger(MOD_ID.toUpperCase());
-    public static final SimpleNetworkWrapper network = new SimpleNetworkWrapper(MOD_ID);
+    public static final NetworkWrapper network = new NetworkWrapper(MOD_ID);
 
     @Mod.Instance(MOD_ID)
     public static Titles instance;
@@ -57,20 +51,10 @@ public class Titles {
 
     /**
      * Build whatever data structures you care about and register handlers, tile entities, renderers, and recipes.
-     *
-     * NOTE: Proxy is only client at this point and does not switch during the entire initialization process
      */
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init();
-
-        NetworkRegistry.INSTANCE.registerGuiHandler(Titles.instance, Titles.proxy);
-
-        TitleHandler handler = new TitleHandler();
-        MinecraftForge.EVENT_BUS.register(handler);
-        FMLCommonHandler.instance().bus().register(handler);
-
-        network.registerMessage(PacketTitleSelection.class, PacketTitleSelection.class, 0, Side.SERVER);
     }
 
     /**

@@ -1,12 +1,18 @@
 package aurilux.titles.common.handler;
 
-import aurilux.ardentcore.common.util.AchievementUtil;
+import aurilux.ardentcore.common.util.AchievementUtils;
 import aurilux.titles.api.TitlesApi;
+import aurilux.titles.common.core.EnumTitleRarity;
 import aurilux.titles.common.core.TitleInfo;
 import aurilux.titles.common.core.Titles;
 import aurilux.titles.common.init.ModAchievements;
+import aurilux.titles.common.packets.PacketSyncObtainedTitles;
+import aurilux.titles.common.packets.PacketSyncSelectedTitles;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,77 +40,87 @@ public class TitleHandler {
     @SubscribeEvent
     public void onAchievement(AchievementEvent event) {
         EntityPlayer player = event.entityPlayer;
-        if (TitlesApi.titleExists(event.achievement.statId) && !AchievementUtil.isAchievementUnlocked(player, event.achievement)) {
-            TitlesApi.unlockTitle(player, event.achievement.statId);
+        if (TitlesApi.titleExists(event.achievement.statId) && !AchievementUtils.isAchievementUnlocked(player, event.achievement)) {
+            Titles.proxy.unlockTitle(player, event.achievement.statId);
         }
     }
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        EntityPlayer player = event.player;
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        //Gets the player's persistent tag that saves title info then reads the unlocked and selected titles
         NBTTagCompound persistentTag = TitlesApi.getPersistantPlayerTag(player);
         String titleString = persistentTag.getString("Titles_unlocked");
-        if (StringUtils.isNullOrEmpty(titleString)) {
-            Titles.logger.info("Unlocked titles tag does not exist. Adding default titles.");
-            ArrayList<TitleInfo> titles = new ArrayList<TitleInfo>();
-            if (Arrays.asList(uniqueList).contains(player.getCommandSenderName())) {
-                titles.add(new TitleInfo(player.getCommandSenderName(), null));
-            }
-            TitlesApi.createProfile(player, titles, true);
+        if (!StringUtils.isNullOrEmpty(titleString)) {
+            Titles.logger.info("Title info exists for " + player.getCommandSenderName() + ". Retrieving list...");
+            Titles.proxy.createProfile(player, TitlesApi.buildTitleInfoList(titleString));
         }
         else {
-            Titles.logger.info("Unlocked titles tag exists. Retrieving list.");
+            Titles.logger.info("Title info does not exist for " + player.getCommandSenderName() + ". Creating new profile...");
+            Titles.logger.info("Does the key exist?" + LanguageRegistry.instance().getStringLocalization("title." + player.getCommandSenderName()));
             ArrayList<TitleInfo> titles = new ArrayList<TitleInfo>();
-            String[] splitTitles = titleString.split(":");
-            for (String t : splitTitles) {
-                titles.add(TitlesApi.convertToTitleInfo(t));
+            if (Arrays.asList(uniqueList).contains(player.getCommandSenderName())) {
+                titles.add(new TitleInfo(player.getCommandSenderName(), EnumTitleRarity.unique));
             }
-            TitlesApi.createProfile(player, titles, false);
+            Titles.proxy.createProfile(player, titles);
         }
-
         String playerSelectedTitle = persistentTag.getString("Titles_selected");
         if (!StringUtils.isNullOrEmpty(playerSelectedTitle)) {
-            TitlesApi.setSelectedTitle(player, TitlesApi.convertToTitleInfo(playerSelectedTitle));
+            Titles.proxy.setSelectedTitle(player, TitlesApi.buildTitleInfo(playerSelectedTitle));
         }
+        else {
+            Titles.proxy.setSelectedTitle(player, TitleInfo.NULL_TITLE);
+        }
+        player.refreshDisplayName();
+
+        //Send the new player's obtained titles to it's client so they can be accessed in the title selection gui
+        Titles.network.sendToPlayer(new PacketSyncObtainedTitles(player.getCommandSenderName()), player);
+        //Send the new player's selected title (if any) to everyone else
+        Titles.network.sendToAllExcept(new PacketSyncSelectedTitles(player.getCommandSenderName()), player);
+        //Send the entire list of selected titles to the new player
+        Titles.network.sendToPlayer(new PacketSyncSelectedTitles(), player);
     }
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        Titles.logger.info("Do I get called at all?");
         EntityPlayer player = event.player;
-        TitlesApi.removeSelectedTitle(player);
-    }
-
-    @SubscribeEvent
-    public void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
-        EntityPlayer player = event.entityPlayer;
-        TitleInfo currentTitle = TitlesApi.getSelectedTitle(player.getCommandSenderName());
-        if (currentTitle != null) {
-            event.displayname += currentTitle.getFormattedTitle();
-        }
+        //TODO send packet to remove from the server and each client?
+        Titles.proxy.selectedTitles.remove(player.getCommandSenderName());
+        Titles.proxy.titlesByPlayer.remove(player.getCommandSenderName());
     }
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-        if (event.source.getSourceOfDamage() != null && event.source.getSourceOfDamage() instanceof EntityPlayerMP) {
+        if (event.source.getSourceOfDamage() instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) event.source.getSourceOfDamage();
             if (event.entity instanceof EntityZombie) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.zombiesSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.zombiesSlain);
             }
             if (event.entity instanceof EntitySkeleton) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.skeletonsSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.skeletonsSlain);
             }
             if (event.entity instanceof EntityCreeper) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.creepersSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.creepersSlain);
             }
             if (event.entity instanceof EntitySpider) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.spidersSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.spidersSlain);
             }
             if (event.entity instanceof EntityBlaze) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.blazesSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.blazesSlain);
             }
             if (event.entity instanceof EntityEnderman) {
-                AchievementUtil.completeAchievement((EntityPlayerMP) event.source.getSourceOfDamage(), ModAchievements.endermenSlain);
+                AchievementUtils.completeAchievement(player, ModAchievements.endermenSlain);
             }
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
+        EntityPlayer player = event.entityPlayer;
+        TitleInfo currentTitle = Titles.proxy.getSelectedTitle(player.getCommandSenderName());
+        if (currentTitle != null && !currentTitle.equals(TitleInfo.NULL_TITLE)) {
+            event.displayname += ", " + currentTitle.getFormattedTitle();
         }
     }
 }
