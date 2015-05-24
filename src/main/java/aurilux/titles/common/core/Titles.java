@@ -28,7 +28,7 @@ public class Titles {
     public static final String MOD_VERSION = "1.0.0";
     public static final String versionUrl = "https://raw.githubusercontent.com/Aurilux/Titles/master/version.xml";
 
-    public static final AssetWrapper assets = new AssetWrapper(MOD_ID.toLowerCase());
+    public static final AssetWrapper assets = new AssetWrapper(MOD_ID.toLowerCase(), null);
     public static final Logger logger = LogManager.getLogger(MOD_ID.toUpperCase());
     public static final NetworkWrapper network = new NetworkWrapper(MOD_ID);
 

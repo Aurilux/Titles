@@ -10,7 +10,6 @@ import aurilux.titles.common.packets.PacketSyncObtainedTitles;
 import aurilux.titles.common.packets.PacketSyncSelectedTitles;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.monster.*;
@@ -57,11 +56,11 @@ public class TitleHandler {
         }
         else {
             Titles.logger.info("Title info does not exist for " + player.getCommandSenderName() + ". Creating new profile...");
-            Titles.logger.info("Does the key exist?" + LanguageRegistry.instance().getStringLocalization("title." + player.getCommandSenderName()));
             ArrayList<TitleInfo> titles = new ArrayList<TitleInfo>();
             if (Arrays.asList(uniqueList).contains(player.getCommandSenderName())) {
                 titles.add(new TitleInfo(player.getCommandSenderName(), EnumTitleRarity.unique));
             }
+            titles.addAll(TitlesApi.commonTitles);
             Titles.proxy.createProfile(player, titles);
         }
         String playerSelectedTitle = persistentTag.getString("Titles_selected");

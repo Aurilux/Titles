@@ -38,15 +38,6 @@ public class TitlesApi {
     }
 
     /**
-     * Uses the achievementId as the title lang key.
-     * @param achievementId the ID of the achievement that will unlock the title
-     * @param titleRarity the rarity of the title
-     */
-    public static void addTitle(String achievementId, EnumTitleRarity titleRarity) {
-        addTitle(achievementId, achievementId, titleRarity);
-    }
-
-    /**
      * Adds a commonly available title - one that all players have access with no need to complete an achievement.
      * @param titleNames list of commonly available title names
      */

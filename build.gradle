@@ -28,8 +28,8 @@ repositories {
 
 ext.priv = parseConfig(file('private.properties'))
 
-def parseConfig(File config) {
-    config.withReader {
+def parseConfig(File priv) {
+    priv.withReader {
         def prop = new Properties()
         prop.load(it)
         return (new ConfigSlurper().parse(prop))
@@ -41,9 +41,6 @@ apply plugin: 'idea'
 
 //Note: This will cause an error unless you have this section after the "apply plugin: 'forge'" declaration
 dependencies {
-    // I don't have to specify NEI.. because gradle magic. aka: transitive dependency resolution
-    // This means that NEI and its dependencies will get loaded automatically
-    compile "mcp.mobius.waila:Waila:1.5.9_1.7.10"
     compile project(":ArdentCore")
 }
 
@@ -56,19 +53,23 @@ idea.module.iml {
 }
 
 //Current version of my mod. Gets appended to the end of the jar name
-version = "1.0.0"
+version = "${priv.mod_version}"
 //Java file structure/hierarchy
 group = "aurilux.titles" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 //Name of the mod. Used to name the resulting jar
 archivesBaseName = "Titles"
 
 minecraft {
-    version = "1.7.10-10.13.2.1230"
+    version = "${priv.minecraft_version}-${priv.forge_version}"
 }
 
-version = "1.7.10-" + project.version
+version = "${priv.minecraft_version}-${priv.mod_version}"
 
 processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -98,7 +99,6 @@ task copyToTesting(type: Copy) {
         def dir = "${priv.user}/Desktop/MultiMC/mods"
         def files = new File(dir).listFiles().sort()
         files.each { File file ->
-            println file.name
             if (file.name.contains(project.name) && !file.name.contains(project.version)) {
                 delete file;
                 //returning true breaks the each loop
@@ -114,7 +114,6 @@ task copyToTesting(type: Copy) {
         def dir = "${priv.user}/AppData/Roaming/.minecraft/mods"
         def files = new File(dir).listFiles().sort()
         files.each { File file ->
-            println file.name
             if (file.name.contains(project.name) && !file.name.contains(project.version)) {
                 delete file;
                 //returning true breaks the each loop
