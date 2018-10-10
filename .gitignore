@@ -1,24 +1,18 @@
+# Directories & Wildcard Filetypes
+######################
+*.bat
+*.iml
+*.txt
+*.odt
+Media/
+.git/
+.idea/
+libs/
+build/
+run/
+
 # Unique files #
 ######################
-*.jar
-*.bat
-*.classpath
-*.project
-*.iml
-*.ipr
-*.iws
-*.properties
-Media/
-bin/
-.git/
-resources/backup/
-config/
-crash-reports/
-logs/
-mods/
-resourcepacks/
-saves/
-Changelog.txt
 
 # OS generated files #
 ######################
