@@ -1,155 +1,69 @@
-# Misc
-misc.titles.unlocked=%s has unlocked the title %s{%s}
-misc.titles.unlockError=There is no title attached to achievement %s. No title was unlocked.
+# Configuration (+Keybindings)
+keybind.titles.category=Titles
+keybind.titles.openTitleSelection=Open Title Selection Screen
 
-# GUI
+# GUI (+Container)
 gui.titles.cancel=Cancel
 gui.titles.confirm=Confirm
 gui.titles.random=Random
 gui.titles.none=None
 
-# Keybindings
-keybind.titles.category=Titles
-keybind.titles.openTitleSelection=Open Title Selection Screen
+# Commands
 
-# Achievements
-achievement.titles.zombieSlayer=Zombie Slayer
-achievement.titles.zombieSlayer.desc=Kill 10 Zombies
-achievement.titles.zombieHunter=Zombie Hunter
-achievement.titles.zombieHunter.desc=Kill 25 Zombies
-achievement.titles.zombieBane=Zombie Bane
-achievement.titles.zombieBane.desc=Kill 75 Zombies
-achievement.titles.zombieNemesis=Zombie Nemesis
-achievement.titles.zombieNemesis.desc=Kill 100 Zombies
-achievement.titles.zombieExecutioner=Zombie Executioner
-achievement.titles.zombieExecutioner.desc=Kill 200 Skeletons
+# Entities
 
-achievement.titles.skeletonSlayer=Skeleton Slayer
-achievement.titles.skeletonSlayer.desc=Kill 10 Skeletons
-achievement.titles.skeletonHunter=Skeleton Hunter
-achievement.titles.skeletonHunter.desc=Kill 25 Skeletons
-achievement.titles.skeletonBane=Skeleton Bane
-achievement.titles.skeletonBane.desc=Kill 75 Skeletons
-achievement.titles.skeletonNemesis=Skeleton Nemesis
-achievement.titles.skeletonNemesis.desc=Kill 100 Skeletons
-achievement.titles.skeletonExecutioner=Skeleton Executioner
-achievement.titles.skeletonExecutioner.desc=Kill 200 Skeletons
+# Items
 
-achievement.titles.creeperSlayer=Creeper Slayer
-achievement.titles.creeperSlayer.desc=Kill 10 Creepers
-achievement.titles.creeperHunter=Creeper Hunter
-achievement.titles.creeperHunter.desc=Kill 25 Creepers
-achievement.titles.creeperBane=Creeper Bane
-achievement.titles.creeperBane.desc=Kill 75 Creepers
-achievement.titles.creeperNemesis=Creeper Nemesis
-achievement.titles.creeperNemesis.desc=Kill 100 Creepers
-achievement.titles.creeperExecutioner=Creeper Executioner
-achievement.titles.creeperExecutioner.desc=Kill 200 Creepers
+# Blocks (+Tile Entities)
 
-achievement.titles.spiderSlayer=Spider Slayer
-achievement.titles.spiderSlayer.desc=Kill 10 Spiders
-achievement.titles.spiderHunter=Spider Hunter
-achievement.titles.spiderHunter.desc=Kill 25 Spiders
-achievement.titles.spiderBane=Spider Bane
-achievement.titles.spiderBane.desc=Kill 75 Spiders
-achievement.titles.spiderNemesis=Spider Nemesis
-achievement.titles.spiderNemesis.desc=Kill 100 Spiders
-achievement.titles.spiderExecutioner=Spider Executioner
-achievement.titles.spiderExecutioner.desc=Kill 200 Spiders
-
-achievement.titles.blazeSlayer=Blaze Slayer
-achievement.titles.blazeSlayer.desc=Kill 10 Blazes
-achievement.titles.blazeHunter=Blaze Hunter
-achievement.titles.blazeHunter.desc=Kill 25 Blazes
-achievement.titles.blazeBane=Blaze Bane
-achievement.titles.blazeBane.desc=Kill 75 Blazes
-achievement.titles.blazeNemesis=Blaze Nemesis
-achievement.titles.blazeNemesis.desc=Kill 100 Blazes
-achievement.titles.blazeExecutioner=Blaze Executioner
-achievement.titles.blazeExecutioner.desc=Kill 200 Blazes
-
-achievement.titles.endermanSlayer=Enderman Slayer
-achievement.titles.endermanSlayer.desc=Kill 10 Endermen
-achievement.titles.endermanHunter=Enderman Hunter
-achievement.titles.endermanHunter.desc=Kill 25 Endermen
-achievement.titles.endermanBane=Enderman Bane
-achievement.titles.endermanBane.desc=Kill 75 Endermen
-achievement.titles.endermanNemesis=Enderman Nemesis
-achievement.titles.endermanNemesis.desc=Kill 100 Endermen
-achievement.titles.endermanExecutioner=Enderman Executioner
-achievement.titles.endermanExecutioner.desc=Kill 200 Endermen
+# Misc
+chat.type.title=%s has unlocked the title (%s)
 
 # Titles
-#unique
-title.Aurilux=the Paladin
-title.Azanor=the Grand Thaumaturge
-title.Dinnerbone=the Inverted
-title.Direwolf20=the DireDerp
-title.Dr_Mr_Boss=the Glowstone Ghost
-title.Grumm=the Inverted
-title.Jadedcat=the Cartographer
-title.Notch=the Creator
-title.Pahimar=the PahiNoob
-title.Soaryn=the Xy-mage
-title.VivaDaylight3=the Myrmecologist
-title.WayOfTime=the Sanguimagus
-title.XCompWiz=the Stranger
-#common
-title.kind=the Kind
-title.brave=the Brave
-title.bold=the Bold
-title.sly=the Sly
-title.chickenHerder=the Chicken Herder
-title.explorer=the Explorer
-title.noob=the Noob
-title.newb=the Newb
-title.dogLover=the Dog Lover
-title.catLover=the Cat Lover
-title.hardy=the Hardy
-title.beautiful=the Beautiful
-title.amateur=the Amateur
-#uncommon
-title.enchanter=the Enchanter
-title.generous=the Generous
-#rare
-title.marksman=the Marksman
-#epic
-title.cartographer=the Wayfarer
-title.witherslayer=the Witherslayer
-title.dragonslayer=the Dragonslayer
-#sequential
-title.zombieSlayer=the Zombie Slayer
-title.zombieHunter=the Zombie Hunter
-title.ZombieBane=the Bane of Zombies
-title.zombieNemesis=the Nemesis of Zombies
-title.zombieExecutioner=the Executioner of the Risen
+#story
+title.minecraft.story.root=the Craftsman
+title.minecraft.story.mine_stone=the Neanderthal
+title.minecraft.story.obtain_armor=the Armorer
+title.minecraft.story.iron_tools=the Miner
+title.minecraft.story.deflect_arrow=the Shieldbearer
+title.minecraft.story.enter_the_nether=the Hellwalker
+title.minecraft.story.enchant_item=the Enchanter
+title.minecraft.story.cure_zombie_villager=the Purifier
+title.minecraft.story.enter_the_end=the Planeswalker
 
-title.skeletonSlayer=the Skeleton Slayer
-title.skeletonHunter=the Skeleton Hunter
-title.skeletonBane=the Bane of Skeletons
-title.skeletonNemesis=the Nemesis of Skeletons
-title.skeletonExecutioner=the Executioner of the Hollow
+#husbandry
+title.minecraft.husbandry.root=the Farmer
+title.minecraft.husbandry.tame_an_animal=the Pet Lover
+title.minecraft.husbandry.fishy_business=the Fisherman
+title.minecraft.husbandry.bred_all_animals=the Matchmaker
+title.minecraft.husbandry.balanced_diet=the Connoisseur
+title.minecraft.husbandry.break_diamond_hoe=the Agriculturalist
 
-title.creeperSlayer=the Creeper Slayer
-title.creeperHunter=the Creeper Hunter
-title.creeperBane=the Bane of Creepers
-title.creeperNemesis=the Nemesis of Creepers
-title.creeperExecutioner=the Executioner of the Ruiners
+#adventure
+title.minecraft.adventure.root=the Adventurer
+title.minecraft.adventure.kill_a_mob=the Hunter
+title.minecraft.adventure.trade=the Trader
+title.minecraft.adventure.shoot_arrow=the Archer
+title.minecraft.adventure.kill_all_mobs=the Huntsman
+title.minecraft.adventure.totem_of_undying=the Undying
+title.minecraft.adventure.summon_iron_golem=the Samaritan
+title.minecraft.adventure.adventuring_time=the Wayfarer
+title.minecraft.adventure.sniper_duel=the Sniper
 
-title.spiderSlayer=the Spider Slayer
-title.spiderHunter=the Spider Hunter
-title.spiderBane=the Bane of Spiders
-title.spiderNemesis=the Nemesis of Spiders
-title.spiderExecutioner=the Executioner of the Webweavers
+#nether
+title.minecraft.nether.fast_travel=the Portal Jumper
+title.minecraft.nether.return_to_sender=the Mailman
+title.minecraft.nether.uneasy_alliance=the Betrayer
+title.minecraft.nether.brew_potion=the Brewer
+title.minecraft.nether.all_potions=the Alchemist
+title.minecraft.nether.all_effects=the Overwhelmed
+title.minecraft.nether.create_full_beacon=the Architect
 
-title.blazeSlayer=the Blaze Slayer
-title.blazeHunter=the Blaze Hunter
-title.blazeBane=the Bane of Blazes
-title.blazeNemesis=the Nemesis of Blazes
-title.blazeExecutioner=the Executioner of the Smoldering
-
-title.endermanSlayer=the Enderman Slayer
-title.endermanHunter=the Enderman Hunter
-title.endermanBane=the Bane of Endermen
-title.endermanNemesis=the Nemesis of Endermen
-title.endermanExecutioner=the Executioner of the Outsiders
+#end
+title.minecraft.end.kill_dragon=the Dragonslayer
+title.minecraft.end.dragon_egg=the Eggsnatcher
+title.minecraft.end.enter_end_gateway=the Voidwalker
+title.minecraft.end.respawn_dragon=the Reviver
+title.minecraft.end.dragon_breath=the Hazmat
+title.minecraft.end.elytra=the Lightyear
+title.minecraft.end.levitate=the Suspended
