@@ -13,3 +13,7 @@ Then you need to add certain entries to your .lang file(s). Using vanilla's adva
 ```
 title.minecraft.story.root=the Craftsman
 ```
+Or, an example from the following the example from above:
+```
+title.testmod.root=the Tester
+```
