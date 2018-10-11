@@ -3,9 +3,9 @@ Inspired by iChun's Hats, Titles allows player to display titles next to their n
 
 # For Modmakers
 ### Step 1
-If you want to add your own titles, send an IMC message with the key "register-titles" and the value being a string that contains all the resource locations of the advancements delineated by a ";".
+If you want to add your own titles, send an IMC message with the key "register-titles" and the value being a string that contains all the resource locations of the advancements delineated by a ";" (make sure there are no spaces).
 ```
-FMLInterModComms.sendMessage("titles", "register-titles", "testmod:root; testmod:adv1; testmod:adv2");
+FMLInterModComms.sendMessage("titles", "register-titles", "testmod:root;testmod:adv1;testmod:adv2");
 ```
 
 ### Step 2
