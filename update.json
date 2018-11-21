@@ -1,10 +1,11 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
-    "1.12.2-latest": "2.0.0",
-    "1.12.2-recommended": "2.0.0"
+    "1.12.2-latest": "2.0.1",
+    "1.12.2-recommended": "2.0.1"
   },
   "1.12.2": {
+    "2.0.1": "Fixed a crash while on a server due to call to client side only class",
     "2.0.0": "BIG Minecraft version jump. New GUI."
   }
 }
