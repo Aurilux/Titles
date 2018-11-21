@@ -1,7 +1,7 @@
 package aurilux.titles.common;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public class TitleInfo implements Comparable {
     public final static TitleInfo NULL_TITLE = new TitleInfo("null", EnumRarity.COMMON);
@@ -16,7 +16,7 @@ public class TitleInfo implements Comparable {
     }
 
     public String getFormattedTitle() {
-        return titleRarity.color + I18n.format(titleId);
+        return titleRarity.color + new TextComponentTranslation(titleId).getFormattedText();
     }
 
     @Override
