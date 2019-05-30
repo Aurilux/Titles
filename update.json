@@ -1,8 +1,8 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
-    "1.12.2-latest": "2.0.1",
-    "1.12.2-recommended": "2.0.1"
+    "1.12.2-latest": "2.1.0",
+    "1.12.2-recommended": "2.1.0"
   },
   "1.12.2": {
     "2.1.0": "Added page counter and config options to change the title colors",
