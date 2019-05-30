@@ -12,12 +12,13 @@ public abstract class AbstractPacket<REQ extends IMessage> implements IMessage, 
     @Override
     public REQ onMessage(REQ message, MessageContext ctx) {
         Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-            // Use anon - lambda causes classloading issues
+            // Use anon. Lambda causes classloading issues
             @Override
             public void run() {
                 if (ctx.side == Side.SERVER) {
                     handleServerSide(message, ctx.getServerHandler().player);
-                } else {
+                }
+                else {
                     handleClientSide(message, FMLClientHandler.instance().getClient().player);
                 }
             }
@@ -29,15 +30,15 @@ public abstract class AbstractPacket<REQ extends IMessage> implements IMessage, 
      * Handle a packet on the client side. Note this occurs after decoding has completed.
      *
      * @param message
-     * @param player the player reference
+     * @param receiver the player reference
      */
-    public abstract void handleClientSide(REQ message, EntityPlayer player);
+    public abstract void handleClientSide(REQ message, EntityPlayer receiver);
 
     /**
      * Handle a packet on the server side. Note this occurs after decoding has completed.
      *
      * @param message
-     * @param player the player reference
+     * @param receiver the player reference
      */
-    public abstract void handleServerSide(REQ message, EntityPlayer player);
+    public abstract void handleServerSide(REQ message, EntityPlayer receiver);
 }

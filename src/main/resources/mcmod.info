@@ -1,0 +1,18 @@
+[{
+	"modid": "titles",
+	"name": "Titles",
+	"description": "Advancements also unlock titles that can be displayed alongside your username",
+	"version": "${version}",
+	"mcversion": "${mcversion}",
+	"url": "",
+	"updateUrl": "",
+	"authorList": [ "Aurilux" ],
+	"credits": "Created by Aurilux",
+    "logoFile": "assets/titles/textures/Titles_logo.png",
+    "screenshots": [],
+    "parent": "",
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "useDependencyInformation": true
+}]

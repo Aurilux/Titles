@@ -1,16 +1,19 @@
 package aurilux.titles.common;
 
+import aurilux.titles.common.capability.TitlesImpl;
+import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import aurilux.titles.common.network.messages.PacketSyncTitleDataOnLogin;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
-import aurilux.titles.common.network.messages.PacketTitleSelection;
+import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 
 @Mod(modid = Titles.MOD_ID,
         name = "Titles",
@@ -21,6 +24,7 @@ public class Titles {
     public static final String MOD_ID = "titles";
     public static final String MOD_VERSION = "1.0.0";
     public static final Logger logger = LogManager.getLogger(MOD_ID.toUpperCase());
+    public static Configuration config;
 
     @Mod.Instance(MOD_ID)
     public static Titles instance;
@@ -38,6 +42,7 @@ public class Titles {
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        TitlesImpl.register();
         proxy.preInit(event);
     }
 
@@ -50,9 +55,8 @@ public class Titles {
         proxy.init(event);
 
         //NETWORK/PACKETS
-        PacketDispatcher.registerDualMessage(PacketTitleSelection.class);
+        PacketDispatcher.registerDualMessage(PacketSyncSelectedTitle.class);
         PacketDispatcher.registerClientMessage(PacketSyncTitleDataOnLogin.class);
-        PacketDispatcher.registerClientMessage(PacketSyncSelectedTitle.class);
         PacketDispatcher.registerClientMessage(PacketSyncUnlockedTitle.class);
     }
 
@@ -72,11 +76,8 @@ public class Titles {
         //Advancements are only loaded at the start, or reload, of the server. So, I have to generate the titles here
         //or else there will be no advancements to generate from.
         TitleManager.generateTitles();
-    }
 
-    @Mod.EventHandler
-    public void serverStop(FMLServerStoppingEvent event) {
-        //TitleManager.saveAllPlayerData();
+        event.registerServerCommand(new CommandTitles());
     }
 
     /**

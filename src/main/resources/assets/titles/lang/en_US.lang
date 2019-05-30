@@ -19,6 +19,8 @@ gui.titles.none=None
 # Misc
 chat.type.title=%s has unlocked the title (%s)
 
+# Advancements
+
 # Titles
 #story
 title.minecraft.story.root=the Craftsman
@@ -34,7 +36,6 @@ title.minecraft.story.enter_the_end=the Planeswalker
 #husbandry
 title.minecraft.husbandry.root=the Farmer
 title.minecraft.husbandry.tame_an_animal=the Pet Lover
-title.minecraft.husbandry.fishy_business=the Fisherman
 title.minecraft.husbandry.bred_all_animals=the Matchmaker
 title.minecraft.husbandry.balanced_diet=the Connoisseur
 title.minecraft.husbandry.break_diamond_hoe=the Agriculturalist

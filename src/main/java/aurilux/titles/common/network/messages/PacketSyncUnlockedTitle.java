@@ -9,31 +9,27 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.util.UUID;
 
 public class PacketSyncUnlockedTitle extends AbstractPacket<PacketSyncUnlockedTitle> {
-    private UUID playerUUID;
     private TitleInfo titleInfo;
 
     public PacketSyncUnlockedTitle() {}
 
-    public PacketSyncUnlockedTitle(UUID playerUUID, TitleInfo titleInfo) {
-        this.playerUUID = playerUUID;
+    public PacketSyncUnlockedTitle(TitleInfo titleInfo) {
         this.titleInfo = titleInfo;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        playerUUID = UUID.fromString(ByteBufUtils.readUTF8String(buf));
-        titleInfo = TitleInfo.fromString(ByteBufUtils.readUTF8String(buf));
+        titleInfo = TitleInfo.readFromNBT(ByteBufUtils.readTag(buf));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, playerUUID.toString());
-        ByteBufUtils.writeUTF8String(buf, titleInfo.toString());
+        ByteBufUtils.writeTag(buf, titleInfo.writeToNBT());
     }
 
     @Override
     public void handleClientSide(PacketSyncUnlockedTitle message, EntityPlayer receiver) {
-        TitleManager.addTitle(message.playerUUID, message.titleInfo);
+        TitleManager.addTitle(receiver, message.titleInfo);
     }
 
     @Override

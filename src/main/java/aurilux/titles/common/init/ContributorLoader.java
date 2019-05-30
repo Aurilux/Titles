@@ -2,7 +2,6 @@ package aurilux.titles.common.init;
 
 import aurilux.titles.common.TitleInfo;
 import aurilux.titles.common.Titles;
-import net.minecraft.item.EnumRarity;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,7 +28,7 @@ public final class ContributorLoader {
     private static void load(Properties props) {
         for(String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
-            contributorTitles.put(key, new TitleInfo(value, EnumRarity.EPIC));
+            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
         }
     }
 
@@ -50,7 +49,7 @@ public final class ContributorLoader {
                 load(props);
             }
             catch (IOException e) {
-                Titles.console("Unable to load contributors list. Either you're offline or github is down.");
+                Titles.console("Unable to load contributors list. Most likely you're offline or github is down.");
             }
         }
     }

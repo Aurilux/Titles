@@ -3,10 +3,10 @@ package aurilux.titles.client.gui;
 import aurilux.titles.client.ModKeybindings;
 import aurilux.titles.common.TitleInfo;
 import aurilux.titles.common.TitleManager;
+import aurilux.titles.common.capability.TitlesImpl;
 import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketTitleSelection;
-import net.minecraft.client.Minecraft;
+import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,9 +20,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class GuiTitleSelection extends GuiScreen {
+    private final ResourceLocation bgTexture = new ResourceLocation("titles", "textures/gui/titleselection.png");
+
     private final int numCols = 2;
     private final int numRows = 6;
     private final int maxPerPage = numCols * numRows;
+    private int page;
+    private int maxPages;
 
     private final int RANDOM_BUTTON = maxPerPage + 1;
     private final int NONE_BUTTON = maxPerPage + 2;
@@ -33,6 +37,7 @@ public class GuiTitleSelection extends GuiScreen {
     private final int NEXT_PAGE = maxPerPage + 7;
     private final int LAST_PAGE = maxPerPage + 8;
 
+    //The size of the GUI image in pixels
     private final int xSize = 256;
     private final int ySize = 222;
     private int guiLeft;
@@ -40,22 +45,20 @@ public class GuiTitleSelection extends GuiScreen {
 
     private EntityPlayer player;
     private TitleInfo temporaryTitle;
-    private int page;
     private List<TitleInfo> playerTitles;
-
-    private final ResourceLocation bgTexture = new ResourceLocation("titles", "textures/gui/titleselection.png");
 
     public GuiTitleSelection(EntityPlayer player) {
         this.player = player;
-        page = 0;
-
         String playerName = player.getName();
-        playerTitles = new ArrayList<>(TitleManager.getObtainedTitles(player.getUniqueID()));
+        playerTitles = new ArrayList<>(TitlesImpl.getCapability(player).getObtainedTitles());
         if (ContributorLoader.contributorTitleExists(playerName)) {
             playerTitles.add(ContributorLoader.getContributorTitle(playerName));
         }
-        temporaryTitle = TitleManager.getSelectedTitle(player.getUniqueID());
+        temporaryTitle = TitleManager.getSelectedTitle(player);
         Collections.sort(playerTitles);
+
+        page = 0;
+        maxPages = playerTitles.size() / 12;
     }
 
     @Override
@@ -64,8 +67,6 @@ public class GuiTitleSelection extends GuiScreen {
 
         guiLeft = (this.width - xSize) / 2;
         guiTop = (this.height - ySize) / 2;
-
-        updateButtonList();
     }
 
     @Override
@@ -76,17 +77,20 @@ public class GuiTitleSelection extends GuiScreen {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         super.drawScreen(mouseX, mouseY, f);
+        updateButtonList();
 
-        String displayString = player.getName();
-        if (!temporaryTitle.equals(TitleInfo.NULL_TITLE)) {
-            displayString += ", " + temporaryTitle.getFormattedTitle();
-        }
-        this.drawCenteredString(this.fontRenderer, displayString, this.width / 2, guiTop + 11, 0xFFFFFF);
+        //Draw the player's name with their selected title
+        String titledPlayerName = player.getName();
+        titledPlayerName += temporaryTitle.getFormattedTitle(true);
+        this.drawCenteredString(this.fontRenderer, titledPlayerName, this.width / 2, guiTop + 11, 0xFFFFFF);
+
+        //Draw the page counter
+        this.drawCenteredString(this.fontRenderer, (page + 1) + "/" + (maxPages + 1), this.width / 2, guiTop + 183, 0xFFFFFF);
     }
 
     private void exitScreen(boolean update) {
         if (update) {
-            PacketDispatcher.INSTANCE.sendToServer(new PacketTitleSelection(player.getUniqueID(), temporaryTitle));
+            PacketDispatcher.INSTANCE.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle));
         }
         mc.displayGuiScreen(null);
     }
@@ -96,13 +100,13 @@ public class GuiTitleSelection extends GuiScreen {
         switch (button.id) {
             case CANCEL_BUTTON : exitScreen(false); break;
             case CONFIRM_BUTTON : exitScreen(true); break;
-            case FIRST_PAGE : page = 0; updateButtonList(); break;
-            case PREV_PAGE : page--; updateButtonList(); break;
-            case NEXT_PAGE : page++; updateButtonList(); break;
-            case LAST_PAGE : page = (int) Math.ceil(playerTitles.size() / 12); updateButtonList(); break;
-            case RANDOM_BUTTON :  chooseRandomTitle(); updateButtonList(); break;
-            case NONE_BUTTON : temporaryTitle = TitleInfo.NULL_TITLE; updateButtonList(); break;
-            default : temporaryTitle = playerTitles.get(button.id + (page * maxPerPage)); updateButtonList();
+            case FIRST_PAGE : page = 0; break;
+            case PREV_PAGE : page--; break;
+            case NEXT_PAGE : page++; break;
+            case LAST_PAGE : page = maxPages; break;
+            case RANDOM_BUTTON :  chooseRandomTitle(); break;
+            case NONE_BUTTON : temporaryTitle = TitleInfo.NULL_TITLE; break;
+            default : temporaryTitle = playerTitles.get(button.id + (page * maxPerPage));
         }
     }
 
@@ -115,17 +119,16 @@ public class GuiTitleSelection extends GuiScreen {
         }
     }
 
-
     @Override
     protected void keyTyped(char c, int ascii) throws IOException {
         super.keyTyped(c, ascii);
         if (ModKeybindings.OPEN_TITLE_SELECTION.getKeyBinding().getKeyCode() == ascii
-                && Minecraft.getMinecraft().currentScreen instanceof GuiTitleSelection) {
+                && this.mc.currentScreen instanceof GuiTitleSelection) {
             exitScreen(false);
         }
     }
 
-    public void updateButtonList() {
+    private void updateButtonList() {
         buttonList.clear();
 
         int buttonHeight = 20;
@@ -141,7 +144,7 @@ public class GuiTitleSelection extends GuiScreen {
         for (int i = 0; i < titlesToDisplay.size(); i++) {
             int col = i % numCols;
             int row = i / numCols;
-            buttonList.add(new GuiButton(i, leftOffset + (titleButtonWidth * col), buttonTitleRowStart + (row * buttonHeight), titleButtonWidth, buttonHeight, titlesToDisplay.get(i).getFormattedTitle()));
+            buttonList.add(new GuiButton(i, leftOffset + (titleButtonWidth * col), buttonTitleRowStart + (row * buttonHeight), titleButtonWidth, buttonHeight, titlesToDisplay.get(i).getFormattedTitle(false)));
         }
 
         buttonList.add(new GuiButton(RANDOM_BUTTON, leftOffset, buttonFirstRowStart, 60, buttonHeight, I18n.format("gui.titles.random")));
@@ -153,8 +156,8 @@ public class GuiTitleSelection extends GuiScreen {
             buttonList.get(buttonList.size() - 2).enabled = false;
             buttonList.get(buttonList.size() - 1).enabled = false;
         }
-        buttonList.add(new GuiButton(CANCEL_BUTTON, leftOffset + 55, buttonSecondRowStart, 60, buttonHeight, I18n.format("gui.titles.cancel")));
-        buttonList.add(new GuiButton(CONFIRM_BUTTON, leftOffset + 125, buttonSecondRowStart, 60, buttonHeight, I18n.format("gui.titles.confirm")));
+        buttonList.add(new GuiButton(CANCEL_BUTTON, leftOffset + 45, buttonSecondRowStart, 60, buttonHeight, I18n.format("gui.titles.cancel")));
+        buttonList.add(new GuiButton(CONFIRM_BUTTON, leftOffset + 135, buttonSecondRowStart, 60, buttonHeight, I18n.format("gui.titles.confirm")));
 
         buttonList.add(new GuiButton(NEXT_PAGE, leftOffset + 198, buttonSecondRowStart, 20, buttonHeight, ">"));
         buttonList.add(new GuiButton(LAST_PAGE, leftOffset + 220, buttonSecondRowStart, 20, buttonHeight, ">>"));
