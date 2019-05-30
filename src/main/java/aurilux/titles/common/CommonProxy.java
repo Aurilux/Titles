@@ -14,17 +14,16 @@ public class CommonProxy {
         TitleManager.registerTitle("minecraft:story/root");
         TitleManager.registerTitle("minecraft:story/mine_stone");
         TitleManager.registerTitle("minecraft:story/obtain_armor");
+        TitleManager.registerTitle("minecraft:story/iron_tools");
         TitleManager.registerTitle("minecraft:story/deflect_arrow");
         TitleManager.registerTitle("minecraft:story/enter_the_nether");
         TitleManager.registerTitle("minecraft:story/enchant_item");
         TitleManager.registerTitle("minecraft:story/cure_zombie_villager");
         TitleManager.registerTitle("minecraft:story/enter_the_end");
-        TitleManager.registerTitle("minecraft:story/enter_the_nether");
 
         //husbandry
         TitleManager.registerTitle("minecraft:husbandry/root");
         TitleManager.registerTitle("minecraft:husbandry/tame_an_animal");
-        TitleManager.registerTitle("minecraft:husbandry/fishy_business");
         TitleManager.registerTitle("minecraft:husbandry/bred_all_animals");
         TitleManager.registerTitle("minecraft:husbandry/balanced_diet");
         TitleManager.registerTitle("minecraft:husbandry/break_diamond_hoe");
