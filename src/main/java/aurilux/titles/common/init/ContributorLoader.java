@@ -1,6 +1,6 @@
 package aurilux.titles.common.init;
 
-import aurilux.titles.common.TitleInfo;
+import aurilux.titles.api.TitleInfo;
 import aurilux.titles.common.Titles;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public final class ContributorLoader {
     private static void load(Properties props) {
         for(String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
-            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
+            contributorTitles.put(key, new TitleInfo(Titles.MOD_ID, value, TitleInfo.TitleRarity.UNIQUE));
         }
     }
 

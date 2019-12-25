@@ -26,4 +26,9 @@ public class ClientProxy extends CommonProxy {
     public void postInit(FMLPostInitializationEvent event){
         super.postInit(event);
     }
+
+    @Override
+    public void sendChatMessageToAllPlayers(String message, Object... args) {
+        super.sendChatMessageToAllPlayers(message, args);
+    }
 }

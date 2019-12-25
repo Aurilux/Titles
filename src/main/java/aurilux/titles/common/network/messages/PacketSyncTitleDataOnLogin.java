@@ -1,27 +1,26 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.common.TitleInfo;
-import aurilux.titles.common.TitleManager;
-import aurilux.titles.common.Titles;
-import aurilux.titles.common.capability.TitlesImpl;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.TitlesAPI;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public class PacketSyncTitleDataOnLogin extends AbstractPacket<PacketSyncTitleDataOnLogin> {
+public class PacketSyncTitleDataOnLogin implements IMessage {
     private final Map<UUID, TitleInfo> playerSelectedTitles = new HashMap<>();
     private NBTTagCompound comp;
 
@@ -29,13 +28,13 @@ public class PacketSyncTitleDataOnLogin extends AbstractPacket<PacketSyncTitleDa
 
     public PacketSyncTitleDataOnLogin(EntityPlayer player) {
         //the player's personal data
-        this.comp = TitlesImpl.getCapability(player).serializeNBT();
+        this.comp = TitlesAPI.getTitlesCap(player).serializeNBT();
 
         //the selected titles of all other players
         PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
         for (EntityPlayerMP temp : playerList.getPlayers()) {
             if (temp.getUniqueID() != player.getUniqueID()) {
-                playerSelectedTitles.put(temp.getUniqueID(), TitlesImpl.getCapability(temp).getSelectedTitle());
+                playerSelectedTitles.put(temp.getUniqueID(), TitlesAPI.getSelectedTitle(temp));
             }
         }
     }
@@ -63,19 +62,22 @@ public class PacketSyncTitleDataOnLogin extends AbstractPacket<PacketSyncTitleDa
         }
     }
 
-    @Override
-    public void handleClientSide(PacketSyncTitleDataOnLogin message, EntityPlayer receiver) {
-        TitlesImpl.getCapability(receiver).deserializeNBT(message.comp);
+    public static class Handler implements IMessageHandler<PacketSyncTitleDataOnLogin, IMessage> {
+        @Override
+        public IMessage onMessage(PacketSyncTitleDataOnLogin message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    TitlesAPI.getTitlesCap(Minecraft.getMinecraft().player).deserializeNBT(message.comp);
 
-        World world = FMLClientHandler.instance().getWorldClient();
-        for (Map.Entry<UUID, TitleInfo> entry : message.playerSelectedTitles.entrySet()) {
-            EntityPlayer player = world.getPlayerEntityByUUID(entry.getKey());
-            TitlesImpl.getCapability(player).setSelectedTitle(entry.getValue());
+                    World world = FMLClientHandler.instance().getWorldClient();
+                    for (Map.Entry<UUID, TitleInfo> entry : message.playerSelectedTitles.entrySet()) {
+                        EntityPlayer player = world.getPlayerEntityByUUID(entry.getKey());
+                        TitlesAPI.getTitlesCap(player).setSelectedTitle(entry.getValue());
+                    }
+                }
+            });
+            return null;
         }
-    }
-
-    @Override
-    public void handleServerSide(PacketSyncTitleDataOnLogin message, EntityPlayer receiver) {
-        //NOOP
     }
 }

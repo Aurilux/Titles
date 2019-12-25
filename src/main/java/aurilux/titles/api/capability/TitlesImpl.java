@@ -1,6 +1,6 @@
-package aurilux.titles.common.capability;
+package aurilux.titles.api.capability;
 
-import aurilux.titles.common.TitleInfo;
+import aurilux.titles.api.TitleInfo;
 import aurilux.titles.common.Titles;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
@@ -37,6 +37,8 @@ public class TitlesImpl {
     public interface ITitles extends INBTSerializable<NBTTagCompound> {
         void add(TitleInfo info);
 
+        void remove(TitleInfo info);
+
         void setObtainedTitles(Set<TitleInfo> newTitles);
 
         Set<TitleInfo> getObtainedTitles();
@@ -68,6 +70,11 @@ public class TitlesImpl {
         @Override
         public void add(TitleInfo info) {
             obtainedTitles.add(info);
+        }
+
+        @Override
+        public void remove(TitleInfo info) {
+            obtainedTitles.remove(info);
         }
 
         @Override

@@ -1,9 +1,10 @@
-package aurilux.titles.common;
+package aurilux.titles.common.init;
 
+import aurilux.titles.common.Titles;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = Titles.MOD_ID)
+@Config(modid = Titles.MOD_ID, name = Titles.MOD_NAME + "/" + Titles.MOD_ID)
 public class ModConfig {
     @Config.Comment("The color for common titles")
     public static ColorOnlyTextFormatting commonColor = ColorOnlyTextFormatting.WHITE;

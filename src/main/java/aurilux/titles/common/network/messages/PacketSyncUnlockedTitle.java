@@ -1,39 +1,42 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.common.TitleInfo;
-import aurilux.titles.common.TitleManager;
+import aurilux.titles.api.TitlesAPI;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.UUID;
-
-public class PacketSyncUnlockedTitle extends AbstractPacket<PacketSyncUnlockedTitle> {
-    private TitleInfo titleInfo;
+public class PacketSyncUnlockedTitle implements IMessage {
+    private String titleKey;
 
     public PacketSyncUnlockedTitle() {}
 
-    public PacketSyncUnlockedTitle(TitleInfo titleInfo) {
-        this.titleInfo = titleInfo;
+    public PacketSyncUnlockedTitle(String titleKey) {
+        this.titleKey = titleKey;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        titleInfo = TitleInfo.readFromNBT(ByteBufUtils.readTag(buf));
+        titleKey = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, titleInfo.writeToNBT());
+        ByteBufUtils.writeUTF8String(buf, titleKey);
     }
 
-    @Override
-    public void handleClientSide(PacketSyncUnlockedTitle message, EntityPlayer receiver) {
-        TitleManager.addTitle(receiver, message.titleInfo);
-    }
-
-    @Override
-    public void handleServerSide(PacketSyncUnlockedTitle message, EntityPlayer receiver) {
-        //NOOP
+    public static class Handler implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
+        @Override
+        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
+            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    TitlesAPI.addTitle(Minecraft.getMinecraft().player, message.titleKey);
+                }
+            });
+            return null;
+        }
     }
 }

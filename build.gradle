@@ -13,22 +13,19 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'idea'
 
-//Load the config file
-ext.config = parseConfig(file('build.properties'))
-
 //Current version of my mod. Gets appended to the end of the jar name
-version = "${config.minecraft_version}-${config.mod_version}"
+version = minecraft_version + "-" + mod_version
 //Java file structure/hierarchy
-group = config.group // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = group_name // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 //Name of the mod. Used to name the resulting jar
-archivesBaseName = config.mod_name
+archivesBaseName = mod_name
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
-    version = "${config.minecraft_version}-${config.forge_version}"
-    mappings = config.mc_mappings
+    version = minecraft_version + "-" + forge_version
+    mappings = mc_mappings
     runDir = "run"
 }
 
@@ -69,24 +66,9 @@ processResources {
     }
 }
 
-def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
-    }
-}
-
-//Adds my custom core library mod to the list of module dependencies in idea during 'setupDecompWorkspace'.
 /*
-idea.module.iml {
-    whenMerged { module ->
-        module.dependencies.add(new org.gradle.plugins.ide.idea.model.ModuleDependency('ArdentCore', 'COMPILE'))
-    }
-}sourceSets {
+sourceSets {
     main { output.resourcesDir = output.classesDir }
 }
-*/
-
-//required for Intellij IDEA 14+ to properly recognize assets
 idea.module.inheritOutputDirs = true
+*/

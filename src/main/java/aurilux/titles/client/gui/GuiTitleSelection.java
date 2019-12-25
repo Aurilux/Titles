@@ -1,14 +1,15 @@
 package aurilux.titles.client.gui;
 
+import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.api.capability.TitlesImpl;
 import aurilux.titles.client.ModKeybindings;
-import aurilux.titles.common.TitleInfo;
-import aurilux.titles.common.TitleManager;
-import aurilux.titles.common.capability.TitlesImpl;
 import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.network.PacketDispatcher;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,6 +48,8 @@ public class GuiTitleSelection extends GuiScreen {
     private TitleInfo temporaryTitle;
     private List<TitleInfo> playerTitles;
 
+    private GuiTextField searchBar;
+
     public GuiTitleSelection(EntityPlayer player) {
         this.player = player;
         String playerName = player.getName();
@@ -54,8 +57,8 @@ public class GuiTitleSelection extends GuiScreen {
         if (ContributorLoader.contributorTitleExists(playerName)) {
             playerTitles.add(ContributorLoader.getContributorTitle(playerName));
         }
-        temporaryTitle = TitleManager.getSelectedTitle(player);
-        Collections.sort(playerTitles);
+        temporaryTitle = TitlesAPI.getSelectedTitle(player);
+        Collections.sort(playerTitles, new TitleInfo.RarityComparator());
 
         page = 0;
         maxPages = playerTitles.size() / 12;
@@ -67,6 +70,12 @@ public class GuiTitleSelection extends GuiScreen {
 
         guiLeft = (this.width - xSize) / 2;
         guiTop = (this.height - ySize) / 2;
+
+        searchBar = new GuiTextField(0, this.fontRenderer, this.width / 2 - 65, height - 24, 150, 20);
+        searchBar.setMaxStringLength(255);
+        searchBar.setText(I18n.format("hats.gui.search"));
+        searchBar.setTextColor(0xAAAAAA);
+        searchBar.setVisible(true);
     }
 
     @Override
@@ -81,11 +90,18 @@ public class GuiTitleSelection extends GuiScreen {
 
         //Draw the player's name with their selected title
         String titledPlayerName = player.getName();
-        titledPlayerName += temporaryTitle.getFormattedTitle(true);
+        titledPlayerName += TitlesAPI.internalHandler.getFormattedTitle(temporaryTitle, true);
         this.drawCenteredString(this.fontRenderer, titledPlayerName, this.width / 2, guiTop + 11, 0xFFFFFF);
 
         //Draw the page counter
         this.drawCenteredString(this.fontRenderer, (page + 1) + "/" + (maxPages + 1), this.width / 2, guiTop + 183, 0xFFFFFF);
+    }
+    @Override
+    public void updateScreen() {
+        searchBar.updateCursorCounter();
+        if(searchBar.isFocused()) {
+            searchBar.setVisible(true);
+        }
     }
 
     private void exitScreen(boolean update) {
@@ -123,11 +139,12 @@ public class GuiTitleSelection extends GuiScreen {
     protected void keyTyped(char c, int ascii) throws IOException {
         super.keyTyped(c, ascii);
         if (ModKeybindings.OPEN_TITLE_SELECTION.getKeyBinding().getKeyCode() == ascii
-                && this.mc.currentScreen instanceof GuiTitleSelection) {
+                || mc.gameSettings.keyBindInventory.getKeyCode() == ascii) {
             exitScreen(false);
         }
     }
 
+    //todo make it only update the page changing buttons. The other ones should remain the same
     private void updateButtonList() {
         buttonList.clear();
 
@@ -144,7 +161,7 @@ public class GuiTitleSelection extends GuiScreen {
         for (int i = 0; i < titlesToDisplay.size(); i++) {
             int col = i % numCols;
             int row = i / numCols;
-            buttonList.add(new GuiButton(i, leftOffset + (titleButtonWidth * col), buttonTitleRowStart + (row * buttonHeight), titleButtonWidth, buttonHeight, titlesToDisplay.get(i).getFormattedTitle(false)));
+            buttonList.add(new GuiButton(i, leftOffset + (titleButtonWidth * col), buttonTitleRowStart + (row * buttonHeight), titleButtonWidth, buttonHeight, TitlesAPI.internalHandler.getFormattedTitle(titlesToDisplay.get(i))));
         }
 
         buttonList.add(new GuiButton(RANDOM_BUTTON, leftOffset, buttonFirstRowStart, 60, buttonHeight, I18n.format("gui.titles.random")));
