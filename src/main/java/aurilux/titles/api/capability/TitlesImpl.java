@@ -1,11 +1,13 @@
 package aurilux.titles.api.capability;
 
 import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.Titles;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -39,11 +41,9 @@ public class TitlesImpl {
 
         void remove(TitleInfo info);
 
-        void setObtainedTitles(Set<TitleInfo> newTitles);
-
         Set<TitleInfo> getObtainedTitles();
 
-        void setSelectedTitle(@Nonnull TitleInfo newTitle);
+        void setSelectedTitle(TitleInfo newTitle);
 
         TitleInfo getSelectedTitle();
     }
@@ -65,6 +65,9 @@ public class TitlesImpl {
         private Set<TitleInfo> obtainedTitles = new HashSet<>();
         private TitleInfo selectedTitle = TitleInfo.NULL_TITLE;
 
+        private final String SEL_TITLE = "selected_title";
+        private final String OBT_TITLES = "obtained_titles";
+
         public DefaultImpl() {}
 
         @Override
@@ -78,17 +81,12 @@ public class TitlesImpl {
         }
 
         @Override
-        public void setObtainedTitles(Set<TitleInfo> newTitles) {
-            obtainedTitles = newTitles;
-        }
-
-        @Override
         public Set<TitleInfo> getObtainedTitles() {
             return obtainedTitles;
         }
 
         @Override
-        public void setSelectedTitle(@Nonnull TitleInfo newTitle) {
+        public void setSelectedTitle(TitleInfo newTitle) {
             selectedTitle = newTitle;
         }
 
@@ -100,25 +98,27 @@ public class TitlesImpl {
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setTag("selectedTitle", this.getSelectedTitle().writeToNBT());
+            nbt.setString(SEL_TITLE, this.getSelectedTitle().getKey());
 
             NBTTagList obtained = new NBTTagList();
             for (TitleInfo title : obtainedTitles) {
-                obtained.appendTag(title.writeToNBT());
+                obtained.appendTag(new NBTTagString(title.getKey()));
             }
+            nbt.setTag(OBT_TITLES, obtained);
 
-            nbt.setTag("obtainedTitles", obtained);
             return nbt;
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            NBTTagCompound n1 = (NBTTagCompound) nbt.getTag("selectedTitle");
-            this.setSelectedTitle(TitleInfo.readFromNBT(n1));
+            this.setSelectedTitle(TitlesAPI.getTitleFromKey(nbt.getString(SEL_TITLE)));
 
-            NBTTagList obtained = nbt.getTagList("obtainedTitles", Constants.NBT.TAG_COMPOUND);
+            NBTTagList obtained = nbt.getTagList(OBT_TITLES, Constants.NBT.TAG_STRING);
             for (int i = 0; i < obtained.tagCount(); i++) {
-                obtainedTitles.add(TitleInfo.readFromNBT(obtained.getCompoundTagAt(i)));
+                TitleInfo titleInfo = TitlesAPI.getTitleFromKey(obtained.getStringTagAt(i));
+                if (!titleInfo.equals(TitleInfo.NULL_TITLE)) {
+                    obtainedTitles.add(titleInfo);
+                }
             }
         }
     }
@@ -141,13 +141,11 @@ public class TitlesImpl {
 
         @Override
         public NBTTagCompound serializeNBT() {
-            //return TITLES_CAPABILITY.getStorage().writeNBT(TITLES_CAPABILITY, this.instance, null);
             return this.instance.serializeNBT();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            //TITLES_CAPABILITY.getStorage().readNBT(TITLES_CAPABILITY, this.instance, null, nbt);
             this.instance.deserializeNBT(nbt);
         }
     }

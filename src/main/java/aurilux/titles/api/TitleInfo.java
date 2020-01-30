@@ -1,14 +1,14 @@
 package aurilux.titles.api;
 
 import aurilux.titles.common.Titles;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Comparator;
 
 public class TitleInfo {
-    public final static TitleInfo NULL_TITLE = new TitleInfo(Titles.MOD_ID, "null", TitleRarity.COMMON);
-    private String modid;
+    public final static TitleInfo NULL_TITLE = new TitleInfo("null", TitleRarity.COMMON);
     private String key;
+    private String modid;
+    private String langKey;
     private TitleRarity titleRarity;
 
     public enum TitleRarity {
@@ -17,16 +17,29 @@ public class TitleInfo {
 
     public TitleInfo() {}
 
-    public TitleInfo(String modid, String key, TitleRarity titleRarity) {
-        this.modid = modid;
+    public TitleInfo(String key, TitleRarity titleRarity) {
         this.key = key;
+        int colon = key.indexOf(":");
+        if (colon == -1) {
+            this.modid = Titles.MOD_ID;
+            this.langKey = key;
+        }
+        else {
+            this.modid = key.substring(0, colon);
+            this.langKey = "title." + key.replaceAll("[\\s]", "_").replaceAll("[\\W]", ".");
+        }
         this.titleRarity = titleRarity;
     }
 
     public String getKey() {
         return key;
     }
-
+    public String getModid() {
+        return modid;
+    }
+    public String getLangKey() {
+        return langKey;
+    }
     public TitleRarity getTitleRarity() {
         return titleRarity;
     }
@@ -45,19 +58,6 @@ public class TitleInfo {
     @Override
     public String toString() {
         return "(" + this.key + ", " + this.titleRarity.toString() + ")";
-    }
-
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("modid", modid);
-        nbt.setString("key", key);
-        nbt.setString("titleRarity", titleRarity.name().toUpperCase());
-        return nbt;
-    }
-
-    public static TitleInfo readFromNBT(NBTTagCompound nbt) {
-        return new TitleInfo(nbt.getString("modid"),
-                nbt.getString("key"), TitleRarity.valueOf(nbt.getString("titleRarity")));
     }
 
     public static class RarityComparator implements Comparator<TitleInfo> {

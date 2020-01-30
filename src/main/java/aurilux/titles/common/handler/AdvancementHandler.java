@@ -28,7 +28,7 @@ public class AdvancementHandler {
     public static void onAdvancement(AdvancementEvent event) {
         EntityPlayer player = event.getEntityPlayer();
         Advancement advancement = event.getAdvancement();
-        TitlesAPI.addTitle(player, advancement.getId().toString(), true);
+        TitlesAPI.addTitleToPlayer(player, advancement.getId().toString(), true);
     }
 
     @SubscribeEvent

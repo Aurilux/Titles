@@ -17,18 +17,27 @@ public final class ContributorLoader {
         new ThreadContributorLoader();
     }
 
-    public static TitleInfo getContributorTitle(String contributorName) {
-        return contributorTitles.get(contributorName);
+    public static boolean contributorTitleExists(String playerName) {
+        return contributorTitles.containsKey(playerName);
     }
 
-    public static boolean contributorTitleExists(String contributorName) {
-        return contributorTitles.containsKey(contributorName);
+    public static TitleInfo getContributorTitle(String playerName) {
+        return contributorTitles.get(playerName);
+    }
+
+    public static TitleInfo getTitleFromKey(String key) {
+        for (TitleInfo titleInfo : contributorTitles.values()) {
+            if (titleInfo.getKey().equals(key)) {
+                return titleInfo;
+            }
+        }
+        return TitleInfo.NULL_TITLE;
     }
 
     private static void load(Properties props) {
         for(String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
-            contributorTitles.put(key, new TitleInfo(Titles.MOD_ID, value, TitleInfo.TitleRarity.UNIQUE));
+            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
         }
     }
 

@@ -6,6 +6,11 @@ import net.minecraft.util.text.ITextComponent;
 
 public class DummyMethodHandler implements IInternalMethodHandler {
     @Override
+    public TitleInfo getTitleFromKey(String key) {
+        return TitleInfo.NULL_TITLE;
+    }
+
+    @Override
     public void syncUnlockedTitle(String key, EntityPlayer player) {}
 
     @Override

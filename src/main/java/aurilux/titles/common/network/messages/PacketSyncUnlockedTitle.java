@@ -33,7 +33,7 @@ public class PacketSyncUnlockedTitle implements IMessage {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    TitlesAPI.addTitle(Minecraft.getMinecraft().player, message.titleKey);
+                    TitlesAPI.addTitleToPlayer(Minecraft.getMinecraft().player, message.titleKey);
                 }
             });
             return null;

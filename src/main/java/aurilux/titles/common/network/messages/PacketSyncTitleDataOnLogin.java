@@ -1,6 +1,5 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitleInfo;
 import aurilux.titles.api.TitlesAPI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -21,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PacketSyncTitleDataOnLogin implements IMessage {
-    private final Map<UUID, TitleInfo> playerSelectedTitles = new HashMap<>();
+    private final Map<UUID, String> playerSelectedTitles = new HashMap<>();
     private NBTTagCompound comp;
 
     public PacketSyncTitleDataOnLogin() {}
@@ -34,7 +33,7 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
         PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
         for (EntityPlayerMP temp : playerList.getPlayers()) {
             if (temp.getUniqueID() != player.getUniqueID()) {
-                playerSelectedTitles.put(temp.getUniqueID(), TitlesAPI.getSelectedTitle(temp));
+                playerSelectedTitles.put(temp.getUniqueID(), TitlesAPI.getPlayerSelectedTitle(temp).getKey());
             }
         }
     }
@@ -44,9 +43,9 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
         ByteBufUtils.writeTag(buf, comp);
 
         buf.writeInt(playerSelectedTitles.entrySet().size());
-        for (Map.Entry<UUID, TitleInfo> entry : playerSelectedTitles.entrySet()) {
+        for (Map.Entry<UUID, String> entry : playerSelectedTitles.entrySet()) {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().toString());
-            ByteBufUtils.writeTag(buf, entry.getValue().writeToNBT());
+            ByteBufUtils.writeUTF8String(buf, entry.getValue());
         }
     }
 
@@ -58,7 +57,7 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
         for (int i = 0; i < size; i++) {
             playerSelectedTitles.put(
                     UUID.fromString(ByteBufUtils.readUTF8String(buf)),
-                    TitleInfo.readFromNBT(ByteBufUtils.readTag(buf)));
+                    ByteBufUtils.readUTF8String(buf));
         }
     }
 
@@ -71,9 +70,9 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
                     TitlesAPI.getTitlesCap(Minecraft.getMinecraft().player).deserializeNBT(message.comp);
 
                     World world = FMLClientHandler.instance().getWorldClient();
-                    for (Map.Entry<UUID, TitleInfo> entry : message.playerSelectedTitles.entrySet()) {
+                    for (Map.Entry<UUID, String> entry : message.playerSelectedTitles.entrySet()) {
                         EntityPlayer player = world.getPlayerEntityByUUID(entry.getKey());
-                        TitlesAPI.getTitlesCap(player).setSelectedTitle(entry.getValue());
+                        TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(entry.getValue()));
                     }
                 }
             });

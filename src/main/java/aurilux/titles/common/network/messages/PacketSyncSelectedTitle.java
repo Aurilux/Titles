@@ -1,7 +1,6 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitleInfo;
-import aurilux.titles.api.capability.TitlesImpl;
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.network.PacketDispatcher;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -17,25 +16,25 @@ import java.util.UUID;
 
 public class PacketSyncSelectedTitle implements IMessage {
     private UUID playerUUID;
-    private TitleInfo selectedTitle;
+    private String selectedTitle;
 
     public PacketSyncSelectedTitle() {}
 
-    public PacketSyncSelectedTitle(UUID playerUUID, TitleInfo titleInfo) {
+    public PacketSyncSelectedTitle(UUID playerUUID, String titleKey) {
         this.playerUUID = playerUUID;
-        selectedTitle = titleInfo;
+        selectedTitle = titleKey;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         playerUUID = UUID.fromString(ByteBufUtils.readUTF8String(buf));
-        selectedTitle = TitleInfo.readFromNBT(ByteBufUtils.readTag(buf));
+        selectedTitle = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, playerUUID.toString());
-        ByteBufUtils.writeTag(buf, selectedTitle.writeToNBT());
+        ByteBufUtils.writeUTF8String(buf, selectedTitle);
     }
 
     public static class HandlerClient implements IMessageHandler<PacketSyncSelectedTitle, IMessage> {
@@ -46,7 +45,7 @@ public class PacketSyncSelectedTitle implements IMessage {
                 public void run() {
                     EntityPlayer player = FMLClientHandler.instance().getWorldClient().getPlayerEntityByUUID(message.playerUUID);
                     if (player != null) {
-                        TitlesImpl.getCapability(player).setSelectedTitle(message.selectedTitle);
+                        TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
                         player.refreshDisplayName();
                     }
                 }
@@ -62,7 +61,7 @@ public class PacketSyncSelectedTitle implements IMessage {
                 @Override
                 public void run() {
                     EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(message.playerUUID);
-                    TitlesImpl.getCapability(player).setSelectedTitle(message.selectedTitle);
+                    TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
                     player.refreshDisplayName();
                     PacketDispatcher.INSTANCE.sendToAll(new PacketSyncSelectedTitle(message.playerUUID, message.selectedTitle));
                 }

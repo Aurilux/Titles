@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 
 public interface IInternalMethodHandler {
+    TitleInfo getTitleFromKey(String key);
+
     void syncUnlockedTitle(String key, EntityPlayer player);
 
     void sendChatMessageToAllPlayers(String message, ITextComponent playerName, TitleInfo titleInfo);

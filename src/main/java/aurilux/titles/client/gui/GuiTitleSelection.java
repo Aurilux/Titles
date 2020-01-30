@@ -2,7 +2,6 @@ package aurilux.titles.client.gui;
 
 import aurilux.titles.api.TitleInfo;
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.TitlesImpl;
 import aurilux.titles.client.ModKeybindings;
 import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.network.PacketDispatcher;
@@ -53,11 +52,11 @@ public class GuiTitleSelection extends GuiScreen {
     public GuiTitleSelection(EntityPlayer player) {
         this.player = player;
         String playerName = player.getName();
-        playerTitles = new ArrayList<>(TitlesImpl.getCapability(player).getObtainedTitles());
+        playerTitles = new ArrayList<>(TitlesAPI.getTitlesCap(player).getObtainedTitles());
         if (ContributorLoader.contributorTitleExists(playerName)) {
             playerTitles.add(ContributorLoader.getContributorTitle(playerName));
         }
-        temporaryTitle = TitlesAPI.getSelectedTitle(player);
+        temporaryTitle = TitlesAPI.getPlayerSelectedTitle(player);
         Collections.sort(playerTitles, new TitleInfo.RarityComparator());
 
         page = 0;
@@ -106,7 +105,7 @@ public class GuiTitleSelection extends GuiScreen {
 
     private void exitScreen(boolean update) {
         if (update) {
-            PacketDispatcher.INSTANCE.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle));
+            PacketDispatcher.INSTANCE.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle.getKey()));
         }
         mc.displayGuiScreen(null);
     }
@@ -144,7 +143,6 @@ public class GuiTitleSelection extends GuiScreen {
         }
     }
 
-    //todo make it only update the page changing buttons. The other ones should remain the same
     private void updateButtonList() {
         buttonList.clear();
 

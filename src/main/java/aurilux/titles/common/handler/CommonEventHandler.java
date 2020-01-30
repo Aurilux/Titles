@@ -43,14 +43,15 @@ public class CommonEventHandler {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
 
         PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleDataOnLogin(player), player);
-        PacketDispatcher.INSTANCE.sendToAll(new PacketSyncSelectedTitle(player.getUniqueID(), TitlesAPI.getSelectedTitle(player)));
+        PacketDispatcher.INSTANCE.sendToAll(new PacketSyncSelectedTitle(player.getUniqueID(),
+                TitlesAPI.getPlayerSelectedTitle(player).getKey()));
     }
 
     @SubscribeEvent
     //I have to have the full package name for PlayerEvent.NameFormat here because otherwise it conflicts with
     //net.minecraftforge.fml.common.gameevent.PlayerEvent.
     public static void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
-        TitleInfo currentTitle = TitlesAPI.getSelectedTitle(event.getEntityPlayer());
+        TitleInfo currentTitle = TitlesAPI.getPlayerSelectedTitle(event.getEntityPlayer());
         event.setDisplayname(event.getDisplayname() + TitlesAPI.internalHandler.getFormattedTitle(currentTitle, true));
     }
 

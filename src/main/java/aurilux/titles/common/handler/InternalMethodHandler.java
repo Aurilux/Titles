@@ -3,6 +3,7 @@ package aurilux.titles.common.handler;
 import aurilux.titles.api.TitleInfo;
 import aurilux.titles.api.internal.IInternalMethodHandler;
 import aurilux.titles.common.Titles;
+import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.init.ModConfig;
 import aurilux.titles.common.network.PacketDispatcher;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
@@ -13,6 +14,11 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
 public class InternalMethodHandler implements IInternalMethodHandler {
+    @Override
+    public TitleInfo getTitleFromKey(String key) {
+        return ContributorLoader.getTitleFromKey(key);
+    }
+
     @Override
     public void syncUnlockedTitle(String key, EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
@@ -42,6 +48,6 @@ public class InternalMethodHandler implements IInternalMethodHandler {
             default: titleColor = ModConfig.commonColor.textFormatting; break; //COMMON
         }
 
-        return (addComma ? ", " : "") + titleColor + new TextComponentTranslation(titleInfo.getKey()).getFormattedText();
+        return (addComma ? ", " : "") + titleColor + new TextComponentTranslation(titleInfo.getLangKey()).getFormattedText();
     }
 }

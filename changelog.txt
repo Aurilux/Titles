@@ -1,3 +1,9 @@
+1.12.2 - 3.1.0
+Barring any bug fixes, this will be the last version for 1.12.
+Forgot the Title Archive gui. Whoops.
+Titles are now also data driven. This means you can add titles either by json files in the
+    Titles config directory, or through the usual API
+
 1.12.2 - 3.0.0
 Fixed a problem with sending packets that caused a server crash.
 Added an API which should make it easier for mod authors to add their own titles.
