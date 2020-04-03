@@ -1,17 +1,17 @@
 1.12.2 - 3.1.0
 Barring any bug fixes, this will be the last version for 1.12.
 Forgot the Title Archive gui. Whoops.
-Titles are now also data driven. This means you can add titles either by json files in the
-    Titles config directory, or through the usual API
+Titles are now also data driven. This means you can add titles through json files in the
+    Titles config directory, in addition to the API
 
 1.12.2 - 3.0.0
+Added commands. Details in the wiki.
 Fixed a problem with sending packets that caused a server crash.
 Added an API which should make it easier for mod authors to add their own titles.
 Added some of my own advancements to unlock additional titles. Most are RL references.
 Titles are no longer limited to just advancements. Details in the wiki.
 Added the Titles Archive - an item that lets you purchase generic titles with Archive Fragments which are found as loot.
 For modpack makers: titles available in the Archive are loaded from archiveTitles.json, which is in the config directory
-Added commands. Details in the wiki.
 
 1.12.2 - 2.1.0
 Added a page counter to the title selection GUI

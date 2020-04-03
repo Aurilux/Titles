@@ -16,7 +16,7 @@ apply plugin: 'idea'
 //Current version of my mod. Gets appended to the end of the jar name
 version = minecraft_version + "-" + mod_version
 //Java file structure/hierarchy
-group = group_name // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = group_name //http://maven.apache.org/guides/mini/guide-naming-conventions.html
 //Name of the mod. Used to name the resulting jar
 archivesBaseName = mod_name
 

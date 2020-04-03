@@ -8,9 +8,11 @@ import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.init.ModConfig;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.PacketDispatcher;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -74,6 +76,10 @@ public class Titles {
     @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandTitles());
+    }
+
+    public static void chatDebug(Object o) {
+        Minecraft.getMinecraft().player.sendMessage(new TextComponentString(o.toString()));
     }
 
     public static void console(Object o, boolean warning) {

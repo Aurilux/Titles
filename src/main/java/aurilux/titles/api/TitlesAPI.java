@@ -39,6 +39,10 @@ public class TitlesAPI {
 
     public static void addTitleToPlayer(EntityPlayer player, String key, boolean announce) {
         TitleInfo titleInfo = titlesMap.get(key);
+        if (titleInfo == null) {
+            titleInfo = archiveTitles.get(key);
+        }
+
         if (titleInfo == null || hasTitle(player, titleInfo)) {
             return;
         }

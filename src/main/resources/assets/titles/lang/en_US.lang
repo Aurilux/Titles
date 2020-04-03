@@ -6,6 +6,10 @@ gui.titles.cancel=Cancel
 gui.titles.confirm=Confirm
 gui.titles.random=Random
 gui.titles.none=None
+gui.titles.purchase=Purchase
+gui.titles.close=Close
+gui.titles.titleselection.empty=Unlock advancements to earn titles
+gui.titles.titlearchive.empty=You've purchased all available titles
 
 # Commands
 commands.titles.usage=/titles <add|remove> <player> <titleKey>

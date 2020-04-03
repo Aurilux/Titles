@@ -46,6 +46,12 @@ public class TitlesImpl {
         void setSelectedTitle(TitleInfo newTitle);
 
         TitleInfo getSelectedTitle();
+
+        void addFragments(int num);
+
+        int getFragmentCount();
+
+        void setFragmentCount(int count);
     }
 
     private static class Storage implements Capability.IStorage<ITitles> {
@@ -62,11 +68,14 @@ public class TitlesImpl {
     }
 
     public static class DefaultImpl implements ITitles {
+        private final String SEL_TITLE = "selected_title";
+        private final String OBT_TITLES = "obtained_titles";
+        private final String FRAG_COUNT = "fragment_count";
+
         private Set<TitleInfo> obtainedTitles = new HashSet<>();
         private TitleInfo selectedTitle = TitleInfo.NULL_TITLE;
 
-        private final String SEL_TITLE = "selected_title";
-        private final String OBT_TITLES = "obtained_titles";
+        private int fragmentCount = 0;
 
         public DefaultImpl() {}
 
@@ -96,8 +105,25 @@ public class TitlesImpl {
         }
 
         @Override
+        public void addFragments(int num) {
+            fragmentCount += num;
+        }
+
+        @Override
+        public int getFragmentCount() {
+            return fragmentCount;
+        }
+
+        @Override
+        public void setFragmentCount(int count) {
+            fragmentCount = count;
+        }
+
+        @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setInteger(FRAG_COUNT, this.getFragmentCount());
+
             nbt.setString(SEL_TITLE, this.getSelectedTitle().getKey());
 
             NBTTagList obtained = new NBTTagList();
@@ -111,7 +137,9 @@ public class TitlesImpl {
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            this.setSelectedTitle(TitlesAPI.getTitleFromKey(nbt.getString(SEL_TITLE)));
+            fragmentCount = nbt.getInteger(FRAG_COUNT);
+
+            selectedTitle = TitlesAPI.getTitleFromKey(nbt.getString(SEL_TITLE));
 
             NBTTagList obtained = nbt.getTagList(OBT_TITLES, Constants.NBT.TAG_STRING);
             for (int i = 0; i < obtained.tagCount(); i++) {

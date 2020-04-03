@@ -1,8 +1,6 @@
 package aurilux.titles.common.item;
 
-public class ItemArchiveFragment extends ItemAux {
-    public ItemArchiveFragment() {
-        super("archiveFragment");
-        setMaxStackSize(16);
-    }
+import net.minecraft.item.Item;
+
+public class ItemArchiveFragment extends Item {
 }
