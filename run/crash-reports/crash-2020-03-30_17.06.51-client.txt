@@ -1,0 +1,124 @@
+---- Minecraft Crash Report ----
+// I feel sad now :(
+
+Time: 3/30/20 5:06 PM
+Description: Updating screen events
+
+java.lang.IllegalArgumentException: fromIndex(24) > toIndex(12)
+	at java.util.ArrayList.subListRangeCheck(ArrayList.java:1014)
+	at java.util.ArrayList.subList(ArrayList.java:1004)
+	at aurilux.titles.client.gui.GuiTitleSelection.updateButtonList(GuiTitleSelection.java:192)
+	at aurilux.titles.client.gui.GuiTitleSelection.actionPerformed(GuiTitleSelection.java:149)
+	at net.minecraft.client.gui.GuiScreen.mouseClicked(GuiScreen.java:443)
+	at net.minecraft.client.gui.GuiScreen.handleMouseInput(GuiScreen.java:533)
+	at net.minecraft.client.gui.GuiScreen.handleInput(GuiScreen.java:501)
+	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1758)
+	at net.minecraft.client.Minecraft.runGameLoop(Minecraft.java:1097)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:397)
+	at net.minecraft.client.main.Main.main(Main.java:118)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135)
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:97)
+	at GradleStart.main(GradleStart.java:25)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Client thread
+Stacktrace:
+	at java.util.ArrayList.subListRangeCheck(ArrayList.java:1014)
+	at java.util.ArrayList.subList(ArrayList.java:1004)
+	at aurilux.titles.client.gui.GuiTitleSelection.updateButtonList(GuiTitleSelection.java:192)
+	at aurilux.titles.client.gui.GuiTitleSelection.actionPerformed(GuiTitleSelection.java:149)
+	at net.minecraft.client.gui.GuiScreen.mouseClicked(GuiScreen.java:443)
+	at net.minecraft.client.gui.GuiScreen.handleMouseInput(GuiScreen.java:533)
+	at net.minecraft.client.gui.GuiScreen.handleInput(GuiScreen.java:501)
+
+-- Affected screen --
+Details:
+	Screen name: aurilux.titles.client.gui.GuiTitleSelection
+
+-- Affected level --
+Details:
+	Level name: MpServer
+	All players: 1 total; [EntityPlayerSP['Aurilux'/319, l='MpServer', x=-140.29, y=73.00, z=252.12]]
+	Chunk stats: MultiplayerChunkCache: 552, 552
+	Level seed: 0
+	Level generator: ID 00 - default, ver 1. Features enabled: false
+	Level generator options: 
+	Level spawn location: World: (-144,64,256), Chunk: (at 0,4,0 in -9,16; contains blocks -144,0,256 to -129,255,271), Region: (-1,0; contains chunks -32,0 to -1,31, blocks -512,0,0 to -1,255,511)
+	Level time: 13741 game time, 13741 day time
+	Level dimension: 0
+	Level storage version: 0x00000 - Unknown?
+	Level weather: Rain time: 0 (now: false), thunder time: 0 (now: false)
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: false
+	Forced entities: 136 total; [EntityCreeper['Creeper'/258, l='MpServer', x=-75.51, y=24.00, z=225.20], EntityBat['Bat'/259, l='MpServer', x=-63.64, y=25.58, z=235.38], EntityWolf['Wolf'/260, l='MpServer', x=-64.60, y=71.00, z=225.37], EntityBat['Bat'/261, l='MpServer', x=-78.69, y=36.76, z=266.30], EntityBat['Bat'/262, l='MpServer', x=-69.61, y=31.61, z=251.55], EntitySpider['Spider'/263, l='MpServer', x=-65.50, y=18.00, z=283.50], EntityCreeper['Creeper'/264, l='MpServer', x=-70.17, y=17.00, z=286.49], EntityZombie['Zombie'/265, l='MpServer', x=-67.34, y=17.00, z=276.45], EntitySkeleton['Skeleton'/266, l='MpServer', x=-71.51, y=18.00, z=274.73], EntityBat['Bat'/267, l='MpServer', x=-76.25, y=18.10, z=277.75], EntityZombie['Zombie'/268, l='MpServer', x=-64.24, y=18.00, z=282.61], EntityBat['Bat'/269, l='MpServer', x=-78.89, y=32.10, z=281.38], EntityBat['Bat'/270, l='MpServer', x=-72.71, y=40.88, z=299.59], EntityCreeper['Creeper'/271, l='MpServer', x=-78.51, y=38.00, z=306.70], EntityBat['Bat'/272, l='MpServer', x=-78.43, y=39.15, z=301.51], EntitySkeleton['Skeleton'/280, l='MpServer', x=-62.69, y=23.00, z=200.50], EntitySkeleton['Skeleton'/281, l='MpServer', x=-62.77, y=23.00, z=199.48], EntityWolf['Wolf'/284, l='MpServer', x=-61.52, y=76.00, z=196.63], EntityChicken['Chicken'/285, l='MpServer', x=-63.53, y=73.00, z=206.31], EntityBat['Bat'/286, l='MpServer', x=-62.18, y=19.10, z=283.74], EntityCow['Cow'/64, l='MpServer', x=-220.11, y=89.00, z=180.55], EntityCow['Cow'/65, l='MpServer', x=-208.20, y=82.00, z=186.54], EntityCreeper['Creeper'/67, l='MpServer', x=-211.50, y=38.00, z=249.50], EntityZombie['Zombie'/68, l='MpServer', x=-209.50, y=56.00, z=250.31], EntityPlayerSP['Aurilux'/319, l='MpServer', x=-140.29, y=73.00, z=252.12], EntityZombie['Zombie'/69, l='MpServer', x=-220.17, y=17.00, z=271.36], EntitySpider['Spider'/78, l='MpServer', x=-203.85, y=24.00, z=186.47], EntityZombie['Zombie'/79, l='MpServer', x=-201.50, y=24.00, z=186.50], EntityZombie['Zombie'/80, l='MpServer', x=-204.94, y=24.00, z=186.55], EntityZombie['Zombie'/81, l='MpServer', x=-206.50, y=63.00, z=180.50], EntityCow['Cow'/83, l='MpServer', x=-203.20, y=78.00, z=187.47], EntityCow['Cow'/84, l='MpServer', x=-195.20, y=77.00, z=201.50], EntityCow['Cow'/85, l='MpServer', x=-205.53, y=85.00, z=192.19], EntityCow['Cow'/86, l='MpServer', x=-203.67, y=71.00, z=209.06], EntityZombie['Zombie'/87, l='MpServer', x=-207.22, y=21.00, z=233.50], EntityCow['Cow'/88, l='MpServer', x=-193.32, y=72.00, z=234.80], EntityCreeper['Creeper'/89, l='MpServer', x=-205.51, y=56.00, z=249.79], EntityCreeper['Creeper'/90, l='MpServer', x=-204.61, y=57.00, z=242.20], EntitySkeleton['Skeleton'/91, l='MpServer', x=-201.53, y=58.00, z=242.72], EntityZombie['Zombie'/92, l='MpServer', x=-189.68, y=20.00, z=285.71], EntityCow['Cow'/93, l='MpServer', x=-195.50, y=65.00, z=274.80], EntitySheep['Sheep'/94, l='MpServer', x=-200.50, y=67.00, z=298.73], EntityCow['Cow'/95, l='MpServer', x=-197.55, y=64.00, z=301.75], EntityCow['Cow'/96, l='MpServer', x=-202.51, y=63.00, z=311.32], EntityCow['Cow'/97, l='MpServer', x=-195.58, y=64.00, z=309.17], EntityCreeper['Creeper'/98, l='MpServer', x=-202.54, y=23.00, z=326.19], EntityCreeper['Creeper'/106, l='MpServer', x=-179.57, y=29.00, z=180.79], EntityZombie['Zombie'/107, l='MpServer', x=-176.20, y=31.00, z=185.50], EntityBat['Bat'/108, l='MpServer', x=-187.75, y=16.43, z=191.09], EntityCow['Cow'/109, l='MpServer', x=-190.41, y=75.00, z=193.16], EntityCow['Cow'/110, l='MpServer', x=-177.59, y=75.00, z=228.68], EntityCow['Cow'/111, l='MpServer', x=-188.79, y=72.00, z=227.65], EntityCow['Cow'/112, l='MpServer', x=-185.69, y=78.00, z=235.36], EntityCow['Cow'/113, l='MpServer', x=-186.55, y=78.00, z=242.59], EntityCow['Cow'/114, l='MpServer', x=-179.70, y=78.00, z=249.53], EntityZombie['Zombie'/115, l='MpServer', x=-190.50, y=42.00, z=275.50], EntityCow['Cow'/116, l='MpServer', x=-179.09, y=67.00, z=285.79], EntityCow['Cow'/117, l='MpServer', x=-180.50, y=70.00, z=279.80], EntityBat['Bat'/118, l='MpServer', x=-176.18, y=23.10, z=289.33], EntityCow['Cow'/119, l='MpServer', x=-185.57, y=64.00, z=290.58], EntitySheep['Sheep'/120, l='MpServer', x=-185.55, y=69.00, z=307.45], EntityCow['Cow'/121, l='MpServer', x=-188.83, y=64.00, z=310.42], EntitySheep['Sheep'/122, l='MpServer', x=-179.13, y=64.37, z=322.81], EntityCow['Cow'/127, l='MpServer', x=-168.39, y=71.00, z=197.45], EntityCow['Cow'/128, l='MpServer', x=-165.75, y=71.00, z=212.17], EntityCow['Cow'/129, l='MpServer', x=-166.44, y=78.17, z=231.45], EntityCow['Cow'/130, l='MpServer', x=-175.77, y=80.00, z=238.48], EntityZombie['Zombie'/131, l='MpServer', x=-174.50, y=52.00, z=259.20], EntityCow['Cow'/132, l='MpServer', x=-173.36, y=75.00, z=267.19], EntitySkeleton['Skeleton'/133, l='MpServer', x=-173.50, y=25.00, z=284.50], EntityCreeper['Creeper'/134, l='MpServer', x=-167.80, y=47.00, z=273.45], EntityCreeper['Creeper'/135, l='MpServer', x=-166.51, y=47.42, z=275.65], EntitySheep['Sheep'/136, l='MpServer', x=-167.73, y=75.00, z=310.51], EntityCow['Cow'/137, l='MpServer', x=-172.52, y=75.00, z=322.81], EntityChicken['Chicken'/138, l='MpServer', x=-166.38, y=78.00, z=331.92], EntityCow['Cow'/140, l='MpServer', x=-165.50, y=75.00, z=324.22], EntityChicken['Chicken'/141, l='MpServer', x=-167.50, y=78.00, z=329.19], EntityCow['Cow'/144, l='MpServer', x=-149.46, y=74.00, z=227.80], EntityCow['Cow'/145, l='MpServer', x=-149.46, y=72.00, z=259.53], EntityBat['Bat'/146, l='MpServer', x=-155.25, y=42.10, z=292.25], EntitySkeleton['Skeleton'/147, l='MpServer', x=-145.50, y=34.00, z=293.50], EntitySkeleton['Skeleton'/148, l='MpServer', x=-145.50, y=34.00, z=294.50], EntityCow['Cow'/149, l='MpServer', x=-145.91, y=67.00, z=295.07], EntityChicken['Chicken'/150, l='MpServer', x=-157.11, y=71.00, z=316.40], EntityCow['Cow'/156, l='MpServer', x=-137.55, y=73.00, z=210.45], EntityCow['Cow'/157, l='MpServer', x=-138.52, y=75.00, z=242.35], EntitySkeleton['Skeleton'/171, l='MpServer', x=-109.51, y=27.00, z=201.30], EntitySkeleton['Skeleton'/172, l='MpServer', x=-115.50, y=44.00, z=204.50], EntityWolf['Wolf'/173, l='MpServer', x=-116.66, y=69.00, z=208.89], EntityWolf['Wolf'/174, l='MpServer', x=-114.45, y=74.00, z=230.50], EntityZombie['Zombie'/175, l='MpServer', x=-124.20, y=33.00, z=246.40], EntitySkeleton['Skeleton'/176, l='MpServer', x=-123.70, y=33.00, z=247.56], EntitySkeleton['Skeleton'/177, l='MpServer', x=-119.37, y=32.00, z=250.27], EntityWolf['Wolf'/178, l='MpServer', x=-114.45, y=71.00, z=243.49], EntitySkeleton['Skeleton'/179, l='MpServer', x=-113.06, y=51.00, z=272.49], EntitySkeleton['Skeleton'/180, l='MpServer', x=-113.79, y=45.00, z=309.50], EntityWolf['Wolf'/181, l='MpServer', x=-113.50, y=64.00, z=305.86], EntityWolf['Wolf'/182, l='MpServer', x=-112.50, y=65.00, z=307.62], EntityWolf['Wolf'/183, l='MpServer', x=-124.69, y=69.00, z=321.30], EntityWolf['Wolf'/184, l='MpServer', x=-121.42, y=68.00, z=320.50], EntityWolf['Wolf'/185, l='MpServer', x=-123.29, y=69.00, z=323.50], EntityCreeper['Creeper'/192, l='MpServer', x=-105.50, y=15.00, z=175.50], EntityCreeper['Creeper'/193, l='MpServer', x=-107.56, y=15.00, z=190.64], EntityWolf['Wolf'/194, l='MpServer', x=-104.30, y=65.00, z=191.27], EntitySkeleton['Skeleton'/195, l='MpServer', x=-110.37, y=43.00, z=203.21], EntityBat['Bat'/196, l='MpServer', x=-107.37, y=32.05, z=254.06], EntityCreeper['Creeper'/197, l='MpServer', x=-97.35, y=24.00, z=284.80], EntityCreeper['Creeper'/198, l='MpServer', x=-102.50, y=40.00, z=287.50], EntityCreeper['Creeper'/199, l='MpServer', x=-105.51, y=49.00, z=277.18], EntityZombie['Zombie'/200, l='MpServer', x=-111.46, y=19.00, z=295.67], EntityCreeper['Creeper'/201, l='MpServer', x=-108.55, y=17.00, z=292.21], EntitySquid['Squid'/202, l='MpServer', x=-99.91, y=61.85, z=302.45], EntitySquid['Squid'/203, l='MpServer', x=-98.47, y=62.60, z=312.91], EntitySquid['Squid'/204, l='MpServer', x=-96.92, y=60.70, z=302.27], EntitySquid['Squid'/205, l='MpServer', x=-97.04, y=62.55, z=314.80], EntityChicken['Chicken'/219, l='MpServer', x=-83.11, y=71.00, z=175.39], EntityZombie['Zombie'/222, l='MpServer', x=-90.46, y=60.00, z=183.80], EntityCreeper['Creeper'/223, l='MpServer', x=-89.49, y=59.00, z=185.91], EntityCreeper['Creeper'/224, l='MpServer', x=-90.72, y=58.00, z=187.50], EntityWolf['Wolf'/225, l='MpServer', x=-80.52, y=72.00, z=177.66], EntityChicken['Chicken'/227, l='MpServer', x=-87.38, y=72.00, z=183.89], EntityWolf['Wolf'/228, l='MpServer', x=-84.35, y=63.00, z=207.66], EntityWolf['Wolf'/229, l='MpServer', x=-86.57, y=68.00, z=246.53], EntitySkeleton['Skeleton'/230, l='MpServer', x=-82.73, y=31.00, z=276.53], EntityZombie['Zombie'/231, l='MpServer', x=-81.19, y=30.00, z=276.51], EntitySkeleton['Skeleton'/232, l='MpServer', x=-86.80, y=31.34, z=278.30], EntityZombie['Zombie'/233, l='MpServer', x=-95.76, y=12.00, z=295.79], EntityCreeper['Creeper'/234, l='MpServer', x=-87.94, y=38.00, z=317.45], EntitySquid['Squid'/235, l='MpServer', x=-94.35, y=61.22, z=303.42], EntityWolf['Wolf'/248, l='MpServer', x=-77.58, y=72.00, z=182.68], EntityItem['item.item.egg'/249, l='MpServer', x=-79.12, y=71.00, z=192.45], EntityChicken['Chicken'/250, l='MpServer', x=-73.53, y=75.00, z=192.63], EntityChicken['Chicken'/251, l='MpServer', x=-74.80, y=74.00, z=200.80], EntityWolf['Wolf'/253, l='MpServer', x=-68.45, y=78.00, z=194.50], EntityChicken['Chicken'/254, l='MpServer', x=-66.16, y=73.00, z=204.20], EntityWolf['Wolf'/255, l='MpServer', x=-70.50, y=73.00, z=208.10]]
+	Retry entities: 0 total; []
+	Server brand: fml,forge
+	Server type: Integrated singleplayer server
+Stacktrace:
+	at net.minecraft.client.multiplayer.WorldClient.addWorldInfoToCrashReport(WorldClient.java:420)
+	at net.minecraft.client.Minecraft.addGraphicsAndWorldToCrashReport(Minecraft.java:2740)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:418)
+	at net.minecraft.client.main.Main.main(Main.java:118)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135)
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:97)
+	at GradleStart.main(GradleStart.java:25)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 1.8.0_191, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 286850528 bytes (273 MB) / 980942848 bytes (935 MB) up to 3790077952 bytes (3614 MB)
+	JVM Flags: 0 total; 
+	IntCache: cache: 0, tcache: 0, allocated: 13, tallocated: 95
+	FML: MCP 9.42 Powered by Forge 14.23.5.2768 5 mods loaded, 5 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+
+	| State     | ID        | Version      | Source                           | Signature |
+	|:--------- |:--------- |:------------ |:-------------------------------- |:--------- |
+	| UCHIJAAAA | minecraft | 1.12.2       | minecraft.jar                    | None      |
+	| UCHIJAAAA | mcp       | 9.42         | minecraft.jar                    | None      |
+	| UCHIJAAAA | FML       | 8.0.99.99    | forgeSrc-1.12.2-14.23.5.2768.jar | None      |
+	| UCHIJAAAA | forge     | 14.23.5.2768 | forgeSrc-1.12.2-14.23.5.2768.jar | None      |
+	| UCHIJAAAA | titles    | 3.0.0        | Titles.main                      | None      |
+
+	Loaded coremods (and transformers): 
+	GL info: ' Vendor: 'NVIDIA Corporation' Version: '4.6.0 NVIDIA 441.66' Renderer: 'GeForce GTX 1060/PCIe/SSE2'
+	Launched Version: 1.12.2
+	LWJGL: 2.9.4
+	OpenGL: GeForce GTX 1060/PCIe/SSE2 GL version 4.6.0 NVIDIA 441.66, NVIDIA Corporation
+	GL Caps: Using GL 1.3 multitexturing.
+Using GL 1.3 texture combiners.
+Using framebuffer objects because OpenGL 3.0 is supported and separate blending is supported.
+Shaders are available because OpenGL 2.1 is supported.
+VBOs are available because OpenGL 1.5 is supported.
+
+	Using VBOs: Yes
+	Is Modded: Definitely; Client brand changed to 'fml,forge'
+	Type: Client (map_client.txt)
+	Resource Packs: 
+	Current Language: English (US)
+	Profiler Position: N/A (disabled)
+	CPU: 12x Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz
