@@ -1,33 +1,35 @@
 package aurilux.titles.common.item;
 
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.TitlesImpl;
+import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.gui.GuiTitleArchive;
 import aurilux.titles.common.Titles;
-import aurilux.titles.common.init.ModItems;
-import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncFragmentCount;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
 
 import javax.annotation.Nonnull;
 
 public class ItemTitleArchive extends Item {
+    public ItemTitleArchive() {
+        super(new Item.Properties()
+            .maxStackSize(1)
+            .group(Titles.itemGroup));
+    }
+
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (player.isSneaking() && !world.isRemote) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand handIn) {
+        ItemStack stack = player.getHeldItem(handIn);
+        if (player.isCrouching() && !world.isRemote) {
             boolean fragCountChanged = false;
             //add fragments from adjacent hotbar slots
-            TitlesImpl.DefaultImpl titlesImpl = TitlesAPI.getTitlesCap(player);
+            ITitles titlesImpl = TitlesAPI.getTitlesCap(player);
             int hotbarSlotIndex = player.inventory.currentItem;
             if (hotbarSlotIndex < 9) {
                 int adjacentSlotIndex = hotbarSlotIndex + 1;
@@ -54,13 +56,14 @@ public class ItemTitleArchive extends Item {
                     }
                 }
                 if (fragCountChanged) {
-                    PacketDispatcher.INSTANCE.sendTo(new PacketSyncFragmentCount(titlesImpl.getFragmentCount()), (EntityPlayerMP) player);
+                    //TODO update when network works again
+                    //PacketDispatcher.INSTANCE.sendTo(new PacketSyncFragmentCount(titlesImpl.getFragmentCount()), (EntityPlayerMP) player);
                 }
             }
         }
-        else if (!player.isSneaking()) {
-            FMLClientHandler.instance().displayGuiScreen(player, new GuiTitleArchive(player));
+        else if (!player.isCrouching()) {
+            Minecraft.getInstance().displayGuiScreen(new GuiTitleArchive(player));
         }
-        return ActionResult.newResult(EnumActionResult.PASS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 }

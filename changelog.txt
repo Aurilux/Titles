@@ -1,3 +1,8 @@
+1.15.2 - 3.2.0
+Updated to 1.15
+Added titles for some of the new advancements added to Minecraft
+Refined how titles are added. Details in the wiki.
+
 1.12.2 - 3.1.0
 Barring any bug fixes, this will be the last version for 1.12.
 Forgot the Title Archive gui. Whoops.

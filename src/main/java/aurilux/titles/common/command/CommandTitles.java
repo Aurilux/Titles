@@ -1,67 +1,44 @@
 package aurilux.titles.common.command;
 
-import aurilux.titles.api.TitlesAPI;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
+import aurilux.titles.api.TitleInfo;
+import aurilux.titles.common.command.argument.TitleArgument;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.server.command.EnumArgument;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-
-public class CommandTitles extends CommandBase {
-    @Override
-    public String getName() {
-        return "titles";
+public class CommandTitles {
+    public enum CommandType {
+        remove,
+        add
     }
 
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "commands.titles.usage";
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+        dispatcher.register(Commands.literal("titles-commands")
+                .requires(s -> s.hasPermissionLevel(2))
+                .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("command", EnumArgument.enumArgument(CommandType.class))
+                                .then(Commands.argument("title", new TitleArgument()))
+                                .executes(ctx -> run(ctx,
+                                        EntityArgument.getPlayer(ctx, "player"),
+                                        TitleArgument.getTitle(ctx, "title")))))
+        );
     }
 
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 2;
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args.length < 3) {
-            throw new WrongUsageException("commands.titles.usage");
+    public static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, TitleInfo titleInfo) throws CommandSyntaxException {
+        CommandType commandType = context.getArgument("command", CommandType.class);
+        //TODO complete after testing
+        if (commandType.equals(CommandType.add)) {
+            context.getSource().sendFeedback(new StringTextComponent("adding title..."), false);
         }
-
-        String commandName = args[0];
-        EntityPlayerMP player = getPlayer(server, sender, args[1]);
-        String titleKey = args[2];
-        if (commandName.equals("add")) {
-            TitlesAPI.addTitleToPlayer(player, titleKey, true);
+        else if (commandType.equals(CommandType.remove)) {
+            context.getSource().sendFeedback(new StringTextComponent("removing title..."), false);
         }
-        else if (commandName.equals("remove")) {
-            TitlesAPI.removeTitleFromPlayer(player, titleKey);
-        }
-        else {
-            throw new WrongUsageException("commands.titles.usage");
-        }
-    }
-
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
-        if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "add", "remove");
-        }
-        else if (args.length == 2) {
-            return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
-        }
-        else if (args.length == 3) {
-            return getListOfStringsMatchingLastWord(args, TitlesAPI.getRegisteredTitles().keySet());
-        }
-        else {
-            return Collections.emptyList();
-        }
+        return 0;
     }
 }

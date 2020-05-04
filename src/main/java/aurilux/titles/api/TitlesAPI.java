@@ -1,15 +1,23 @@
 package aurilux.titles.api;
 
-import aurilux.titles.api.capability.TitlesImpl;
+import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.api.internal.DummyMethodHandler;
 import aurilux.titles.api.internal.IInternalMethodHandler;
-import net.minecraft.entity.player.EntityPlayer;
+import aurilux.titles.common.core.TitlesConfig;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TitlesAPI {
+    @CapabilityInject(ITitles.class)
+    public static Capability<ITitles> TITLES_CAPABILITY;
+
     private static final Map<String, TitleInfo> titlesMap = new HashMap<>();
     private static final Map<String, TitleInfo> archiveTitles = new HashMap<>();
 
@@ -33,11 +41,11 @@ public class TitlesAPI {
         return archiveTitles;
     }
 
-    public static void addTitleToPlayer(EntityPlayer player, String key) {
+    public static void addTitleToPlayer(PlayerEntity player, String key) {
         addTitleToPlayer(player, key, false);
     }
 
-    public static void addTitleToPlayer(EntityPlayer player, String key, boolean announce) {
+    public static void addTitleToPlayer(PlayerEntity player, String key, boolean announce) {
         TitleInfo titleInfo = titlesMap.get(key);
         if (titleInfo == null) {
             titleInfo = archiveTitles.get(key);
@@ -48,14 +56,16 @@ public class TitlesAPI {
         }
 
         getTitlesCap(player).add(titleInfo);
-        internalHandler.syncUnlockedTitle(key, player);
+        //TODO refactor this
+        //internalHandler.syncUnlockedTitle(key, player);
 
         if (announce) {
-            internalHandler.sendChatMessageToAllPlayers("chat.title.add", player.getDisplayName(), titleInfo);
+            //TODO uncomment this later
+            //internalHandler.sendChatMessageToAllPlayers("chat.title.add", player.getDisplayName(), titleInfo);
         }
     }
 
-    public static void removeTitleFromPlayer(EntityPlayer player, String key) {
+    public static void removeTitleFromPlayer(PlayerEntity player, String key) {
         TitleInfo titleInfo = titlesMap.get(key);
         if (titleInfo != null) {
             getTitlesCap(player).remove(titleInfo);
@@ -73,24 +83,44 @@ public class TitlesAPI {
             return getArchiveTitles().get(key);
         }
         else {
-            return internalHandler.getTitleFromKey(key);
+            return TitleInfo.NULL_TITLE;//TODO internalHandler.getTitleFromKey(key);
         }
     }
 
-    public static TitleInfo getPlayerSelectedTitle(EntityPlayer player) {
+    public static String getFormattedTitle(TitleInfo titleInfo) {
+        return getFormattedTitle(titleInfo, false);
+    }
+
+    public static String getFormattedTitle(TitleInfo titleInfo, boolean addComma) {
+        if (titleInfo.equals(TitleInfo.NULL_TITLE)) {
+            return "";
+        }
+
+        TextFormatting titleColor;
+        switch (titleInfo.getTitleRarity()) {
+            case UNIQUE: titleColor = TitlesConfig.CLIENT.uniqueColor.get().textFormatting; break;
+            case RARE: titleColor = TitlesConfig.CLIENT.rareColor.get().textFormatting; break;
+            case UNCOMMON: titleColor = TitlesConfig.CLIENT.uncommonColor.get().textFormatting; break;
+            default: titleColor = TitlesConfig.CLIENT.commonColor.get().textFormatting; break; //COMMON
+        }
+
+        return (addComma ? ", " : "") + titleColor + new TranslationTextComponent(titleInfo.getLangKey()).getFormattedText();
+    }
+
+    public static TitleInfo getPlayerSelectedTitle(PlayerEntity player) {
         return getTitlesCap(player).getSelectedTitle();
     }
 
-    public static void setPlayerSelectedTitle(EntityPlayer player, TitleInfo titleInfo) {
+    public static void setPlayerSelectedTitle(PlayerEntity player, TitleInfo titleInfo) {
         getTitlesCap(player).setSelectedTitle(titleInfo);
     }
 
-    public static boolean hasTitle(EntityPlayer player, TitleInfo titleInfo) {
+    public static boolean hasTitle(PlayerEntity player, TitleInfo titleInfo) {
         return getTitlesCap(player).getObtainedTitles().contains(titleInfo);
     }
 
-    public static TitlesImpl.DefaultImpl getTitlesCap(EntityPlayer player) {
-        return TitlesImpl.getCapability(player);
+    public static ITitles getTitlesCap(PlayerEntity player) {
+        return player.getCapability(TITLES_CAPABILITY).orElseThrow(NullPointerException::new);
     }
 
     public static Map<String, TitleInfo> getRegisteredTitles() {

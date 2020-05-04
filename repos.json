@@ -1,0 +1,6 @@
+{
+  "Progwml6": {
+    "url": "https://dvs1.progwml6.com/files/maven/",
+    "lib": "mezz.jei:jei-1.15.2:6.0.0.2"
+  }
+}

@@ -1,21 +1,23 @@
-# Directories & Wildcard Filetypes
+# Git, Gradle, Forge, Intellij, etc #
 ######################
-*.bat
-*.iml
-*.ipr
-*.iws
-media/
-build/
+.git/
 .idea/
-gradle/
-.gradle/
+libs/
+build/
 run/
 
-# Unique files #
+# Entirely Ignored Extensions and Directories #
 ######################
-ToDoList.txt
+*.bat
+*.txt
+*.odt
+media/
 
-# OS generated files #
+# Unique Files #
+######################
+private.properties
+
+# Various OS generated files #
 ######################
 .DS_Store
 .DS_Store?

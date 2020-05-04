@@ -1,29 +1,16 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.common.Titles;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.TableLootEntry;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.List;
-
-@Mod.EventBusSubscriber(modid = Titles.MOD_ID)
+@Mod.EventBusSubscriber(modid = Titles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LootHandler {
-    private static final List<String> TABLES = ImmutableList.of(
-            "inject/spawn_bonus_chest", "inject/simple_dungeon", "inject/stronghold_corridor",
-            "inject/stronghold_crossing", "inject/stronghold_library"
-    );
-
-    public static void init() {
-        for (String tableName : TABLES) {
-            LootTableList.register(new ResourceLocation(Titles.MOD_ID, tableName));
-        }
-    }
-
     @SubscribeEvent
     public static void loadLoot(LootTableLoadEvent event) {
         String prefix = "minecraft:chests/";
@@ -43,10 +30,15 @@ public class LootHandler {
     }
 
     private static LootPool getInjectPool(String entryName) {
-        return new LootPool(new LootEntry[] { getInjectEntry(entryName) }, new LootCondition[0], new RandomValueRange(1), new RandomValueRange(0, 1), "titles_inject_pool");
+        return LootPool.builder()
+                .addEntry(getInjectEntry(entryName))
+                .bonusRolls(0, 1)
+                .name("titles_inject")
+                .build();
     }
 
-    private static LootEntry getInjectEntry(String name) {
-        return new LootEntryTable(new ResourceLocation(Titles.MOD_ID, "inject/" + name), 1, 0, new LootCondition[0], "titles_inject_entry");
+    private static LootEntry.Builder getInjectEntry(String name) {
+        ResourceLocation table = new ResourceLocation(Titles.MOD_ID, "inject/" + name);
+        return TableLootEntry.builder(table) .weight(1);
     }
 }

@@ -1,92 +1,101 @@
 package aurilux.titles.common;
 
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.TitlesImpl;
+import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.common.capability.TitlesImpl;
 import aurilux.titles.common.command.CommandTitles;
+import aurilux.titles.common.core.TitleRegistry;
+import aurilux.titles.common.core.TitlesConfig;
 import aurilux.titles.common.handler.InternalMethodHandler;
 import aurilux.titles.common.handler.LootHandler;
-import aurilux.titles.common.init.ModConfig;
-import aurilux.titles.common.init.ModItems;
-import aurilux.titles.common.network.PacketDispatcher;
-import net.minecraft.client.Minecraft;
-import net.minecraft.creativetab.CreativeTabs;
+import aurilux.titles.common.item.ModItems;
+import aurilux.titles.common.network.PacketHandler;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Titles.MOD_ID,
-        name = Titles.MOD_NAME,
-        version = Titles.MOD_VERSION,
-        acceptedMinecraftVersions = "[1.12,]",
-        updateJSON = "https://raw.githubusercontent.com/Aurilux/Titles/blob/master/update.json")
+import javax.annotation.Nullable;
+
+@Mod(Titles.MOD_ID)
 public class Titles {
     public static final String MOD_ID = "titles";
     public static final String MOD_NAME = "Titles";
-    public static final String MOD_VERSION = "3.0.0";
+
+    public static Titles instance;
+
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID.toUpperCase());
-    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MOD_ID) {
+
+    public static ItemGroup itemGroup = new ItemGroup(MOD_NAME) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ModItems.titleArchive);
         }
     };
 
-    public static boolean DEV_ENV;
+    public Titles() {
+        instance = this;
 
-    @Mod.Instance(MOD_ID)
-    public static Titles instance;
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
 
-    @SidedProxy(
-            clientSide = "aurilux.titles.client.ClientProxy",
-            serverSide = "aurilux.titles.common.CommonProxy")
-    public static CommonProxy proxy;
+        //this.registerModConfigs(TitlesConfig.CLIENT_SPEC, null);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, TitlesConfig.CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        DEV_ENV = ((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"));
-        proxy.preInit(event);
+        MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+    }
 
+    private void commonSetup(FMLCommonSetupEvent event) {
         TitlesAPI.internalHandler = new InternalMethodHandler();
-        TitlesImpl.register();
-        ModConfig.init(event);
+        CapabilityManager.INSTANCE.register(ITitles.class,
+                new Capability.IStorage<ITitles>() {
+                    @Nullable
+                    @Override
+                    public INBT writeNBT(Capability<ITitles> capability, ITitles instance, Direction side) {
+                        return instance.serializeNBT();
+                    }
+
+                    @Override
+                    public void readNBT(Capability<ITitles> capability, ITitles instance, Direction side, INBT nbt) {
+                        instance.deserializeNBT((CompoundNBT) nbt);
+                    }
+                }, TitlesImpl::new);
+        //CapabilityHelper.registerDeferredCapability(ITitles.class, TitlesImpl::new);
+        MinecraftForge.EVENT_BUS.register(new LootHandler());
+        TitleRegistry.INSTANCE.init();
+        PacketHandler.init();
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.init(event);
-        PacketDispatcher.init();
-        LootHandler.init();
+    private void clientSetup(FMLClientSetupEvent event) {
     }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        proxy.postInit(event);
-        ModConfig.loadTitles();
+    //TODO do I even need this? Will be determined after the API rework
+    private void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        String className = TitlesAPI.internalHandler.getClass().getName();
+        String expected = "aurilux.titles.common.handler.InternalMethodHandler";
+        if(!className.equals(expected)) {
+            throw new IllegalAccessError("The Titles API internal method handler has been overridden. "
+                    + "(Expected classname: " + expected + ", Actual classname: " + className + ")");
+        }
     }
 
-    @Mod.EventHandler
-    public void serverStart(FMLServerStartingEvent event) {
-        event.registerServerCommand(new CommandTitles());
-    }
-
-    public static void chatDebug(Object o) {
-        Minecraft.getMinecraft().player.sendMessage(new TextComponentString(o.toString()));
-    }
-
-    public static void console(Object o, boolean warning) {
-        LOGGER.log(warning ? Level.WARN : Level.INFO, o.toString());
-    }
-
-    public static void console(Object o) {
-        console(o, false);
+    private void serverStarting(FMLServerStartingEvent event) {
+        CommandTitles.register(event.getCommandDispatcher());
     }
 }
