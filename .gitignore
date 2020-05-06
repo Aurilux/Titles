@@ -8,12 +8,12 @@ media/
 build/
 .idea/
 gradle/
-.gradle
-Changelog.txt
-ToDoList.txt
+.gradle/
+run/
 
 # Unique files #
 ######################
+ToDoList.txt
 
 # OS generated files #
 ######################

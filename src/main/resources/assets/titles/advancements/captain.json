@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:boat"
+    },
+    "title": {
+      "translate": "advancement.titles.captain"
+    },
+    "description": {
+      "translate": "advancement.titles.captain.desc"
+    }
+  },
+  "parent": "titles:root",
+  "__comment": "This is triggered by code",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

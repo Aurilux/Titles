@@ -1,5 +1,4 @@
 # Configuration (+Keybindings)
-keybind.titles.category=Titles
 keybind.titles.openTitleSelection=Open Title Selection Screen
 
 # GUI (+Container)
@@ -7,21 +6,48 @@ gui.titles.cancel=Cancel
 gui.titles.confirm=Confirm
 gui.titles.random=Random
 gui.titles.none=None
+gui.titles.purchase=Purchase
+gui.titles.close=Close
+gui.titles.titleselection.empty=Unlock advancements to earn titles
+gui.titles.titlearchive.empty=You've purchased all available titles
 
 # Commands
+commands.titles.usage=/titles <add|remove> <player> <titleKey>
 
 # Entities
 
 # Items
+itemGroup.titles=Titles
+item.titleArchive.name=Title Archive
+item.archiveFragment.name=Archive Fragment
 
 # Blocks (+Tile Entities)
 
 # Misc
-chat.type.title=%s has unlocked the title (%s)
+chat.title.add=%s has unlocked the title (%s)
+titles.modid=Titles
 
 # Advancements
+advancement.titles.root.desc=Flaunt your feats
+advancement.titles.spelunker=How Low Can You Go?
+advancement.titles.spelunker.desc=Go below y-level 20
+advancement.titles.chicken_chaser=Do You Chase Chickens?
+advancement.titles.chicken_chaser.desc=Kill a chicken
+advancement.titles.captain=You are the Captain Now
+advancement.titles.captain.desc=Get in a boat
+advancement.titles.opulent=The One Percent
+advancement.titles.opulent.desc=Build a beacon base entirely out of diamond blocks
+advancement.titles.melon_lord=MWHAHAHA!
+advancement.titles.melon_lord.desc=Wear a carved pumpkin as a helmet
 
 # Titles
+#titles
+title.titles.spelunker=the Spelunker
+title.titles.chicken_chaser=the Chicken Chaser
+title.titles.captain=the Captain
+title.titles.opulent=the Opulent
+title.titles.melon_lord=the Melon Lord
+
 #story
 title.minecraft.story.root=the Craftsman
 title.minecraft.story.mine_stone=the Neanderthal
@@ -35,6 +61,7 @@ title.minecraft.story.enter_the_end=the Planeswalker
 
 #husbandry
 title.minecraft.husbandry.root=the Farmer
+title.minecraft.husbandry.breed_an_animal=the Grazier
 title.minecraft.husbandry.tame_an_animal=the Pet Lover
 title.minecraft.husbandry.bred_all_animals=the Matchmaker
 title.minecraft.husbandry.balanced_diet=the Connoisseur
@@ -42,10 +69,10 @@ title.minecraft.husbandry.break_diamond_hoe=the Agriculturalist
 
 #adventure
 title.minecraft.adventure.root=the Adventurer
-title.minecraft.adventure.kill_a_mob=the Hunter
+title.minecraft.adventure.kill_a_mob=the Huntsman
 title.minecraft.adventure.trade=the Trader
 title.minecraft.adventure.shoot_arrow=the Archer
-title.minecraft.adventure.kill_all_mobs=the Huntsman
+title.minecraft.adventure.kill_all_mobs=the Trophy Hunter
 title.minecraft.adventure.totem_of_undying=the Undying
 title.minecraft.adventure.summon_iron_golem=the Samaritan
 title.minecraft.adventure.adventuring_time=the Wayfarer

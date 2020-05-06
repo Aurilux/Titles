@@ -1,6 +1,6 @@
 package aurilux.titles.common.init;
 
-import aurilux.titles.common.TitleInfo;
+import aurilux.titles.api.TitleInfo;
 import aurilux.titles.common.Titles;
 
 import java.io.IOException;
@@ -17,12 +17,21 @@ public final class ContributorLoader {
         new ThreadContributorLoader();
     }
 
-    public static TitleInfo getContributorTitle(String contributorName) {
-        return contributorTitles.get(contributorName);
+    public static boolean contributorTitleExists(String playerName) {
+        return contributorTitles.containsKey(playerName);
     }
 
-    public static boolean contributorTitleExists(String contributorName) {
-        return contributorTitles.containsKey(contributorName);
+    public static TitleInfo getContributorTitle(String playerName) {
+        return contributorTitles.get(playerName);
+    }
+
+    public static TitleInfo getTitleFromKey(String key) {
+        for (TitleInfo titleInfo : contributorTitles.values()) {
+            if (titleInfo.getKey().equals(key)) {
+                return titleInfo;
+            }
+        }
+        return TitleInfo.NULL_TITLE;
     }
 
     private static void load(Properties props) {

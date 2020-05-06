@@ -4,51 +4,50 @@ import aurilux.titles.api.TitlesAPI;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketSyncUnlockedTitle implements IMessage {
-    private String titleKey;
+public class PacketSyncFragmentCount implements IMessage {
+    private int fragmentCount;
 
-    public PacketSyncUnlockedTitle() {}
+    public PacketSyncFragmentCount() {}
 
-    public PacketSyncUnlockedTitle(String titleKey) {
-        this.titleKey = titleKey;
+    public PacketSyncFragmentCount(int count) {
+        fragmentCount = count;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        titleKey = ByteBufUtils.readUTF8String(buf);
+        fragmentCount = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, titleKey);
+        buf.writeInt(fragmentCount);
     }
 
-    public static class HandlerClient implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
+    public static class HandlerClient implements IMessageHandler<PacketSyncFragmentCount, IMessage> {
         @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
+        public IMessage onMessage(PacketSyncFragmentCount message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    TitlesAPI.addTitleToPlayer(Minecraft.getMinecraft().player, message.titleKey);
+                    TitlesAPI.getTitlesCap(Minecraft.getMinecraft().player).setFragmentCount(message.fragmentCount);
                 }
             });
             return null;
         }
     }
 
-    public static class HandlerServer implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
+    public static class HandlerServer implements IMessageHandler<PacketSyncFragmentCount, IMessage> {
         @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
+        public IMessage onMessage(PacketSyncFragmentCount message, MessageContext ctx) {
             ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
                     EntityPlayerMP player = ctx.getServerHandler().player;
-                    TitlesAPI.addTitleToPlayer(player, message.titleKey);
+                    TitlesAPI.getTitlesCap(player).setFragmentCount(message.fragmentCount);
                 }
             });
             return null;
