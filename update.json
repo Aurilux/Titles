@@ -1,10 +1,11 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
-    "1.12.2-latest": "3.1.0",
-    "1.12.2-recommended": "3.1.0"
+    "1.12.2-latest": "3.1.1",
+    "1.12.2-recommended": "3.1.1"
   },
   "1.12.2": {
+    "3.1.1": "Fixed a server side crash caused by referencing a client only class",
     "3.1.0": "Titles are now data-driven, making it easier for modpack devs to add their own",
     "3.0.0": "Lots of changes. See the changelog for details",
     "2.1.0": "Added page counter and config options to change the title colors",

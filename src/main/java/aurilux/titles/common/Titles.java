@@ -7,6 +7,7 @@ import aurilux.titles.common.handler.InternalMethodHandler;
 import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.init.ModConfig;
 import aurilux.titles.common.init.ModItems;
+import aurilux.titles.common.network.GuiHandler;
 import aurilux.titles.common.network.PacketDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 public class Titles {
     public static final String MOD_ID = "titles";
     public static final String MOD_NAME = "Titles";
-    public static final String MOD_VERSION = "3.0.0";
+    public static final String MOD_VERSION = "3.1.1";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID.toUpperCase());
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MOD_ID) {
         @Override
@@ -62,6 +64,7 @@ public class Titles {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        NetworkRegistry.INSTANCE.registerGuiHandler(Titles.MOD_ID, new GuiHandler());
         proxy.init(event);
         PacketDispatcher.init();
         LootHandler.init();

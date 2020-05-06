@@ -1,3 +1,6 @@
+1.12.2 - 3.1.1
+Fixed a server side crash caused by referencing a client only class
+
 1.12.2 - 3.1.0
 Barring any bug fixes, this will be the last version for 1.12.
 Forgot the Title Archive gui. Whoops.

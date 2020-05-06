@@ -2,9 +2,9 @@ package aurilux.titles.common.item;
 
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.TitlesImpl;
-import aurilux.titles.client.gui.GuiTitleArchive;
 import aurilux.titles.common.Titles;
 import aurilux.titles.common.init.ModItems;
+import aurilux.titles.common.network.GuiHandler;
 import aurilux.titles.common.network.PacketDispatcher;
 import aurilux.titles.common.network.messages.PacketSyncFragmentCount;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +15,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
 
 import javax.annotation.Nonnull;
 
@@ -59,7 +58,7 @@ public class ItemTitleArchive extends Item {
             }
         }
         else if (!player.isSneaking()) {
-            FMLClientHandler.instance().displayGuiScreen(player, new GuiTitleArchive(player));
+            player.openGui(Titles.MOD_ID, GuiHandler.ARCHIVE, player.world, 0, 0, 0);
         }
         return ActionResult.newResult(EnumActionResult.PASS, stack);
     }

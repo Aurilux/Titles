@@ -17,8 +17,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Titles.MOD_ID)
 public class ModItems {
-    public static final ItemTitleArchive titleArchive = new ItemTitleArchive();
-    public static final ItemArchiveFragment archiveFragment = new ItemArchiveFragment();
+    public static final Item titleArchive = new ItemTitleArchive();
+    public static final Item archiveFragment = new ItemArchiveFragment();
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
