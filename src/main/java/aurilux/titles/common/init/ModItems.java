@@ -5,7 +5,6 @@ import aurilux.titles.common.item.ItemArchiveFragment;
 import aurilux.titles.common.item.ItemTitleArchive;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -24,8 +23,8 @@ public class ModItems {
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> reg = event.getRegistry();
 
-        reg.register(setDefaults(titleArchive, "titleArchive", 1));
-        reg.register(setDefaults(archiveFragment, "archiveFragment", 64));
+        reg.register(titleArchive);
+        reg.register(archiveFragment);
     }
 
     @SideOnly(Side.CLIENT)
@@ -38,15 +37,5 @@ public class ModItems {
     @SideOnly(Side.CLIENT)
     private static void registerRender(Item item) {
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-    }
-
-    private static Item setDefaults(Item item, String name, int stackSize) {
-        return setDefaults(item, name).setMaxStackSize(stackSize);
-    }
-    
-    private static Item setDefaults(Item item, String name) {
-        return item.setCreativeTab(Titles.CREATIVE_TAB)
-                .setRegistryName(new ResourceLocation(Titles.MOD_ID, name))
-                .setTranslationKey(name);
     }
 }
