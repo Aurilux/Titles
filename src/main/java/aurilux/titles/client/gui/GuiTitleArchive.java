@@ -1,9 +1,12 @@
 package aurilux.titles.client.gui;
 
 import aurilux.titles.api.TitleInfo;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.item.ModItems;
+import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.network.messages.PacketSyncFragmentCount;
+import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
@@ -20,16 +23,16 @@ import java.util.List;
 public class GuiTitleArchive extends GuiTitleSelection {
     private int totalFragCost = 0;
 
-    public GuiTitleArchive(PlayerEntity player) {
-        super(player);
+    public GuiTitleArchive(PlayerEntity player, ITitles cap) {
+        super(player, cap);
         temporaryTitle = TitleInfo.NULL_TITLE;
         calculateTotalFragCost();
     }
 
     @Override
     public List<TitleInfo> getTitlesList() {
-        List<TitleInfo> temp = new ArrayList<>(TitlesAPI.getArchiveTitles().values());
-        temp.removeIf(t -> (TitlesAPI.getTitlesCap(player).getObtainedTitles().contains(t)));
+        List<TitleInfo> temp = new ArrayList<>(TitleRegistry.INSTANCE.getArchiveTitles().values());
+        temp.removeIf(t -> (playerCapability.getUnlockedTitles().contains(t)));
         Collections.sort(temp, new TitleInfo.RarityComparator());
         return temp;
     }
@@ -45,8 +48,8 @@ public class GuiTitleArchive extends GuiTitleSelection {
     public void render(int mouseX, int mouseY, float f) {
         super.render(mouseX, mouseY, f);
         this.itemRenderer.renderItemIntoGUI(new ItemStack(ModItems.archiveFragment), guiLeft + 16, guiTop + 31);
-        String fragmentDisplay = "x " + TitlesAPI.getTitlesCap(player).getFragmentCount() + " [" + totalFragCost + "]";
-        if (temporaryTitle != TitleInfo.NULL_TITLE) {
+        String fragmentDisplay = "x " + playerCapability.getFragmentCount() + " [" + totalFragCost + "]";
+        if (!temporaryTitle.isNull()) {
             fragmentDisplay += ChatFormatting.RED + " -" + getFragCost(temporaryTitle);
         }
         this.font.drawStringWithShadow(fragmentDisplay, guiLeft + 30, guiTop + 35, 0xFFFFFF);
@@ -58,15 +61,13 @@ public class GuiTitleArchive extends GuiTitleSelection {
     }
 
     private void purchaseTitle() {
-        ITitles titlesImpl = TitlesAPI.getTitlesCap(player);
-        if (titlesImpl.getFragmentCount() < getFragCost(temporaryTitle)) {
+        if (playerCapability.getFragmentCount() < getFragCost(temporaryTitle)) {
             return;
         }
-        titlesImpl.addFragments(-getFragCost(temporaryTitle));
-        TitlesAPI.addTitleToPlayer(player, temporaryTitle.getKey());
-        //TODO update when network is updated
-        //PacketDispatcher.INSTANCE.sendToServer(new PacketSyncUnlockedTitle(temporaryTitle.getKey()));
-        //PacketDispatcher.INSTANCE.sendToServer(new PacketSyncFragmentCount(titlesImpl.getFragmentCount()));
+        playerCapability.addFragments(-getFragCost(temporaryTitle));
+        playerCapability.add(temporaryTitle);
+        PacketHandler.sendToServer(new PacketSyncUnlockedTitle(temporaryTitle.getKey()));
+        PacketHandler.sendToServer(new PacketSyncFragmentCount(playerCapability.getFragmentCount()));
         titlesList = getTitlesList();
         calculateTotalFragCost();
         temporaryTitle = TitleInfo.NULL_TITLE;

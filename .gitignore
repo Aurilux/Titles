@@ -1,6 +1,7 @@
 # Git, Gradle, Forge, Intellij, etc #
 ######################
 .git/
+.gradle/
 .idea/
 libs/
 build/

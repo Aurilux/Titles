@@ -8,7 +8,7 @@ public class GuiButtonTitle extends Button {
     private TitleInfo titleInfo;
 
     public GuiButtonTitle(int x, int y, int width, int height, IPressable action, TitleInfo t) {
-        super(x, y, width, height, TitlesAPI.getFormattedTitle(t), action);
+        super(x, y, width, height, TitlesAPI.instance().getFormattedTitle(t, false), action);
         titleInfo = t;
     }
 

@@ -1,50 +1,47 @@
 package aurilux.titles.common.network.messages;
 
-/*
-public class PacketSyncUnlockedTitle implements IMessage {
-    private String titleKey;
 
-    public PacketSyncUnlockedTitle() {}
+import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.core.TitleRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.util.function.Supplier;
+
+public class PacketSyncUnlockedTitle {
+    private String titleKey;
 
     public PacketSyncUnlockedTitle(String titleKey) {
         this.titleKey = titleKey;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        titleKey = ByteBufUtils.readUTF8String(buf);
+    public static void encode(PacketSyncUnlockedTitle msg, PacketBuffer buf) {
+        buf.writeString(msg.titleKey);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, titleKey);
+    public static PacketSyncUnlockedTitle decode(PacketBuffer buf) {
+        return new PacketSyncUnlockedTitle(buf.readString());
     }
 
-    public static class HandlerClient implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    TitlesAPI.addTitleToPlayer(Minecraft.getMinecraft().player, message.titleKey);
+    public static void handle(PacketSyncUnlockedTitle message, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(new Runnable() {
+            @Override
+            public void run() {
+                TitleInfo title = TitleRegistry.INSTANCE.getTitle(message.titleKey);
+                if (ctx.get().getDirection().getReceptionSide().isClient()) {
+                    ClientPlayerEntity player = Minecraft.getInstance().player;
+                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.add(title));
                 }
-            });
-            return null;
-        }
-    }
-
-    public static class HandlerServer implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
-            ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
-                    TitlesAPI.addTitleToPlayer(player, message.titleKey);
+                else {
+                    ServerPlayerEntity player = ctx.get().getSender();
+                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.add(title));
                 }
-            });
-            return null;
-        }
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }
- */

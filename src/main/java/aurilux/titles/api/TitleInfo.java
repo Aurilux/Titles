@@ -43,6 +43,9 @@ public class TitleInfo {
     public TitleRarity getTitleRarity() {
         return titleRarity;
     }
+    public boolean isNull() {
+        return this.equals(NULL_TITLE);
+    }
 
     @Override
     public boolean equals(Object o) {

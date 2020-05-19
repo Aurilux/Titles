@@ -1,4 +1,4 @@
-# MANDATORY
+## MANDATORY
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml"
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
@@ -14,14 +14,14 @@ loaderVersion="[31,)"
     displayName="Titles"
     # The description text for the mod (multi line!)
     description='''
-    Adds titles that you can add to your name'''
-    # OPTIONAL
+    Adds earnable titles that can be displayed next to your username'''
+    ## OPTIONAL
     # A text field displayed in the mod UI
     authors="Aurilux"
     # A text field displayed in the mod UI
     #credits="Thanks for this example mod goes to Java"
     # A file name (in the root of the mod JAR) containing a logo for display
-    #logoFile="examplemod.png"
+    logoFile="titles_logo.png"
     # A URL for the "homepage" for this mod, displayed in the mod UI
     displayURL="https://minecraft.curseforge.com/projects/titles"
     # A URL to refer people to when problems occur with this mod

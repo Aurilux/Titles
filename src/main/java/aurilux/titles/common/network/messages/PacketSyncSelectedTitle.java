@@ -38,16 +38,16 @@ public class PacketSyncSelectedTitle {
             public void run() {
                 if (ctx.get().getDirection().getReceptionSide().isClient()) {
                     PlayerEntity player = Minecraft.getInstance().player;
-                    TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
+                    TitlesAPI.instance().setDisplayTitle(player, message.selectedTitle);
                 }
                 else {
                     ServerPlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(message.playerUUID);
-                    TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
-                    PacketHandler.syncSelectedTitleToAll(player);
+                    TitlesAPI.instance().setDisplayTitle(player, message.selectedTitle);
+                    PacketHandler.sendToAllExcept(new PacketSyncSelectedTitle(message.playerUUID, message.selectedTitle), player);
                 }
-
             }
         });
+        ctx.get().setPacketHandled(true);
     }
 }
 /*

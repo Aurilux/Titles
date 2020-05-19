@@ -26,9 +26,9 @@ import net.minecraftforge.fml.common.Mod;
 public class AdvancementHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
-        PlayerEntity player = event.getPlayer();
+        ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
         Advancement advancement = event.getAdvancement();
-        TitlesAPI.addTitleToPlayer(player, advancement.getId().toString(), true);
+        TitlesAPI.instance().unlockTitle(player, advancement.getId().toString());
     }
 
     @SubscribeEvent

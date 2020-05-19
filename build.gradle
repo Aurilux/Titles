@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 buildscript {
     repositories {
         maven { url = "https://files.minecraftforge.net/maven" }
@@ -11,7 +13,7 @@ buildscript {
 
 plugins {
    //id "com.matthewprenger.cursegradle" version "1.2.0"
-    id "java"
+    id "java-library"
 }
 
 //Normally this would be added to the plugins block above, but since ForgeGradle is constantly changing, and the
@@ -21,17 +23,9 @@ apply plugin: "idea"
 
 idea {
     module {
-        for (String excludeDirName in [".idea", "run", "out", "gradle", "media"]) {
-            File excludeDir = new File(projectDir, excludeDirName)
-            excludeDirs.add(excludeDir)
+        for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out"]) {
+            excludeDirs += file(excludeDirName)
         }
-        /*
-        iml {
-            beforeMerged { module ->
-                module.dependencies.add(new org.gradle.plugins.ide.idea.model.ModuleDependency(':ArdentCore', 'COMPILE'))
-            }
-        }
-         */
     }
 }
 
@@ -46,7 +40,7 @@ version = mod_version
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 //Load in the repositories for mods useful in the dev process
-def repos = new groovy.json.JsonSlurper().parse(file("repos.json"))
+def repos = new JsonSlurper().parse(file("repos.json"))
 repositories {
     mavenCentral()
     repos.each { n, u ->
@@ -59,6 +53,10 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:" + minecraft_version + "-" + forge_version
+
+    //compile files("../ArdentCore/build/libs")
+    compile project(":ArdentCore")
+
     repos.each { n, l ->
         compileOnly fg.deobf(l.lib + ":api")
         runtimeOnly fg.deobf(l.lib)
@@ -71,10 +69,15 @@ minecraft {
 
     runs {
         client = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
+            properties 'fml.earlyprogresswindow': 'false'
+
+            if (project.hasProperty('mc_uuid')) {
+                args '--uuid', project.getProperty('mc_uuid')
+            }
+            if (project.hasProperty('mc_username')) {
+                args '--username', project.getProperty('mc_username')
+            }
             workingDirectory project.file('run').canonicalPath
             mods {
                 titles {
@@ -83,9 +86,6 @@ minecraft {
             }
         }
         server = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
             mods {

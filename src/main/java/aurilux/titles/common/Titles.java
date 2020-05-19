@@ -1,13 +1,11 @@
 package aurilux.titles.common;
 
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.ITitles;
-import aurilux.titles.common.capability.TitlesImpl;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesConfig;
-import aurilux.titles.common.handler.InternalMethodHandler;
 import aurilux.titles.common.handler.LootHandler;
+import aurilux.titles.common.impl.TitlesImpl;
 import aurilux.titles.common.item.ModItems;
 import aurilux.titles.common.network.PacketHandler;
 import net.minecraft.item.ItemGroup;
@@ -23,7 +21,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +34,6 @@ public class Titles {
     public static final String MOD_NAME = "Titles";
 
     public static Titles instance;
-
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID.toUpperCase());
 
     public static ItemGroup itemGroup = new ItemGroup(MOD_NAME) {
@@ -57,12 +53,10 @@ public class Titles {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, TitlesConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);
 
-        MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        TitlesAPI.internalHandler = new InternalMethodHandler();
         CapabilityManager.INSTANCE.register(ITitles.class,
                 new Capability.IStorage<ITitles>() {
                     @Nullable
@@ -83,16 +77,6 @@ public class Titles {
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
-    }
-
-    //TODO do I even need this? Will be determined after the API rework
-    private void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        String className = TitlesAPI.internalHandler.getClass().getName();
-        String expected = "aurilux.titles.common.handler.InternalMethodHandler";
-        if(!className.equals(expected)) {
-            throw new IllegalAccessError("The Titles API internal method handler has been overridden. "
-                    + "(Expected classname: " + expected + ", Actual classname: " + className + ")");
-        }
     }
 
     private void serverStarting(FMLServerStartingEvent event) {

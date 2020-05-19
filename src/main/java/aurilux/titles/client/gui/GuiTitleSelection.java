@@ -2,8 +2,12 @@ package aurilux.titles.client.gui;
 
 import aurilux.titles.api.TitleInfo;
 import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.gui.button.GuiButtonTitle;
 import aurilux.titles.client.handler.ClientEventHandler;
+import aurilux.titles.common.core.TitleRegistry;
+import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -44,24 +48,25 @@ public class GuiTitleSelection extends Screen {
     protected int buttonSecondRowStart;
 
     protected PlayerEntity player;
+    protected ITitles playerCapability;
     protected TitleInfo temporaryTitle;
     protected List<TitleInfo> titlesList;
 
-    public GuiTitleSelection(PlayerEntity player) {
+    public GuiTitleSelection(PlayerEntity player, ITitles cap) {
         super(new StringTextComponent("Title Selection"));
         this.player = player;
-        temporaryTitle = TitlesAPI.getPlayerSelectedTitle(player);
+        playerCapability = cap;
+        temporaryTitle = playerCapability.getSelectedTitle();
         titlesList = getTitlesList();
     }
 
     public List<TitleInfo> getTitlesList() {
+        List<TitleInfo> temp = new ArrayList<>(playerCapability.getUnlockedTitles());
         String playerName = player.getName().getString();
-        List<TitleInfo> temp = new ArrayList<>(TitlesAPI.getTitlesCap(player).getObtainedTitles());
-        /*
-        if (ContributorLoader.contributorTitleExists(playerName)) {
-            temp.add(ContributorLoader.getContributorTitle(playerName));
+        TitleInfo possibleContributor = TitleRegistry.INSTANCE.getTitle(playerName);
+        if (!possibleContributor.isNull()) {
+            temp.add(possibleContributor);
         }
-         */
         Collections.sort(temp, new TitleInfo.RarityComparator());
         return temp;
     }
@@ -95,7 +100,7 @@ public class GuiTitleSelection extends Screen {
 
         //Draw the player's name with their selected title
         String titledPlayerName = player.getName().getString();
-        titledPlayerName += TitlesAPI.getFormattedTitle(temporaryTitle, true);
+        titledPlayerName += TitlesAPI.instance().getFormattedTitle(temporaryTitle, true);
         this.drawCenteredString(this.font, titledPlayerName, this.width / 2, guiTop + 11, 0xFFFFFF);
 
         //Draw the page counter
@@ -112,8 +117,7 @@ public class GuiTitleSelection extends Screen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            //TODO uncomment when network is fixed
-            //PacketDispatcher.INSTANCE.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle.getKey()));
+            PacketHandler.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle.getKey()));
         }
         getMinecraft().displayGuiScreen(null);
     }

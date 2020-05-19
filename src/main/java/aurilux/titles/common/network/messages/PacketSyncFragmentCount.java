@@ -1,50 +1,43 @@
 package aurilux.titles.common.network.messages;
 
-/*
-public class PacketSyncFragmentCount implements IMessage {
-    private int fragmentCount;
+import aurilux.titles.api.TitlesAPI;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-    public PacketSyncFragmentCount() {}
+import java.util.function.Supplier;
+
+public class PacketSyncFragmentCount {
+    private int fragmentCount;
 
     public PacketSyncFragmentCount(int count) {
         fragmentCount = count;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        fragmentCount = buf.readInt();
+    public static void encode(PacketSyncFragmentCount msg, PacketBuffer buf) {
+        buf.writeInt(msg.fragmentCount);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(fragmentCount);
+    public static PacketSyncFragmentCount decode(PacketBuffer buf) {
+        return new PacketSyncFragmentCount(buf.readInt());
     }
 
-    public static class HandlerClient implements IMessageHandler<PacketSyncFragmentCount, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncFragmentCount message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    TitlesAPI.getTitlesCap(Minecraft.getMinecraft().player).setFragmentCount(message.fragmentCount);
+    public static void handle(PacketSyncFragmentCount message, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(new Runnable() {
+            @Override
+            public void run() {
+                if (ctx.get().getDirection().getReceptionSide().isClient()) {
+                    PlayerEntity player = Minecraft.getInstance().player;
+                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.setFragmentCount(message.fragmentCount));
                 }
-            });
-            return null;
-        }
-    }
-
-    public static class HandlerServer implements IMessageHandler<PacketSyncFragmentCount, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncFragmentCount message, MessageContext ctx) {
-            ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
-                    TitlesAPI.getTitlesCap(player).setFragmentCount(message.fragmentCount);
+                else {
+                    ServerPlayerEntity player = ctx.get().getSender();
+                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.setFragmentCount(message.fragmentCount));
                 }
-            });
-            return null;
-        }
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }
- */

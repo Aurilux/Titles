@@ -1,9 +1,11 @@
 package aurilux.titles.common.network;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.ardentcore.common.util.Debug;
 import aurilux.titles.common.Titles;
 import aurilux.titles.common.network.messages.PacketSendDataOnLogin;
+import aurilux.titles.common.network.messages.PacketSyncFragmentCount;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -13,10 +15,10 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class PacketHandler {
     private static String protocol = "1";
-    private static SimpleChannel network;
+    private static SimpleChannel CHANNEL;
 
     public static void init() {
-        network = NetworkRegistry.ChannelBuilder
+        CHANNEL = NetworkRegistry.ChannelBuilder
                 .named(new ResourceLocation(Titles.MOD_ID, "main"))
                 .networkProtocolVersion(() -> protocol)
                 .clientAcceptedVersions(protocol::equals)
@@ -24,37 +26,38 @@ public class PacketHandler {
                 .simpleChannel();
 
         int id = 0;
-        network.registerMessage(id++, PacketSendDataOnLogin.class, PacketSendDataOnLogin::encode,
+        CHANNEL.registerMessage(id++, PacketSendDataOnLogin.class, PacketSendDataOnLogin::encode,
                 PacketSendDataOnLogin::decode, PacketSendDataOnLogin::handle);
-        network.registerMessage(id++, PacketSyncSelectedTitle.class, PacketSyncSelectedTitle::encode,
+        CHANNEL.registerMessage(id++, PacketSyncSelectedTitle.class, PacketSyncSelectedTitle::encode,
                 PacketSyncSelectedTitle::decode, PacketSyncSelectedTitle::handle);
+        CHANNEL.registerMessage(id++, PacketSyncFragmentCount.class, PacketSyncFragmentCount::encode,
+                PacketSyncFragmentCount::decode, PacketSyncFragmentCount::handle);
+        CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
+                PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle);
     }
 
-    public static void syncFragmentCount() {
-
+    public static void sendToServer(Object msg) {
+        CHANNEL.sendToServer(msg);
     }
 
-    public static void syncSelectedTitle(ServerPlayerEntity player) {
-        network.sendTo(new PacketSyncSelectedTitle(player.getUniqueID(),
-                TitlesAPI.getPlayerSelectedTitle(player).toString()), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
-    }
-
-    public static void syncSelectedTitleToAll(ServerPlayerEntity player) {
-        sendToAll(new PacketSyncSelectedTitle(player.getUniqueID(), TitlesAPI.getPlayerSelectedTitle(player).toString()));
-    }
-
-    public static void syncUnlockedTitle() {
-
-    }
-
-    public static void sendDataOnLogin(ServerPlayerEntity player) {
-        network.sendTo(new PacketSendDataOnLogin(player), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-        sendToAll(new PacketSyncSelectedTitle(player.getUniqueID(), TitlesAPI.getPlayerSelectedTitle(player).getKey()));
-    }
-
-    private static void sendToAll(Object msg) {
+    public static void sendToAllExcept(Object msg, ServerPlayerEntity ignoredPlayer) {
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            network.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+            if (ignoredPlayer != null && player != ignoredPlayer) {
+                CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+            }
+            else {
+                if (ignoredPlayer != null) {
+                    Debug.LOGGER.debug("Ignored Player: " + ignoredPlayer.getDisplayName().getString());
+                }
+            }
         }
+    }
+
+    public static void sendTo(Object msg, ServerPlayerEntity player) {
+        CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+    }
+
+    public static void sendToAll(Object msg) {
+        sendToAllExcept(msg, null);
     }
 }

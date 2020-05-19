@@ -2,13 +2,15 @@ package aurilux.titles.common.core;
 
 import aurilux.titles.api.TitleInfo;
 import aurilux.titles.common.Titles;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.minecraft.util.ResourceLocation;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,77 +23,95 @@ public class TitleRegistry {
 
     private final Map<String, TitleInfo> titlesMap = new HashMap<>();
     private final Map<String, TitleInfo> archiveTitles = new HashMap<>();
-    private volatile Map<String, TitleInfo> contributorTitles = new HashMap<>();
-    private final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
-            .create();
-    private static final String DATA_LOCATION = Titles.MOD_ID;
+    private final Map<String, TitleInfo> contributorTitles = new HashMap<>();
 
     private TitleRegistry() {}
 
+    public TitleInfo getTitle(String titleKey) {
+        return titlesMap.getOrDefault(titleKey,
+                archiveTitles.getOrDefault(titleKey,
+                        contributorTitles.getOrDefault(titleKey,
+                                TitleInfo.NULL_TITLE)));
+    }
+
+    public Map<String, TitleInfo> getTitlesMap() {
+        return titlesMap;
+    }
+
+    public Map<String, TitleInfo> getArchiveTitles() {
+        return archiveTitles;
+    }
 
     public void init() {
         new ThreadContributorLoader();
 
         List<ModInfo> mods = ModList.get().getMods();
-        Map<Pair<ModInfo, ResourceLocation>, String> foundTitles = new HashMap<>();
+        Map<ModInfo, String> foundTitles = new HashMap<>();
 
+        //From each mod, find it's title data
         mods.forEach(mod -> {
-            String id = mod.getModId();
-            String filePath = String.format("data/%s/%s", id, DATA_LOCATION);
+            String modId = mod.getModId();
+            //Minecraft and Forge will not have title data, so we ignore them
+            if (modId.equals("minecraft") || modId.equals("forge")) {
+                return;
+            }
+
+            String filePath = String.format("data/%s/%s", modId, Titles.MOD_ID);
             Path modSource = mod.getOwningFile().getFile().getFilePath().resolve(filePath);
             if (Files.exists(modSource)) {
                 try {
                     Iterator<Path> itr = Files.walk(modSource).iterator();
                     while (itr.hasNext()) {
-                        Titles.LOGGER.info(itr.next().getFileName().toString());
+                        Path p = itr.next();
+                        //Path objects inherently use the "\". We replace it with "/" so it's easier for us to work with
+                        String pathString = p.toString().replaceAll("\\\\", "/");
+                        String fileName = pathString.substring(pathString.lastIndexOf(Titles.MOD_ID + "/"));
+                        if (pathString.endsWith(".json") && (modId.equals(Titles.MOD_ID) || modId.equals(fileName))) {
+                            String assetPath = pathString.substring(pathString.indexOf("/data"));
+                            foundTitles.put(mod, assetPath);
+                        }
                     }
                 }
                 catch (IOException ex) {
-                    Titles.LOGGER.warn("WARNING!");
+                    Titles.LOGGER.warn("Unable to find title data for mod {}", modId);
                 }
             }
         });
-/*
-        foundBooks.forEach((pair, file) -> {
-            ModInfo mod = pair.getLeft();
+
+        //Load all the titles from the files we found
+        foundTitles.forEach((mod, file) -> {
             Optional<? extends ModContainer> container = ModList.get().getModContainerById(mod.getModId());
             container.ifPresent(c -> {
-                ResourceLocation res = pair.getRight();
-
                 Class<?> ownerClass = c.getMod().getClass();
-                try (InputStream stream = ownerClass.getResourceAsStream(file)) {
-                    loadTitles(mod, ownerClass, res, stream, false);
-                } catch (Exception e) {
-                    Debug.LOGGER.error("Failed to load book {} defined by mod {}, skipping",
-                            res, c.getModInfo().getModId(), e);
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(ownerClass.getResourceAsStream(file)));
+                    JsonObject titleData = new JsonParser().parse(reader).getAsJsonObject();
+                    if (titleData != null) {
+                        for (Map.Entry<String, JsonElement> entry : titleData.entrySet()) {
+                            TitleInfo.TitleRarity titleRarity = TitleInfo.TitleRarity.valueOf(entry.getKey().toUpperCase());
+                            //I reserve the UNIQUE title rarity for my contributors. This prevents people from being sneaky.
+                            if (!titleRarity.equals(TitleInfo.TitleRarity.UNIQUE)) {
+                                JsonArray titles = entry.getValue().getAsJsonArray();
+                                for (int i = 0; i < titles.size(); i++) {
+                                    String key = titles.get(i).getAsString();
+                                    TitleInfo newTitle = new TitleInfo(key, titleRarity);
+                                    if (file.equals("archive")) {
+                                        archiveTitles.put(key, newTitle);
+                                    }
+                                    else {
+                                        titlesMap.put(key, newTitle);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    Titles.LOGGER.error("Failed to load titles defined by mod {}, skipping",
+                            c.getModInfo().getModId(), ex);
                 }
             });
-        });*/
-    }
-
-    public boolean contributorTitleExists(String playerName) {
-        return contributorTitles.containsKey(playerName);
-    }
-
-    public TitleInfo getContributorTitle(String playerName) {
-        return contributorTitles.get(playerName);
-    }
-
-    public TitleInfo getTitleFromKey(String key) {
-        for (TitleInfo titleInfo : contributorTitles.values()) {
-            if (titleInfo.getKey().equals(key)) {
-                return titleInfo;
-            }
-        }
-        return TitleInfo.NULL_TITLE;
-    }
-
-    private void load(Properties props) {
-        for(String key : props.stringPropertyNames()) {
-            String value = props.getProperty(key);
-            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
-        }
+        });
     }
 
     private class ThreadContributorLoader extends Thread {
@@ -111,68 +131,15 @@ public class TitleRegistry {
                 load(props);
             }
             catch (IOException e) {
-                Titles.LOGGER.debug("Unable to load contributors list. Most likely you're offline or github is down.");
+                Titles.LOGGER.warn("Unable to load contributors list. Most likely you're offline or github is down.");
             }
         }
     }
-/*
-    public void loadBook(IModInfo mod, Class<?> ownerClass, ResourceLocation res, InputStream stream,
-                         boolean external) {
-        Reader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-        Book book = GSON.fromJson(reader, Book.class);
-        book.build(mod, ownerClass, res, external);
-        books.put(res, book);
-    }
 
-    // HELPER
-
-    public static boolean findFiles(ModInfo mod, String base, Function<Path, Boolean> preprocessor,
-                                    BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot, boolean visitAllFiles) {
-        if (mod.getModId().equals("minecraft") || mod.getModId().equals("forge"))
-            return false;
-
-        Path source = mod.getOwningFile().getFile().getFilePath();
-
-        FileSystem fs = null;
-        boolean success = true;
-
-        try {
-            Path root = null;
-
-            if (Files.isRegularFile(source)) {
-                fs = FileSystems.newFileSystem(source, null);
-                root = fs.getPath("/" + base);
-            } else if (Files.isDirectory(source))
-                root = source.resolve(base);
-
-            if (root == null || !Files.exists(root))
-                return defaultUnfoundRoot;
-
-            if (preprocessor != null) {
-                Boolean cont = preprocessor.apply(root);
-                if (cont == null || !cont)
-                    return false;
-            }
-
-            if (processor != null) {
-                Iterator<Path> itr = Files.walk(root).iterator();
-
-                while (itr.hasNext()) {
-                    Boolean cont = processor.apply(root, itr.next());
-
-                    if (visitAllFiles)
-                        success &= cont != null && cont;
-                    else if (cont == null || !cont)
-                        return false;
-                }
-            }
-        } catch(IOException ex) {
-            throw new UncheckedIOException(ex);
-        } finally {
-            IOUtils.closeQuietly(fs);
+    private void load(Properties props) {
+        for(String key : props.stringPropertyNames()) {
+            String value = props.getProperty(key);
+            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
         }
-
-        return success;
     }
-    */
 }

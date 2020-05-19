@@ -7,11 +7,13 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.Set;
 
 public interface ITitles extends INBTSerializable<CompoundNBT> {
-    void add(TitleInfo info);
+    boolean add(TitleInfo title);
 
-    void remove(TitleInfo info);
+    void remove(TitleInfo title);
 
-    Set<TitleInfo> getObtainedTitles();
+    boolean hasTitle(TitleInfo title);
+
+    Set<TitleInfo> getUnlockedTitles();
 
     void setSelectedTitle(TitleInfo newTitle);
 

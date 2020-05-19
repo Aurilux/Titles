@@ -1,11 +1,14 @@
 package aurilux.titles.client.handler;
 
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.client.gui.GuiTitleSelection;
 import aurilux.titles.common.Titles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -26,7 +29,17 @@ public class ClientEventHandler {
     public static void onClientTickEvent(final TickEvent.ClientTickEvent event) {
         if (openTitleSelection.isPressed()) {
             PlayerEntity player = Minecraft.getInstance().player;
-            Minecraft.getInstance().displayGuiScreen(new GuiTitleSelection(player));
+            TitlesAPI.instance().getCapability(player).ifPresent(cap -> {
+                Minecraft.getInstance().displayGuiScreen(new GuiTitleSelection(player, cap));
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientChatReceived(ClientChatReceivedEvent event) {
+        if (event.getMessage() instanceof TranslationTextComponent) {
+            TranslationTextComponent textComponent = (TranslationTextComponent) event.getMessage();
+            Titles.LOGGER.info("Text component key: " + textComponent.getKey());
         }
     }
 }
