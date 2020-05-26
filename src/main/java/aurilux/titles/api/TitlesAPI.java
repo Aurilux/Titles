@@ -3,6 +3,8 @@ package aurilux.titles.api;
 import aurilux.titles.api.capability.TitlesImpl;
 import aurilux.titles.api.internal.DummyMethodHandler;
 import aurilux.titles.api.internal.IInternalMethodHandler;
+import aurilux.titles.common.network.PacketDispatcher;
+import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Collections;
@@ -48,7 +50,6 @@ public class TitlesAPI {
         }
 
         getTitlesCap(player).add(titleInfo);
-        internalHandler.syncUnlockedTitle(key, player);
 
         if (announce) {
             internalHandler.sendChatMessageToAllPlayers("chat.title.add", player.getDisplayName(), titleInfo);
@@ -57,8 +58,12 @@ public class TitlesAPI {
 
     public static void removeTitleFromPlayer(EntityPlayer player, String key) {
         TitleInfo titleInfo = titlesMap.get(key);
-        if (titleInfo != null) {
-            getTitlesCap(player).remove(titleInfo);
+        if (titleInfo != null && hasTitle(player, titleInfo)) {
+            TitlesImpl.ITitles cap = getTitlesCap(player);
+            cap.remove(titleInfo);
+            if (cap.getDisplayTitle().equals(titleInfo)) {
+                cap.setDisplayTitle(TitleInfo.NULL_TITLE);
+            }
         }
     }
 
@@ -77,12 +82,12 @@ public class TitlesAPI {
         }
     }
 
-    public static TitleInfo getPlayerSelectedTitle(EntityPlayer player) {
-        return getTitlesCap(player).getSelectedTitle();
+    public static TitleInfo getPlayerDisplayTitle(EntityPlayer player) {
+        return getTitlesCap(player).getDisplayTitle();
     }
 
-    public static void setPlayerSelectedTitle(EntityPlayer player, TitleInfo titleInfo) {
-        getTitlesCap(player).setSelectedTitle(titleInfo);
+    public static void setPlayerDisplayTitle(EntityPlayer player, TitleInfo titleInfo) {
+        getTitlesCap(player).setDisplayTitle(titleInfo);
     }
 
     public static boolean hasTitle(EntityPlayer player, TitleInfo titleInfo) {

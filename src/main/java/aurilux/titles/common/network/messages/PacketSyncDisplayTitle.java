@@ -1,6 +1,7 @@
 package aurilux.titles.common.network.messages;
 
 import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.Titles;
 import aurilux.titles.common.network.PacketDispatcher;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -14,13 +15,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.UUID;
 
-public class PacketSyncSelectedTitle implements IMessage {
+public class PacketSyncDisplayTitle implements IMessage {
     private UUID playerUUID;
     private String selectedTitle;
 
-    public PacketSyncSelectedTitle() {}
+    public PacketSyncDisplayTitle() {}
 
-    public PacketSyncSelectedTitle(UUID playerUUID, String titleKey) {
+    public PacketSyncDisplayTitle(UUID playerUUID, String titleKey) {
         this.playerUUID = playerUUID;
         selectedTitle = titleKey;
     }
@@ -37,15 +38,15 @@ public class PacketSyncSelectedTitle implements IMessage {
         ByteBufUtils.writeUTF8String(buf, selectedTitle);
     }
 
-    public static class HandlerClient implements IMessageHandler<PacketSyncSelectedTitle, IMessage> {
+    public static class HandlerClient implements IMessageHandler<PacketSyncDisplayTitle, IMessage> {
         @Override
-        public IMessage onMessage(PacketSyncSelectedTitle message, MessageContext ctx) {
+        public IMessage onMessage(PacketSyncDisplayTitle message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
                     EntityPlayer player = FMLClientHandler.instance().getWorldClient().getPlayerEntityByUUID(message.playerUUID);
                     if (player != null) {
-                        TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
+                        TitlesAPI.setPlayerDisplayTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
                         player.refreshDisplayName();
                     }
                 }
@@ -54,16 +55,16 @@ public class PacketSyncSelectedTitle implements IMessage {
         }
     }
 
-    public static class HandlerServer implements IMessageHandler<PacketSyncSelectedTitle, IMessage> {
+    public static class HandlerServer implements IMessageHandler<PacketSyncDisplayTitle, IMessage> {
         @Override
-        public IMessage onMessage(PacketSyncSelectedTitle message, MessageContext ctx) {
+        public IMessage onMessage(PacketSyncDisplayTitle message, MessageContext ctx) {
             ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
                     EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(message.playerUUID);
-                    TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
+                    TitlesAPI.setPlayerDisplayTitle(player, TitlesAPI.getTitleFromKey(message.selectedTitle));
                     player.refreshDisplayName();
-                    PacketDispatcher.INSTANCE.sendToAll(new PacketSyncSelectedTitle(message.playerUUID, message.selectedTitle));
+                    PacketDispatcher.INSTANCE.sendToAll(new PacketSyncDisplayTitle(message.playerUUID, message.selectedTitle));
                 }
             });
             return null;

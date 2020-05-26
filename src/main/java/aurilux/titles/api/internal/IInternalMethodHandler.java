@@ -9,6 +9,8 @@ public interface IInternalMethodHandler {
 
     void syncUnlockedTitle(String key, EntityPlayer player);
 
+    void syncRemovedTitle(String key, EntityPlayer player);
+
     void sendChatMessageToAllPlayers(String message, ITextComponent playerName, TitleInfo titleInfo);
 
     String getFormattedTitle(TitleInfo titleInfo);

@@ -12,7 +12,7 @@ gui.titles.titleselection.empty=Desbloquea logros para conseguir titulos
 gui.titles.titlearchive.empty=Has comprado todos los titulos disponibles
 
 # Commands
-commands.titles.usage=/titles <add|remove> <player> <titleKey>
+commands.titles.usage=/titles <command>
 
 # Entities
 

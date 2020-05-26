@@ -3,9 +3,10 @@ package aurilux.titles.client.gui;
 import aurilux.titles.api.TitleInfo;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.client.ModKeybindings;
+import aurilux.titles.common.Titles;
 import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -57,7 +58,7 @@ public class GuiTitleSelection extends GuiScreen {
 
     public GuiTitleSelection(EntityPlayer player) {
         this.player = player;
-        temporaryTitle = TitlesAPI.getPlayerSelectedTitle(player);
+        temporaryTitle = TitlesAPI.getPlayerDisplayTitle(player);
         titlesList = getTitlesList();
     }
 
@@ -117,9 +118,15 @@ public class GuiTitleSelection extends GuiScreen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            PacketDispatcher.INSTANCE.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle.getKey()));
+            PacketDispatcher.INSTANCE.sendToServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getKey()));
         }
         mc.displayGuiScreen(null);
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        updateButtonList();
     }
 
     @Override
@@ -135,7 +142,6 @@ public class GuiTitleSelection extends GuiScreen {
             case LAST_PAGE : page = maxPages; break;
             default : temporaryTitle = titlesList.get(button.id + (page * maxPerPage));
         }
-        updateButtonList();
     }
 
     private void chooseRandomTitle() {

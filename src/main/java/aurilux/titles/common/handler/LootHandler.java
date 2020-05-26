@@ -1,31 +1,25 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.common.Titles;
-import com.google.common.collect.ImmutableList;
+import aurilux.titles.common.init.ModConfig;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.*;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootEntryTable;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.RandomValueRange;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.List;
-
 @Mod.EventBusSubscriber(modid = Titles.MOD_ID)
 public class LootHandler {
-    private static final List<String> TABLES = ImmutableList.of(
-            "inject/spawn_bonus_chest", "inject/simple_dungeon", "inject/stronghold_corridor",
-            "inject/stronghold_crossing", "inject/stronghold_library"
-    );
-
-    public static void init() {
-        for (String tableName : TABLES) {
-            LootTableList.register(new ResourceLocation(Titles.MOD_ID, tableName));
-        }
-    }
-
     @SubscribeEvent
     public static void loadLoot(LootTableLoadEvent event) {
+        if (!ModConfig.addFragmentsToLoot) {
+            return;
+        }
+
         String prefix = "minecraft:chests/";
         String name = event.getName().toString();
 

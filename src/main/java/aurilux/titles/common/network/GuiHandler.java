@@ -1,7 +1,6 @@
 package aurilux.titles.common.network;
 
 import aurilux.titles.client.gui.GuiTitleArchive;
-import aurilux.titles.client.gui.GuiTitleSelection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;

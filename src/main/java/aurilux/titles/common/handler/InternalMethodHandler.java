@@ -6,7 +6,9 @@ import aurilux.titles.common.Titles;
 import aurilux.titles.common.init.ContributorLoader;
 import aurilux.titles.common.init.ModConfig;
 import aurilux.titles.common.network.PacketDispatcher;
+import aurilux.titles.common.network.messages.PacketSyncRemovedTitle;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.ITextComponent;
@@ -27,6 +29,13 @@ public class InternalMethodHandler implements IInternalMethodHandler {
     }
 
     @Override
+    public void syncRemovedTitle(String key, EntityPlayer player) {
+        if (player instanceof EntityPlayerMP) {
+            PacketDispatcher.INSTANCE.sendTo(new PacketSyncRemovedTitle(key), (EntityPlayerMP) player);
+        }
+    }
+
+    @Override
     public void sendChatMessageToAllPlayers(String message, ITextComponent playerName, TitleInfo info) {
         Titles.proxy.sendChatMessageToAllPlayers(message, playerName, getFormattedTitle(info));
     }
@@ -42,10 +51,10 @@ public class InternalMethodHandler implements IInternalMethodHandler {
 
         TextFormatting titleColor;
         switch (titleInfo.getTitleRarity()) {
-            case UNIQUE: titleColor = ModConfig.uniqueColor.textFormatting; break;
-            case RARE: titleColor = ModConfig.rareColor.textFormatting; break;
-            case UNCOMMON: titleColor = ModConfig.uncommonColor.textFormatting; break;
-            default: titleColor = ModConfig.commonColor.textFormatting; break; //COMMON
+            case UNIQUE: titleColor = TextFormatting.LIGHT_PURPLE; break;
+            case RARE: titleColor = TextFormatting.AQUA; break;
+            case UNCOMMON: titleColor = TextFormatting.YELLOW; break;
+            default: titleColor = TextFormatting.WHITE; break; //COMMON
         }
 
         return (addComma ? ", " : "") + titleColor + new TextComponentTranslation(titleInfo.getLangKey()).getFormattedText();

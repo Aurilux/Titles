@@ -14,6 +14,9 @@ public class DummyMethodHandler implements IInternalMethodHandler {
     public void syncUnlockedTitle(String key, EntityPlayer player) {}
 
     @Override
+    public void syncRemovedTitle(String key, EntityPlayer player) {}
+
+    @Override
     public void sendChatMessageToAllPlayers(String message, ITextComponent playerName, TitleInfo titleInfo) {}
 
     @Override

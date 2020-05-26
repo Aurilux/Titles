@@ -43,9 +43,9 @@ public class TitlesImpl {
 
         Set<TitleInfo> getObtainedTitles();
 
-        void setSelectedTitle(TitleInfo newTitle);
+        void setDisplayTitle(TitleInfo newTitle);
 
-        TitleInfo getSelectedTitle();
+        TitleInfo getDisplayTitle();
 
         void addFragments(int num);
 
@@ -73,7 +73,7 @@ public class TitlesImpl {
         private final String FRAG_COUNT = "fragment_count";
 
         private Set<TitleInfo> obtainedTitles = new HashSet<>();
-        private TitleInfo selectedTitle = TitleInfo.NULL_TITLE;
+        private TitleInfo displayTitle = TitleInfo.NULL_TITLE;
 
         private int fragmentCount = 0;
 
@@ -95,13 +95,13 @@ public class TitlesImpl {
         }
 
         @Override
-        public void setSelectedTitle(TitleInfo newTitle) {
-            selectedTitle = newTitle;
+        public void setDisplayTitle(TitleInfo newTitle) {
+            displayTitle = newTitle;
         }
 
         @Override
-        public TitleInfo getSelectedTitle() {
-            return selectedTitle;
+        public TitleInfo getDisplayTitle() {
+            return displayTitle;
         }
 
         @Override
@@ -124,7 +124,7 @@ public class TitlesImpl {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setInteger(FRAG_COUNT, this.getFragmentCount());
 
-            nbt.setString(SEL_TITLE, this.getSelectedTitle().getKey());
+            nbt.setString(SEL_TITLE, this.getDisplayTitle().getKey());
 
             NBTTagList obtained = new NBTTagList();
             for (TitleInfo title : obtainedTitles) {
@@ -139,8 +139,9 @@ public class TitlesImpl {
         public void deserializeNBT(NBTTagCompound nbt) {
             fragmentCount = nbt.getInteger(FRAG_COUNT);
 
-            selectedTitle = TitlesAPI.getTitleFromKey(nbt.getString(SEL_TITLE));
+            displayTitle = TitlesAPI.getTitleFromKey(nbt.getString(SEL_TITLE));
 
+            obtainedTitles.clear();
             NBTTagList obtained = nbt.getTagList(OBT_TITLES, Constants.NBT.TAG_STRING);
             for (int i = 0; i < obtained.tagCount(); i++) {
                 TitleInfo titleInfo = TitlesAPI.getTitleFromKey(obtained.getStringTagAt(i));
