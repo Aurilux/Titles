@@ -5,8 +5,10 @@ import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.TitlesImpl;
 import aurilux.titles.common.Titles;
 import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
-import aurilux.titles.common.network.messages.PacketSyncTitleDataOnLogin;
+import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
+import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
+import aurilux.titles.common.network.messages.PacketSyncTitleData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,9 +17,12 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber(modid = Titles.MOD_ID)
 public class CommonEventHandler {
@@ -42,16 +47,16 @@ public class CommonEventHandler {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
 
-        PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleDataOnLogin(player), player);
-        PacketDispatcher.INSTANCE.sendToAll(new PacketSyncSelectedTitle(player.getUniqueID(),
-                TitlesAPI.getPlayerSelectedTitle(player).getKey()));
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleData(player), player);
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncAllDisplayTitles(player), player);
+        PacketDispatcher.INSTANCE.sendToAll(new PacketSyncDisplayTitle(player.getUniqueID(),
+                TitlesAPI.getPlayerDisplayTitle(player).getKey()));
     }
 
-    @SubscribeEvent
     //I have to have the full package name for PlayerEvent.NameFormat here because otherwise it conflicts with
     //net.minecraftforge.fml.common.gameevent.PlayerEvent.
     public static void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
-        TitleInfo currentTitle = TitlesAPI.getPlayerSelectedTitle(event.getEntityPlayer());
+        TitleInfo currentTitle = TitlesAPI.getPlayerDisplayTitle(event.getEntityPlayer());
         event.setDisplayname(event.getDisplayname() + TitlesAPI.internalHandler.getFormattedTitle(currentTitle, true));
     }
 

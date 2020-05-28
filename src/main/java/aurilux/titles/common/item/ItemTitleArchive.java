@@ -19,6 +19,13 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 
 public class ItemTitleArchive extends Item {
+    public ItemTitleArchive() {
+        this.setCreativeTab(Titles.CREATIVE_TAB);
+        this.setMaxStackSize(1);
+        this.setRegistryName(Titles.MOD_ID, "titleArchive");
+        this.setTranslationKey("titleArchive");
+    }
+
     @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {

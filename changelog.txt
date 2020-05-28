@@ -1,3 +1,13 @@
+1.12.2 - 3.1.3
+Added es_es.lang (Thanks Alfkors!)
+Added a command to load advancement-based titles in existing worlds (/titles refresh)
+Added a config option to disable archive fragments being added to loot
+Removed the config option to change rarity colors. There was just no good way to make it update in chat as well.
+    *Note: this may comeback in 1.15, but we'll see
+
+1.12.2 - 3.1.2
+Fixed a client side crash. Not even sure what caused it to happen or how what I did fixed it
+
 1.12.2 - 3.1.1
 Fixed a server side crash caused by referencing a client only class
 

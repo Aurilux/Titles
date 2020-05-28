@@ -10,7 +10,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -19,31 +23,15 @@ import java.util.List;
 import java.util.Map;
 
 @Config(modid = Titles.MOD_ID, name = Titles.MOD_NAME + "/" + Titles.MOD_ID + "_config")
+@Mod.EventBusSubscriber(modid = Titles.MOD_ID)
 public class ModConfig {
-    @Config.Comment("The color for common titles")
-    public static ColorOnlyTextFormatting commonColor = ColorOnlyTextFormatting.WHITE;
-    @Config.Comment("The color for uncommon titles")
-    public static ColorOnlyTextFormatting uncommonColor = ColorOnlyTextFormatting.YELLOW;
-    @Config.Comment("The color for rare titles")
-    public static ColorOnlyTextFormatting rareColor = ColorOnlyTextFormatting.AQUA;
-    @Config.Comment("The color for unique (a.k.a. contributor) titles")
-    public static ColorOnlyTextFormatting uniqueColor = ColorOnlyTextFormatting.LIGHT_PURPLE;
+    @Config.Comment("Set to false if you do not want archive fragments to be added to loot")
+    public static boolean addFragmentsToLoot = true;
 
-    public enum ColorOnlyTextFormatting {
-        //Lighter Colors
-        AQUA(TextFormatting.AQUA),
-        BLUE(TextFormatting.BLUE),
-        GOLD(TextFormatting.GOLD),
-        GRAY(TextFormatting.GRAY),
-        GREEN(TextFormatting.GREEN),
-        LIGHT_PURPLE(TextFormatting.LIGHT_PURPLE),
-        RED(TextFormatting.RED),
-        YELLOW(TextFormatting.YELLOW),
-        WHITE(TextFormatting.WHITE);
-
-        public TextFormatting textFormatting;
-        ColorOnlyTextFormatting(TextFormatting textFormatting) {
-            this.textFormatting = textFormatting;
+    @SubscribeEvent
+    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.getModID().equals(Titles.MOD_ID)) {
+            ConfigManager.sync(Titles.MOD_ID, Config.Type.INSTANCE);
         }
     }
 
@@ -91,7 +79,7 @@ public class ModConfig {
                 jsonObject = new JsonParser().parse(new FileReader(titleFile)).getAsJsonObject();
             }
             catch (IOException | IllegalArgumentException e) {
-                Titles.console("Unable to load titles. Either the file doesn't exist or the format is wrong.");
+                Titles.LOGGER.warn("Unable to load titles. Either the file doesn't exist or the format is wrong.");
             }
             finally {
                 if (jsonObject != null) {

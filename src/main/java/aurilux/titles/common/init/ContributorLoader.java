@@ -58,7 +58,7 @@ public final class ContributorLoader {
                 load(props);
             }
             catch (IOException e) {
-                Titles.console("Unable to load contributors list. Most likely you're offline or github is down.");
+                Titles.LOGGER.warn("Unable to load contributors list. Most likely you're offline or github is down.");
             }
         }
     }

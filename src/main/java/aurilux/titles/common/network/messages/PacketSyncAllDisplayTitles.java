@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -19,29 +18,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PacketSyncTitleDataOnLogin implements IMessage {
+public class PacketSyncAllDisplayTitles implements IMessage {
     private final Map<UUID, String> playerSelectedTitles = new HashMap<>();
-    private NBTTagCompound comp;
 
-    public PacketSyncTitleDataOnLogin() {}
+    public PacketSyncAllDisplayTitles() {}
 
-    public PacketSyncTitleDataOnLogin(EntityPlayer player) {
-        //the player's personal data
-        this.comp = TitlesAPI.getTitlesCap(player).serializeNBT();
-
+    public PacketSyncAllDisplayTitles(EntityPlayer player) {
         //the selected titles of all other players
         PlayerList playerList = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
         for (EntityPlayerMP temp : playerList.getPlayers()) {
             if (temp.getUniqueID() != player.getUniqueID()) {
-                playerSelectedTitles.put(temp.getUniqueID(), TitlesAPI.getPlayerSelectedTitle(temp).getKey());
+                playerSelectedTitles.put(temp.getUniqueID(), TitlesAPI.getPlayerDisplayTitle(temp).getKey());
             }
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeTag(buf, comp);
-
         buf.writeInt(playerSelectedTitles.entrySet().size());
         for (Map.Entry<UUID, String> entry : playerSelectedTitles.entrySet()) {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().toString());
@@ -51,8 +44,6 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        comp = ByteBufUtils.readTag(buf);
-
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
             playerSelectedTitles.put(
@@ -61,18 +52,19 @@ public class PacketSyncTitleDataOnLogin implements IMessage {
         }
     }
 
-    public static class Handler implements IMessageHandler<PacketSyncTitleDataOnLogin, IMessage> {
+    public static class HandlerClient implements IMessageHandler<PacketSyncAllDisplayTitles, IMessage> {
         @Override
-        public IMessage onMessage(PacketSyncTitleDataOnLogin message, MessageContext ctx) {
+        public IMessage onMessage(PacketSyncAllDisplayTitles message, MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    TitlesAPI.getTitlesCap(Minecraft.getMinecraft().player).deserializeNBT(message.comp);
-
                     World world = FMLClientHandler.instance().getWorldClient();
                     for (Map.Entry<UUID, String> entry : message.playerSelectedTitles.entrySet()) {
                         EntityPlayer player = world.getPlayerEntityByUUID(entry.getKey());
-                        TitlesAPI.setPlayerSelectedTitle(player, TitlesAPI.getTitleFromKey(entry.getValue()));
+                        if (player != null) {
+                            TitlesAPI.setPlayerDisplayTitle(player, TitlesAPI.getTitleFromKey(entry.getValue()));
+                            player.refreshDisplayName();
+                        }
                     }
                 }
             });

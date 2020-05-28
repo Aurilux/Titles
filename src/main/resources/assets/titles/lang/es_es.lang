@@ -1,0 +1,97 @@
+# Configuration (+Keybindings)
+keybind.titles.openTitleSelection=Open Title Selection Screen
+
+# GUI (+Container)
+gui.titles.cancel=Cancelar
+gui.titles.confirm=Confirmar
+gui.titles.random=Aleatorio
+gui.titles.none=Ninguno
+gui.titles.purchase=Comprar
+gui.titles.close=Cerrar
+gui.titles.titleselection.empty=Desbloquea logros para conseguir titulos
+gui.titles.titlearchive.empty=Has comprado todos los titulos disponibles
+
+# Commands
+commands.titles.usage=/titles <command>
+
+# Entities
+
+# Items
+itemGroup.titles=Titulos
+item.titleArchive.name=Archivo de Titulos
+item.archiveFragment.name=Fragmento de Archivo
+
+# Blocks (+Tile Entities)
+
+# Misc
+chat.title.add=%s has unlocked the title (%s)
+titles.modid=Titles
+
+# Advancements
+advancement.titles.root.desc=Alardea de tus Hazañas
+advancement.titles.spelunker=¿Cuanto Puedes Bajar?
+advancement.titles.spelunker.desc=Llega mas Bajo de y: 20
+advancement.titles.chicken_chaser=¿Persigues Gallinas?
+advancement.titles.chicken_chaser.desc=Mata una Gallina
+advancement.titles.captain=Ahora tu eres el Capitan
+advancement.titles.captain.desc=Montate en un Barco
+advancement.titles.opulent=El Uno Porciento
+advancement.titles.opulent.desc=Construye una Base de Faro entera de Bloques de Diamante
+advancement.titles.melon_lord=MWHAHAHA!
+advancement.titles.melon_lord.desc=Equipate una Calabaza Tallada como si fuera un Casco
+
+# Titles
+#titles
+title.titles.spelunker=el Espeleologo
+title.titles.chicken_chaser=el Seguidor de Gallinas
+title.titles.captain=el Capitan
+title.titles.opulent=el Opulento
+title.titles.melon_lord=el Señor Melon
+
+#story
+title.minecraft.story.root=el Artesano
+title.minecraft.story.mine_stone=el Neandertal
+title.minecraft.story.obtain_armor=el Armero
+title.minecraft.story.iron_tools=el Minero
+title.minecraft.story.deflect_arrow=el Portador de Escudos
+title.minecraft.story.enter_the_nether=el Caminante del Infierno
+title.minecraft.story.enchant_item=el Encantador
+title.minecraft.story.cure_zombie_villager=el Purificador
+title.minecraft.story.enter_the_end=el Cruzadimensiones
+
+#husbandry
+title.minecraft.husbandry.root=el Granjero
+title.minecraft.husbandry.breed_an_animal=el Susurrador de Animales
+title.minecraft.husbandry.tame_an_animal=el Amante de los Animales
+title.minecraft.husbandry.bred_all_animals=el Casamentero
+title.minecraft.husbandry.balanced_diet=el Entendido
+title.minecraft.husbandry.break_diamond_hoe=el Agricultor
+
+#adventure
+title.minecraft.adventure.root=el Aventurero
+title.minecraft.adventure.kill_a_mob=el Cazador
+title.minecraft.adventure.trade=el Comerciante
+title.minecraft.adventure.shoot_arrow=el Arquero
+title.minecraft.adventure.kill_all_mobs=el Cazador de Trofeos
+title.minecraft.adventure.totem_of_undying=el Eterno
+title.minecraft.adventure.summon_iron_golem=el Samaritano
+title.minecraft.adventure.adventuring_time=el Caminante
+title.minecraft.adventure.sniper_duel=el Francotirador
+
+#nether
+title.minecraft.nether.fast_travel=el Saltaportales
+title.minecraft.nether.return_to_sender=el Mensajero
+title.minecraft.nether.uneasy_alliance=el Traidor
+title.minecraft.nether.brew_potion=el Cervecero
+title.minecraft.nether.all_potions=el Alquimista
+title.minecraft.nether.all_effects=el Abrumado
+title.minecraft.nether.create_full_beacon=el Arquitecto
+
+#end
+title.minecraft.end.kill_dragon=el Matadragones
+title.minecraft.end.dragon_egg=el Ladron de Huevos
+title.minecraft.end.enter_end_gateway=el Caminante del Vacio
+title.minecraft.end.respawn_dragon=el Revividor
+title.minecraft.end.dragon_breath=el Antiradiactivo
+title.minecraft.end.elytra=el Año Luz
+title.minecraft.end.levitate=el Suspendido

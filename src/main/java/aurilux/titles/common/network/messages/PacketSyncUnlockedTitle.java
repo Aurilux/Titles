@@ -47,8 +47,7 @@ public class PacketSyncUnlockedTitle implements IMessage {
             ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
                 @Override
                 public void run() {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
-                    TitlesAPI.addTitleToPlayer(player, message.titleKey);
+                    TitlesAPI.addTitleToPlayer(ctx.getServerHandler().player, message.titleKey);
                 }
             });
             return null;
