@@ -55,6 +55,7 @@ public class CommonEventHandler {
 
     //I have to have the full package name for PlayerEvent.NameFormat here because otherwise it conflicts with
     //net.minecraftforge.fml.common.gameevent.PlayerEvent.
+    @SubscribeEvent
     public static void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
         TitleInfo currentTitle = TitlesAPI.getPlayerDisplayTitle(event.getEntityPlayer());
         event.setDisplayname(event.getDisplayname() + TitlesAPI.internalHandler.getFormattedTitle(currentTitle, true));
