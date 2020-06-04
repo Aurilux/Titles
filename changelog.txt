@@ -1,3 +1,6 @@
+1.12.2 - 3.1.5
+Renamed es_es.lang to es_ES.lang so Minecraft would recognize it
+
 1.12.2 - 3.1.4
 Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.
 
