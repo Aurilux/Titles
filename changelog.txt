@@ -1,3 +1,6 @@
+1.12.2 - 3.1.4
+Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.
+
 1.12.2 - 3.1.3
 Added es_es.lang (Thanks Alfkors!)
 Added a command to load advancement-based titles in existing worlds (/titles refresh)

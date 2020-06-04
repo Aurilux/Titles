@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 public class Titles {
     public static final String MOD_ID = "titles";
     public static final String MOD_NAME = "Titles";
-    public static final String MOD_VERSION = "3.1.3";
+    public static final String MOD_VERSION = "3.1.4";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID.toUpperCase());
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MOD_ID) {
         @Override
