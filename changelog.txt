@@ -1,3 +1,6 @@
+1.12.2 - 3.1.6
+Improved pattern matching to prevent errors with mods with weird lang file entries for advancements.
+
 1.12.2 - 3.1.5
 Renamed es_es.lang to es_ES.lang so Minecraft would recognize it
 

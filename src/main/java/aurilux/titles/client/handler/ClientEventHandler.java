@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Titles.MOD_ID)
@@ -45,13 +47,13 @@ public class ClientEventHandler {
                         .filter(tc -> tc instanceof TextComponentTranslation)
                         .map(tc -> ((TextComponentTranslation) tc).getKey())
                         .map(key -> {
+                            key = key.replaceAll("[/W:]", ".");
                             if (key.startsWith("advancement")) {
                                 key = key.substring(key.indexOf(".") + 1);
                             }
-                            if (key.endsWith(".title")) {
+                            if (key.endsWith(".title")) { // This is mostly just for vanilla minecraft's lang entries
                                 key = key.substring(0, key.indexOf(".title"));
                             }
-                            key = key.replace(".", "/");
                             return key;
                         })
                         .findFirst().ifPresent(advancementKey -> {
@@ -61,11 +63,11 @@ public class ClientEventHandler {
                                     .map(ModContainer::getModId)
                                     .filter(id -> !(id.equals("forge") || id.equals("FML") || id.equals("mcp")))
                                     .forEach(id -> {
-                                        String potentialModid = advancementKey.substring(0, advancementKey.indexOf("/"));
-                                        // First check if the next section of the advancement key string is a mod id...
                                         String titleKey;
-                                        if (potentialModid.equals(id)) {
-                                            titleKey = advancementKey.replaceFirst("/", ":");
+                                        // First check if the next section of the advancement key string is a mod id...
+                                        int dotIndex = advancementKey.indexOf(".");
+                                        if (dotIndex != -1 && advancementKey.substring(0, dotIndex).equals(id)) {
+                                            titleKey = advancementKey.replaceFirst(".", ":");
                                         }
                                         else { // ...if not, add the mod id to it and see if that works
                                             titleKey = id + ":" + advancementKey;
@@ -73,8 +75,8 @@ public class ClientEventHandler {
 
                                         TitleInfo title = TitlesAPI.getTitleFromKey(titleKey);
                                         if (!title.equals(TitleInfo.NULL_TITLE)) {
-                                            component.appendText(" and earned the title " +
-                                                    TitlesAPI.internalHandler.getFormattedTitle(title));
+                                            component.appendText(" and earned the title [" +
+                                                    TitlesAPI.internalHandler.getFormattedTitle(title) + "]");
                                             event.setMessage(component);
                                         }
                                     });
