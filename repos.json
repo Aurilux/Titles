@@ -1,10 +1,6 @@
 {
   "Progwml6": {
     "url": "https://dvs1.progwml6.com/files/maven/",
-    "lib": "mezz.jei:jei-1.15.2:6.0.0.2"
-  },
-  "BlameJared/Vazkii": {
-    "url": "https://maven.blamejared.com/",
-    "lib": "vazkii.patchouli:Patchouli:1.15.2-1.2-32.160"
+    "lib": "mezz.jei:jei-1.16.4:7.6.0.58"
   }
 }

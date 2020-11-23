@@ -1,20 +1,25 @@
 package aurilux.titles.client.gui;
 
-import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.api.capability.TitlesCapability;
+import aurilux.titles.client.Keybinds;
 import aurilux.titles.client.gui.button.GuiButtonTitle;
 import aurilux.titles.client.handler.ClientEventHandler;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -48,26 +53,26 @@ public class GuiTitleSelection extends Screen {
     protected int buttonSecondRowStart;
 
     protected PlayerEntity player;
-    protected ITitles playerCapability;
-    protected TitleInfo temporaryTitle;
-    protected List<TitleInfo> titlesList;
+    protected TitlesCapability playerCapability;
+    protected Title temporaryTitle;
+    protected List<Title> titlesList;
 
-    public GuiTitleSelection(PlayerEntity player, ITitles cap) {
+    public GuiTitleSelection(PlayerEntity player, TitlesCapability cap) {
         super(new StringTextComponent("Title Selection"));
         this.player = player;
         playerCapability = cap;
-        temporaryTitle = playerCapability.getSelectedTitle();
+        temporaryTitle = playerCapability.getDisplayTitle();
         titlesList = getTitlesList();
     }
 
-    public List<TitleInfo> getTitlesList() {
-        List<TitleInfo> temp = new ArrayList<>(playerCapability.getUnlockedTitles());
+    public List<Title> getTitlesList() {
+        List<Title> temp = new ArrayList<>(playerCapability.getUnlockedTitles());
         String playerName = player.getName().getString();
-        TitleInfo possibleContributor = TitleRegistry.INSTANCE.getTitle(playerName);
+        Title possibleContributor = TitleRegistry.INSTANCE.getTitle(playerName);
         if (!possibleContributor.isNull()) {
             temp.add(possibleContributor);
         }
-        Collections.sort(temp, new TitleInfo.RarityComparator());
+        Collections.sort(temp, new Title.RarityComparator());
         return temp;
     }
 
@@ -88,26 +93,26 @@ public class GuiTitleSelection extends Screen {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float f) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float f) {
         //renders the background tint
-        this.renderBackground();
+        this.renderBackground(matrixStack);
         RenderSystem.pushMatrix();
         RenderSystem.color3f(1.0F, 1.0F, 1.0F);
         this.getMinecraft().getTextureManager().bindTexture(bgTexture);
-        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
         RenderSystem.popMatrix();
-        super.render(mouseX, mouseY, f);
+        super.render(matrixStack, mouseX, mouseY, f);
 
         //Draw the player's name with their selected title
         String titledPlayerName = player.getName().getString();
         titledPlayerName += TitlesAPI.instance().getFormattedTitle(temporaryTitle, true);
-        this.drawCenteredString(this.font, titledPlayerName, this.width / 2, guiTop + 11, 0xFFFFFF);
+        drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 11, 0xFFFFFF);
 
         //Draw the page counter
-        this.drawCenteredString(this.font, (page + 1) + "/" + (maxPages + 1), this.width / 2, guiTop + 183, 0xFFFFFF);
+        drawCenteredString(matrixStack, this.font, (page + 1) + "/" + (maxPages + 1), this.width / 2, guiTop + 183, 0xFFFFFF);
 
         if (titlesList.size() == 0) {
-            this.drawCenteredString(this.font, getEmptyMessage(), this.width / 2, guiTop + 105, 0xFFFFFF);
+            drawCenteredString(matrixStack, this.font, getEmptyMessage(), this.width / 2, guiTop + 105, 0xFFFFFF);
         }
     }
 
@@ -129,7 +134,7 @@ public class GuiTitleSelection extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (ClientEventHandler.openTitleSelection.getKeyBinding().matchesKey(keyCode, scanCode)
+        if (Keybinds.openTitleSelection.getKeyBinding().matchesKey(keyCode, scanCode)
                 || getMinecraft().gameSettings.keyBindInventory.matchesKey(keyCode, scanCode)) {
             exitScreen(false);
             return true;
@@ -144,7 +149,7 @@ public class GuiTitleSelection extends Screen {
 
         //Add all of the displayed title buttons
         maxIndex = Math.min((page + 1) * MAX_PER_PAGE, titlesList.size());
-        List<TitleInfo> titlesToDisplay = titlesList.subList(page * MAX_PER_PAGE, maxIndex);
+        List<Title> titlesToDisplay = titlesList.subList(page * MAX_PER_PAGE, maxIndex);
         for (int i = 0; i < titlesToDisplay.size(); i++) {
             int col = i % NUM_COLS;
             int row = i / NUM_COLS;
@@ -156,14 +161,14 @@ public class GuiTitleSelection extends Screen {
         addChangeButtons();
 
         //Add the navigation buttons
-        this.addButton(new Button(leftOffset, buttonSecondRowStart, 20, buttonHeight, "<<", button -> setPage(0)));
-        this.addButton(new Button(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight, "<", button -> setPage(page--)));
+        this.addButton(new Button(leftOffset, buttonSecondRowStart, 20, buttonHeight, ITextComponent.getTextComponentOrEmpty("<<"), button -> setPage(0)));
+        this.addButton(new Button(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight, ITextComponent.getTextComponentOrEmpty("<"), button -> setPage(page--)));
         if (page == 0) {
             buttons.get(buttons.size() - 2).active = false;
             buttons.get(buttons.size() - 1).active = false;
         }
-        this.addButton(new Button(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight, ">", button -> setPage(page++)));
-        this.addButton(new Button(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight, ">>", button -> setPage(MAX_PER_PAGE)));
+        this.addButton(new Button(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight, ITextComponent.getTextComponentOrEmpty(">"), button -> setPage(page++)));
+        this.addButton(new Button(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight, ITextComponent.getTextComponentOrEmpty(">>"), button -> setPage(MAX_PER_PAGE)));
         if (maxIndex == titlesList.size()) {
             buttons.get(buttons.size() - 2).active = false;
             buttons.get(buttons.size() - 1).active = false;
@@ -172,13 +177,13 @@ public class GuiTitleSelection extends Screen {
 
     protected void addChangeButtons() {
         this.addButton(new Button(leftOffset, buttonFirstRowStart, 60, buttonHeight,
-                I18n.format("gui.titles.random"), button -> chooseRandomTitle()));
+                new TranslationTextComponent("gui.titles.random"), button -> chooseRandomTitle()));
         this.addButton(new Button(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
-                I18n.format("gui.titles.none"), button -> temporaryTitle = TitleInfo.NULL_TITLE));
+                new TranslationTextComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
         this.addButton(new Button(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
-                I18n.format("gui.titles.cancel"), button -> exitScreen(false)));
+                new TranslationTextComponent("gui.titles.cancel"), button -> exitScreen(false)));
         this.addButton(new Button(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
-                I18n.format("gui.titles.confirm"), button -> exitScreen(true)));
+                new TranslationTextComponent("gui.titles.confirm"), button -> exitScreen(true)));
     }
 
     private void titleButtonPressed(Button button) {
@@ -191,7 +196,7 @@ public class GuiTitleSelection extends Screen {
 
     private void chooseRandomTitle() {
         if (titlesList.size() <= 0) {
-            temporaryTitle = TitleInfo.NULL_TITLE;
+            temporaryTitle = Title.NULL_TITLE;
         }
         else {
             temporaryTitle = titlesList.get(player.world.rand.nextInt(titlesList.size()));

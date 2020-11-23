@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 buildscript {
@@ -12,7 +13,6 @@ buildscript {
 }
 
 plugins {
-   //id "com.matthewprenger.cursegradle" version "1.2.0"
     id "java-library"
 }
 
@@ -21,20 +21,19 @@ plugins {
 apply plugin: "net.minecraftforge.gradle"
 apply plugin: "idea"
 
-idea {
-    module {
-        for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out"]) {
-            excludeDirs += file(excludeDirName)
-        }
+idea.module {
+    for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out", "logs"]) {
+        excludeDirs += file(excludeDirName)
     }
 }
 
-//NOTE: build.gradle automatically loads gradle.properties, which holds variables that change between different mods
+//NOTE: build.gradle automatically loads gradle.properties, which holds variables that change between different mods,
+//such as the forge version and mod properties (name, mod id, etc)
 
 //Basic mod setup
-group = mod_group
+group = "aurilux." + mod_id
 archivesBaseName = mod_name
-version = mod_version
+version = minecraft_version + "-" + mod_version
 
 //Uncomment if using Eclipse so eclipse task generates correctly.
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
@@ -54,9 +53,6 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:" + minecraft_version + "-" + forge_version
 
-    //compile files("../ArdentCore/build/libs")
-    compile project(":ArdentCore")
-
     repos.each { n, l ->
         compileOnly fg.deobf(l.lib + ":api")
         runtimeOnly fg.deobf(l.lib)
@@ -69,15 +65,11 @@ minecraft {
 
     runs {
         client = {
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'forge.logging.console.level': 'debug'
             properties 'fml.earlyprogresswindow': 'false'
 
-            if (project.hasProperty('mc_uuid')) {
-                args '--uuid', project.getProperty('mc_uuid')
-            }
-            if (project.hasProperty('mc_username')) {
-                args '--username', project.getProperty('mc_username')
-            }
             workingDirectory project.file('run').canonicalPath
             mods {
                 titles {
@@ -86,6 +78,8 @@ minecraft {
             }
         }
         server = {
+            // Recommended logging data for a userdev environment
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
             mods {
@@ -101,12 +95,29 @@ jar {
     manifest {
         attributes([
                 "Specification-Title": mod_id,
-                "Specification-Vendor": mod_id,
+                "Specification-Vendor": "Aurilux",
                 "Specification-Version": "1",
                 "Implementation-Title": project.name,
                 "Implementation-Version": mod_version,
-                "Implementation-Vendor" : mod_id,
+                "Implementation-Vendor" : "Aurilux",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
+
+task updateJson {
+    doLast {
+        def updateJsonFile = file('update.json')
+        def updateJson = new JsonSlurper().parse(updateJsonFile) as Map
+
+        updateJson."${minecraft_version}"."${mod_version}" = "See https://www.curseforge.com/minecraft/mc-mods/${mod_id}/files for detailed information."
+
+        // Update promos
+        updateJson.promos."${minecraft_version}-latest" = "${mod_version}"
+        updateJson.promos."${minecraft_version}-recommended" = "${mod_version}"
+
+        updateJsonFile.write(JsonOutput.prettyPrint(JsonOutput.toJson(updateJson)))
+    }
+}
+
+//build.dependsOn updateJson

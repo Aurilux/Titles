@@ -1,7 +1,7 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.common.Titles;
+import aurilux.titles.common.TitlesMod;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.advancements.PlayerAdvancements;
@@ -22,7 +22,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Titles.MOD_ID)
+@Mod.EventBusSubscriber(modid = TitlesMod.ID)
 public class AdvancementHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
@@ -117,7 +117,7 @@ public class AdvancementHandler {
     private static void grantCriterion(ServerPlayerEntity player, String advancementId) {
         PlayerAdvancements advancements = player.getAdvancements();
         AdvancementManager manager = player.getServerWorld().getServer().getAdvancementManager();
-        Advancement advancement = manager.getAdvancement(new ResourceLocation(Titles.MOD_ID, advancementId));
+        Advancement advancement = manager.getAdvancement(new ResourceLocation(TitlesMod.ID, advancementId));
         if(advancement != null) {
             advancements.grantCriterion(advancement, "code_triggered");
         }

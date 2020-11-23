@@ -1,37 +1,38 @@
 package aurilux.titles.common.item;
 
-import aurilux.titles.common.Titles;
+import aurilux.titles.common.TitlesMod;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.item.Rarity;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod.EventBusSubscriber(modid = Titles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-@ObjectHolder(Titles.MOD_ID)
 public class ModItems {
-    @ObjectHolder(Names.ARCHIVE)
-    public static Item titleArchive;
-    @ObjectHolder(Names.FRAGMENT)
-    public static Item archiveFragment;
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesMod.ID);
 
-    public static <V extends IForgeRegistryEntry<V>> void register(IForgeRegistry<V> reg, IForgeRegistryEntry<V> thing, String name) {
-        reg.register(thing.setRegistryName(new ResourceLocation(Titles.MOD_ID, name)));
+    public static final RegistryObject<ItemTitleFragment> TITLE_FRAGMENT = ITEMS.register("title_fragment", () ->
+            new ItemTitleFragment(quarterStack()));
+    public static final RegistryObject<ItemTitleScroll> TITLE_SCROLL_COMMON = ITEMS.register("title_scroll_common",() ->
+            new ItemTitleScroll(unstackable().rarity(Rarity.COMMON)));
+    public static final RegistryObject<ItemTitleScroll> TITLE_SCROLL_UNCOMMON = ITEMS.register("title_scroll_uncommon", () ->
+            new ItemTitleScroll(unstackable().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<ItemTitleScroll> TITLE_SCROLL_RARE = ITEMS.register("title_scroll_rare", () ->
+            new ItemTitleScroll(unstackable().rarity(Rarity.RARE)));
+
+    public static void register(IEventBus eventBus) {
+        ITEMS.register(eventBus);
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
-        IForgeRegistry<Item> reg = event.getRegistry();
-
-        register(reg, new ItemTitleArchive(), Names.ARCHIVE);
-        register(reg, new ItemArchiveFragment(), Names.FRAGMENT);
+    private static Item.Properties baseProp() {
+        return new Item.Properties().group(TitlesMod.itemGroup);
     }
 
-    public final class Names {
-        public static final String ARCHIVE = "titles_archive";
-        public static final String FRAGMENT = "archive_fragment";
+    private static Item.Properties unstackable() {
+        return baseProp().maxStackSize(1);
+    }
+
+    private static Item.Properties quarterStack() {
+        return baseProp().maxStackSize(16);
     }
 }

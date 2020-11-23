@@ -1,8 +1,9 @@
 package aurilux.titles.common.network.messages;
 
 
-import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -31,15 +32,11 @@ public class PacketSyncUnlockedTitle {
         ctx.get().enqueueWork(new Runnable() {
             @Override
             public void run() {
-                TitleInfo title = TitleRegistry.INSTANCE.getTitle(message.titleKey);
-                if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                    ClientPlayerEntity player = Minecraft.getInstance().player;
-                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.add(title));
-                }
-                else {
-                    ServerPlayerEntity player = ctx.get().getSender();
-                    TitlesAPI.instance().getCapability(player).ifPresent(c -> c.add(title));
-                }
+                ClientPlayerEntity player = Minecraft.getInstance().player;
+                TitlesAPI.instance().getCapability(player).ifPresent(c -> {
+                        c.add(TitleRegistry.INSTANCE.getTitle(message.titleKey));
+                        TitlesMod.LOG.debug("Synced unlocked title - CLIENT - " + c.serializeNBT());
+                });
             }
         });
         ctx.get().setPacketHandled(true);

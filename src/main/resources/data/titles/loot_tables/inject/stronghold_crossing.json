@@ -5,7 +5,7 @@
     "entries": [
       {
         "type": "item",
-        "name": "titles:archive_fragment",
+        "name": "titles:title_fragment",
         "weight": 60
       },
       {

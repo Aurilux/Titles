@@ -1,10 +1,10 @@
 {
   "display": {
     "icon": {
-      "item": "titles:titles_archive"
+      "item": "titles:title_scroll_common"
     },
     "title": {
-      "translate": "titles.modid"
+      "translate": "itemGroup.titles"
     },
     "description": {
       "translate": "advancement.titles.root.desc"

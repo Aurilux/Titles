@@ -1,9 +1,7 @@
 package aurilux.titles.common.network;
 
-import aurilux.ardentcore.common.util.Debug;
-import aurilux.titles.common.Titles;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.messages.PacketSendDataOnLogin;
-import aurilux.titles.common.network.messages.PacketSyncFragmentCount;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -13,27 +11,26 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+import java.util.Optional;
+
 public class PacketHandler {
     private static String protocol = "1";
-    private static SimpleChannel CHANNEL;
+    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(TitlesMod.ID, "main"),
+            () -> protocol,
+            protocol::equals,
+            protocol::equals
+    );
 
     public static void init() {
-        CHANNEL = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(Titles.MOD_ID, "main"))
-                .networkProtocolVersion(() -> protocol)
-                .clientAcceptedVersions(protocol::equals)
-                .serverAcceptedVersions(protocol::equals)
-                .simpleChannel();
-
         int id = 0;
         CHANNEL.registerMessage(id++, PacketSendDataOnLogin.class, PacketSendDataOnLogin::encode,
-                PacketSendDataOnLogin::decode, PacketSendDataOnLogin::handle);
+                PacketSendDataOnLogin::decode, PacketSendDataOnLogin::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
+                PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+
         CHANNEL.registerMessage(id++, PacketSyncSelectedTitle.class, PacketSyncSelectedTitle::encode,
                 PacketSyncSelectedTitle::decode, PacketSyncSelectedTitle::handle);
-        CHANNEL.registerMessage(id++, PacketSyncFragmentCount.class, PacketSyncFragmentCount::encode,
-                PacketSyncFragmentCount::decode, PacketSyncFragmentCount::handle);
-        CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
-                PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle);
     }
 
     public static void sendToServer(Object msg) {
@@ -42,13 +39,11 @@ public class PacketHandler {
 
     public static void sendToAllExcept(Object msg, ServerPlayerEntity ignoredPlayer) {
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            if (ignoredPlayer != null && player != ignoredPlayer) {
+            if (ignoredPlayer == null || player != ignoredPlayer) {
                 CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
             }
             else {
-                if (ignoredPlayer != null) {
-                    Debug.LOGGER.debug("Ignored Player: " + ignoredPlayer.getDisplayName().getString());
-                }
+                TitlesMod.LOG.debug("Ignored Player: " + ignoredPlayer.getDisplayName().getString());
             }
         }
     }

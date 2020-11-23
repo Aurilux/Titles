@@ -1,18 +1,19 @@
 package aurilux.titles.client.gui.button;
 
-import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ITextComponent;
 
 public class GuiButtonTitle extends Button {
-    private TitleInfo titleInfo;
+    private Title title;
 
-    public GuiButtonTitle(int x, int y, int width, int height, IPressable action, TitleInfo t) {
-        super(x, y, width, height, TitlesAPI.instance().getFormattedTitle(t, false), action);
-        titleInfo = t;
+    public GuiButtonTitle(int x, int y, int width, int height, IPressable action, Title t) {
+        super(x, y, width, height, ITextComponent.getTextComponentOrEmpty(TitlesAPI.instance().getFormattedTitle(t, false)), action);
+        title = t;
     }
 
-    public TitleInfo getTitle() {
-        return titleInfo;
+    public Title getTitle() {
+        return title;
     }
 }

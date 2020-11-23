@@ -1,5 +1,6 @@
 package aurilux.titles.common.network.messages;
 
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,23 +11,24 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PacketSendDataOnLogin {
-    private Map<UUID, String> playerSelectedTitles;
     private final CompoundNBT comp;
+    private Map<UUID, String> playerDisplayTitles;
 
-    public PacketSendDataOnLogin(CompoundNBT comp, Map<UUID, String> playerSelectedTitles) {
+    public PacketSendDataOnLogin(CompoundNBT comp, Map<UUID, String> playerDisplayTitles) {
         this.comp = comp;
-        this.playerSelectedTitles = playerSelectedTitles;
+        this.playerDisplayTitles = playerDisplayTitles;
     }
 
     public static void encode(PacketSendDataOnLogin msg, PacketBuffer buf) {
         buf.writeCompoundTag(msg.comp);
 
-        buf.writeInt(msg.playerSelectedTitles.entrySet().size());
-        for (Map.Entry<UUID, String> entry : msg.playerSelectedTitles.entrySet()) {
+        buf.writeInt(msg.playerDisplayTitles.entrySet().size());
+        for (Map.Entry<UUID, String> entry : msg.playerDisplayTitles.entrySet()) {
             buf.writeString(entry.getKey().toString());
             buf.writeString(entry.getValue());
         }
@@ -54,7 +56,7 @@ public class PacketSendDataOnLogin {
                     TitlesAPI.instance().getCapability(Minecraft.getInstance().player).ifPresent(cap -> cap.deserializeNBT(message.comp));
 
                     World world = Minecraft.getInstance().world;
-                    for (Map.Entry<UUID, String> entry : message.playerSelectedTitles.entrySet()) {
+                    for (Map.Entry<UUID, String> entry : message.playerDisplayTitles.entrySet()) {
                         PlayerEntity player = world.getPlayerByUuid(entry.getKey());
                         TitlesAPI.instance().setDisplayTitle(player, entry.getValue());
                     }

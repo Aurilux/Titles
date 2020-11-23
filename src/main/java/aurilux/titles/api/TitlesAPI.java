@@ -1,7 +1,8 @@
 package aurilux.titles.api;
 
-import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.api.capability.TitlesCapability;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.LazyValue;
 import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.LogManager;
@@ -20,17 +21,25 @@ public interface TitlesAPI {
         return INSTANCE.getValue();
     }
 
-    default void unlockTitle(PlayerEntity player, String titleKey) {
+    default void unlockTitle(ServerPlayerEntity player, String titleKey) {
     }
 
     default void setDisplayTitle(PlayerEntity player, String titleKey) {
     }
 
-    default LazyOptional<ITitles> getCapability(PlayerEntity player) {
+    default boolean titleExists(String titleId) {
+        return false;
+    }
+
+    default Title getTitle(String titleId) {
+        return Title.NULL_TITLE;
+    }
+
+    default LazyOptional<TitlesCapability> getCapability(PlayerEntity player) {
         return null;
     }
 
-    default String getFormattedTitle(TitleInfo title, boolean addComma) {
+    default String getFormattedTitle(Title title, boolean addComma) {
         return "";
     }
 }

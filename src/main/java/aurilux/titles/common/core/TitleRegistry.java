@@ -1,11 +1,12 @@
 package aurilux.titles.common.core;
 
-import aurilux.titles.api.TitleInfo;
-import aurilux.titles.common.Titles;
+import aurilux.titles.api.Title;
+import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.item.Rarity;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -16,47 +17,49 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class TitleRegistry {
     public static final TitleRegistry INSTANCE = new TitleRegistry();
 
-    private final Map<String, TitleInfo> titlesMap = new HashMap<>();
-    private final Map<String, TitleInfo> archiveTitles = new HashMap<>();
-    private final Map<String, TitleInfo> contributorTitles = new HashMap<>();
+    private final Map<String, Title> titlesMap = new HashMap<>();
+    private final Map<String, Title> lootTitles = new HashMap<>();
+
+    // I need two maps because contributor titles can be referenced by either a username or by title key
+    private final Map<String, Title> contributorTitlesByUsername = new HashMap<>();
+    private final Map<String, Title> contributorTitlesByTitleKey = new HashMap<>();
 
     private TitleRegistry() {}
 
-    public TitleInfo getTitle(String titleKey) {
+    public Title getTitle(String titleKey) {
         return titlesMap.getOrDefault(titleKey,
-                archiveTitles.getOrDefault(titleKey,
-                        contributorTitles.getOrDefault(titleKey,
-                                TitleInfo.NULL_TITLE)));
+               lootTitles.getOrDefault(titleKey,
+               contributorTitlesByUsername.getOrDefault(titleKey,
+               contributorTitlesByTitleKey.getOrDefault(titleKey,
+                       Title.NULL_TITLE))));
     }
 
-    public Map<String, TitleInfo> getTitlesMap() {
+    public Map<String, Title> getTitlesMap() {
         return titlesMap;
     }
 
-    public Map<String, TitleInfo> getArchiveTitles() {
-        return archiveTitles;
+    public Map<String, Title> getLootTitles() {
+        return lootTitles;
     }
 
     public void init() {
         new ThreadContributorLoader();
 
-        List<ModInfo> mods = ModList.get().getMods();
-        Map<ModInfo, String> foundTitles = new HashMap<>();
-
         //From each mod, find it's title data
-        mods.forEach(mod -> {
+        ModList.get().getMods().forEach(mod -> {
             String modId = mod.getModId();
-            //Minecraft and Forge will not have title data, so we ignore them
-            if (modId.equals("minecraft") || modId.equals("forge")) {
+            //Minecraft, Forge, and MCP will not have title data, so we ignore them
+            if (modId.equals("minecraft") || modId.equals("forge") || modId.equals("mcp")) {
                 return;
             }
 
-            String filePath = String.format("data/%s/%s", modId, Titles.MOD_ID);
+            String filePath = String.format("data/%s/%s", modId, TitlesMod.ID);
             Path modSource = mod.getOwningFile().getFile().getFilePath().resolve(filePath);
             if (Files.exists(modSource)) {
                 try {
@@ -65,52 +68,55 @@ public class TitleRegistry {
                         Path p = itr.next();
                         //Path objects inherently use the "\". We replace it with "/" so it's easier for us to work with
                         String pathString = p.toString().replaceAll("\\\\", "/");
-                        String fileName = pathString.substring(pathString.lastIndexOf(Titles.MOD_ID + "/"));
-                        if (pathString.endsWith(".json") && (modId.equals(Titles.MOD_ID) || modId.equals(fileName))) {
+                        String fileName = pathString.substring(pathString.lastIndexOf(TitlesMod.ID + "/"));
+                        // We add all the titles files from Titles because it includes minecraft and loot titles.
+                        // Other mods should only include titles for their own mods
+                        if (pathString.endsWith(".json") && (modId.equals(TitlesMod.ID) || modId.equals(fileName))) {
                             String assetPath = pathString.substring(pathString.indexOf("/data"));
-                            foundTitles.put(mod, assetPath);
+                            readTitlesFromFile(mod, assetPath);
                         }
                     }
                 }
                 catch (IOException ex) {
-                    Titles.LOGGER.warn("Unable to find title data for mod {}", modId);
+                    TitlesMod.LOG.warn("Unable to find title data for mod {}", modId);
                 }
             }
         });
+    }
 
-        //Load all the titles from the files we found
-        foundTitles.forEach((mod, file) -> {
-            Optional<? extends ModContainer> container = ModList.get().getModContainerById(mod.getModId());
+    private void readTitlesFromFile(ModInfo modInfo, String filePath) {
+        Optional<? extends ModContainer> container = ModList.get().getModContainerById(modInfo.getModId());
             container.ifPresent(c -> {
-                Class<?> ownerClass = c.getMod().getClass();
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(ownerClass.getResourceAsStream(file)));
-                    JsonObject titleData = new JsonParser().parse(reader).getAsJsonObject();
-                    if (titleData != null) {
-                        for (Map.Entry<String, JsonElement> entry : titleData.entrySet()) {
-                            TitleInfo.TitleRarity titleRarity = TitleInfo.TitleRarity.valueOf(entry.getKey().toUpperCase());
-                            //I reserve the UNIQUE title rarity for my contributors. This prevents people from being sneaky.
-                            if (!titleRarity.equals(TitleInfo.TitleRarity.UNIQUE)) {
-                                JsonArray titles = entry.getValue().getAsJsonArray();
-                                for (int i = 0; i < titles.size(); i++) {
-                                    String key = titles.get(i).getAsString();
-                                    TitleInfo newTitle = new TitleInfo(key, titleRarity);
-                                    if (file.equals("archive")) {
-                                        archiveTitles.put(key, newTitle);
-                                    }
-                                    else {
-                                        titlesMap.put(key, newTitle);
-                                    }
+            Class<?> ownerClass = c.getMod().getClass();
+            String fileName = Paths.get(filePath).getFileName().toString().split("[.]")[0];
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(ownerClass.getResourceAsStream(filePath)));
+                JsonObject titleData = new JsonParser().parse(reader).getAsJsonObject();
+                if (titleData != null) {
+                    for (Map.Entry<String, JsonElement> entry : titleData.entrySet()) {
+                        Rarity titleRarity = Rarity.valueOf(entry.getKey().toUpperCase());
+                        //I reserve the EPIC title rarity for my contributors. This prevents people from being sneaky.
+                        if (!titleRarity.equals(Rarity.EPIC)) {
+                            JsonArray titles = entry.getValue().getAsJsonArray();
+                            for (int i = 0; i < titles.size(); i++) {
+                                String key = ":" + titles.get(i).getAsString();
+                                if (fileName.equals("loot")) {
+                                    key = TitlesMod.ID + key;
+                                    lootTitles.put(key, new Title(key, titleRarity));
+                                }
+                                else {
+                                    // At this point the file name should be the same as the mod id
+                                    key = fileName + key;
+                                    titlesMap.put(key, new Title(key, titleRarity));
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception ex) {
-                    Titles.LOGGER.error("Failed to load titles defined by mod {}, skipping",
-                            c.getModInfo().getModId(), ex);
-                }
-            });
+            }
+            catch (Exception ex) {
+                TitlesMod.LOG.error("Failed to load titles defined by mod {}, skipping", c.getModId(), ex);
+            }
         });
     }
 
@@ -131,7 +137,7 @@ public class TitleRegistry {
                 load(props);
             }
             catch (IOException e) {
-                Titles.LOGGER.warn("Unable to load contributors list. Most likely you're offline or github is down.");
+                TitlesMod.LOG.warn("Unable to load contributors list. Most likely you're offline or github is down.");
             }
         }
     }
@@ -139,7 +145,8 @@ public class TitleRegistry {
     private void load(Properties props) {
         for(String key : props.stringPropertyNames()) {
             String value = props.getProperty(key);
-            contributorTitles.put(key, new TitleInfo(value, TitleInfo.TitleRarity.UNIQUE));
+            contributorTitlesByUsername.put(key, new Title(value, Rarity.EPIC));
+            contributorTitlesByTitleKey.put(value, new Title(value, Rarity.EPIC));
         }
     }
 }

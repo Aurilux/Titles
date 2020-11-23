@@ -6,6 +6,7 @@
 libs/
 build/
 run/
+logs/
 
 # Entirely Ignored Extensions and Directories #
 ######################
