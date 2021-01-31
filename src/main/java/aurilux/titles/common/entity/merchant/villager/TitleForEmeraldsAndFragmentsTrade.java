@@ -1,4 +1,4 @@
-package aurilux.titles.common.core;
+package aurilux.titles.common.entity.merchant.villager;
 
 import aurilux.titles.common.item.ModItems;
 import net.minecraft.entity.Entity;

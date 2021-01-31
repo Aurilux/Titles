@@ -1,7 +1,9 @@
 package aurilux.titles.api;
 
-import aurilux.titles.common.TitlesMod;
+import net.minecraft.client.resources.ClientLanguageMap;
 import net.minecraft.item.Rarity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Comparator;
 
@@ -17,9 +19,9 @@ public class Title {
     public Title(String key, Rarity rarity) {
         this.key = key;
         int colonIndex = key.indexOf(":");
-        // This is used for NULL_TITLE and for contributor titles as neither needs unique translation
+        // This is used for NULL_TITLE, loot, and contributor titles as neither needs unique translations
         if (colonIndex == -1) {
-            modid = TitlesMod.ID;
+            modid = TitlesAPI.MOD_ID;
             langKey = key;
         }
         else {
@@ -45,6 +47,19 @@ public class Title {
         return this.equals(NULL_TITLE);
     }
 
+    public ITextComponent getComponent(boolean isMasculine) {
+        String modifiedLangKey = getLangKey();
+        if (!isMasculine && ClientLanguageMap.getInstance().func_230506_b_(getLangKey() + ".f")) {
+            modifiedLangKey += ".f";
+        }
+        return new TranslationTextComponent(modifiedLangKey).mergeStyle(getRarity().color);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(%s:%s, %s)", getModid(), getKey(), getRarity());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Title)) {
@@ -52,13 +67,8 @@ public class Title {
         }
         else {
             Title temp = (Title) o;
-            return this.key.equals(temp.key) && this.rarity.equals(temp.rarity);
+            return getKey().equals(temp.key) && getRarity().equals(temp.rarity);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "(" + this.modid + ":" + this.key + ", " + this.rarity.toString() + ")";
     }
 
     public static class RarityComparator implements Comparator<Title> {
@@ -71,13 +81,6 @@ public class Title {
                 return -1;
             }
             return 0;
-        }
-    }
-
-    public static class ModComparator implements Comparator<Title> {
-        @Override
-        public int compare(Title o1, Title o2) {
-            return o1.modid.compareTo(o2.modid);
         }
     }
 }

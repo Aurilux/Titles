@@ -11,27 +11,27 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class PacketSyncSelectedTitle {
+public class PacketSyncGenderSetting {
+    private final boolean gender;
     private final UUID playerUUID;
-    private final String selectedTitle;
 
-    public PacketSyncSelectedTitle(UUID uuid, String titleKey) {
+    public PacketSyncGenderSetting(UUID uuid, boolean setting) {
         playerUUID = uuid;
-        selectedTitle = titleKey;
+        gender = setting;
     }
 
-    public static void encode(PacketSyncSelectedTitle msg, PacketBuffer buf) {
+    public static void encode(PacketSyncGenderSetting msg, PacketBuffer buf) {
         buf.writeString(msg.playerUUID.toString());
-        buf.writeString(msg.selectedTitle);
+        buf.writeBoolean(msg.gender);
     }
 
-    public static PacketSyncSelectedTitle decode(PacketBuffer buf) {
+    public static PacketSyncGenderSetting decode(PacketBuffer buf) {
         UUID uuid = UUID.fromString(buf.readString());
-        String titleKey = buf.readString();
-        return new PacketSyncSelectedTitle(uuid, titleKey);
+        boolean setting = buf.readBoolean();
+        return new PacketSyncGenderSetting(uuid, setting);
     }
 
-    public static void handle(PacketSyncSelectedTitle message, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncGenderSetting message, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             PlayerEntity player;
             if (ctx.get().getDirection().getReceptionSide().isClient()) {
@@ -39,11 +39,11 @@ public class PacketSyncSelectedTitle {
             }
             else {
                 player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(message.playerUUID);
-                PacketHandler.sendToAll(new PacketSyncSelectedTitle(message.playerUUID, message.selectedTitle));
+                PacketHandler.sendToAll(new PacketSyncGenderSetting(message.playerUUID, message.gender));
             }
 
             if (player != null) {
-                TitlesAPI.setDisplayTitle(player, message.selectedTitle);
+                TitlesAPI.getCapability(player).ifPresent(cap -> cap.setGenderSetting(message.gender));
                 player.refreshDisplayName();
             }
         });

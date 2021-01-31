@@ -1,5 +1,6 @@
 package aurilux.titles.common.item;
 
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import net.minecraft.item.Item;
 import net.minecraft.item.Rarity;
@@ -9,7 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModItems {
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesMod.ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesAPI.MOD_ID);
 
     public static final RegistryObject<ItemTitleFragment> TITLE_FRAGMENT = ITEMS.register("title_fragment", () ->
             new ItemTitleFragment(quarterStack()));

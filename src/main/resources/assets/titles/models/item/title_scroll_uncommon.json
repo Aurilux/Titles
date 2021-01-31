@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "titles:items/titles_archive"
+    "layer0": "titles:items/title_scroll_uncommon"
   }
 }

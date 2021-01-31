@@ -1,17 +1,17 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:diamond_block"
+      "item": "minecraft:arrow"
     },
-    "frame": "challenge",
+    "frame": "goal",
     "title": {
-      "translate": "advancement.titles.opulent"
+      "translate": "advancement.titles.pincushion"
     },
     "description": {
-      "translate": "advancement.titles.opulent.desc"
+      "translate": "advancement.titles.pincushion.desc"
     }
   },
-  "parent": "titles:spelunker",
+  "parent": "titles:root",
   "__comment": "This is triggered by code",
   "criteria": {
     "code_triggered": {

@@ -1,6 +1,7 @@
 package aurilux.titles.common.command.argument;
 
 import aurilux.titles.api.Title;
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.core.TitleRegistry;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -25,12 +26,12 @@ public class TitleArgument implements ArgumentType<Title> {
 
     @Override
     public Title parse(StringReader reader) throws CommandSyntaxException {
-        return TitleRegistry.INSTANCE.getTitle(ResourceLocation.read(reader).toString());
+        return TitlesAPI.internal().getTitle(ResourceLocation.read(reader).toString());
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return ISuggestionProvider.suggest(TitleRegistry.INSTANCE.getTitlesMap().keySet(), builder);
+        return ISuggestionProvider.suggest(TitleRegistry.INSTANCE.getRegisteredTitles().keySet(), builder);
     }
 
     @Override

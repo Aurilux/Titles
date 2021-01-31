@@ -1,6 +1,6 @@
 package aurilux.titles.common.handler;
 
-import aurilux.titles.common.TitlesMod;
+import aurilux.titles.api.TitlesAPI;
 import net.minecraft.loot.LootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.TableLootEntry;
@@ -24,7 +24,7 @@ public class LootHandler {
     }
 
     private static LootPool getInjectPool(String entryName) {
-        ResourceLocation table = new ResourceLocation(TitlesMod.ID, "inject/" + entryName);
+        ResourceLocation table = new ResourceLocation(TitlesAPI.MOD_ID, "inject/" + entryName);
         LootEntry.Builder<?> entry = TableLootEntry.builder(table).weight(1);
         return LootPool.builder()
                 .addEntry(entry)

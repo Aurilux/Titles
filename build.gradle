@@ -12,13 +12,9 @@ buildscript {
     }
 }
 
-plugins {
-    id "java-library"
-}
-
-//Normally this would be added to the plugins block above, but since ForgeGradle is constantly changing, and the
-//plugin block requires you to specify a version, this allows gradle to get the most up-to-date version.
 apply plugin: "net.minecraftforge.gradle"
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'java-library'
 apply plugin: "idea"
 
 idea.module {

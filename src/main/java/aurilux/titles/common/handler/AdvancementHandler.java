@@ -1,7 +1,6 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.common.TitlesMod;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.advancements.PlayerAdvancements;
@@ -16,19 +15,33 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = TitlesMod.ID)
+import java.util.Set;
+
+@Mod.EventBusSubscriber(modid = TitlesAPI.MOD_ID)
 public class AdvancementHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
         Advancement advancement = event.getAdvancement();
-        TitlesAPI.instance().unlockTitle(player, advancement.getId().toString());
+        TitlesAPI.internal().unlockTitle(player, advancement.getId().toString());
+    }
+
+    @SubscribeEvent
+    public static void onArrowHit(LivingDamageEvent event) {
+        if (!event.getSource().damageType.equals("arrow") || !(event.getEntity() instanceof ServerPlayerEntity)) {
+            return;
+        }
+
+        if (event.getEntityLiving().getArrowCountInEntity() >= 7) {
+            grantCriterion((ServerPlayerEntity) event.getEntity(), "pincushion");
+        }
     }
 
     @SubscribeEvent
@@ -55,7 +68,11 @@ public class AdvancementHandler {
     @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         Block placedBlock = event.getPlacedBlock().getBlock();
-        if (placedBlock != Blocks.DIAMOND_BLOCK && placedBlock != Blocks.BEACON) {
+        Set<ResourceLocation> blockTags = placedBlock.getTags();
+        ResourceLocation opulentTag = new ResourceLocation(TitlesAPI.MOD_ID, "opulent");
+        ResourceLocation beaconBaseTag = new ResourceLocation("minecraft", "beacon_base_blocks");
+        boolean beaconBaseAndOpulent = blockTags.contains(opulentTag) && blockTags.contains(beaconBaseTag);
+        if (placedBlock != Blocks.BEACON && !beaconBaseAndOpulent) {
             return;
         }
 
@@ -67,8 +84,11 @@ public class AdvancementHandler {
         World world = player.world;
         BlockPos beaconBlockPos = null;
 
-        //if the placed block was a diamond block, find the nearest beacon
-        if (placedBlock == Blocks.DIAMOND_BLOCK) {
+        if (placedBlock == Blocks.BEACON) {
+            beaconBlockPos = event.getPos();
+        }
+        else {
+            // The placed block was an opulent block, so find the nearest beacon
             BlockPos placedPos = event.getPos();
             beaconSearch:
             for (int x = -4; x <= 4; x++) {
@@ -83,12 +103,9 @@ public class AdvancementHandler {
                 }
             }
         }
-        else {
-            beaconBlockPos = event.getPos();
-        }
 
         //Determine how many levels the beacon has
-        boolean onlyDiamondBlock = true;
+        boolean onlyOpulentBlock = true;
         int levels = 0;
         if (beaconBlockPos != null) {
             beaconBaseValidation:
@@ -100,8 +117,8 @@ public class AdvancementHandler {
 
                 for(int k = beaconBlockPos.getX() - i; k <= beaconBlockPos.getX() + i; k++) {
                     for(int l = beaconBlockPos.getZ() - i; l <= beaconBlockPos.getZ() + i; l++) {
-                        if (world.getBlockState(new BlockPos(k, j, l)).getBlock() != Blocks.DIAMOND_BLOCK) {
-                            onlyDiamondBlock = false;
+                        if (world.getBlockState(new BlockPos(k, j, l)).getBlock() != placedBlock) {
+                            onlyOpulentBlock = false;
                             break beaconBaseValidation;
                         }
                     }
@@ -109,7 +126,7 @@ public class AdvancementHandler {
             }
         }
 
-        if (onlyDiamondBlock && levels == 4) {
+        if (onlyOpulentBlock && levels == 4) {
             grantCriterion(player, "opulent");
         }
     }
@@ -117,7 +134,7 @@ public class AdvancementHandler {
     private static void grantCriterion(ServerPlayerEntity player, String advancementId) {
         PlayerAdvancements advancements = player.getAdvancements();
         AdvancementManager manager = player.getServerWorld().getServer().getAdvancementManager();
-        Advancement advancement = manager.getAdvancement(new ResourceLocation(TitlesMod.ID, advancementId));
+        Advancement advancement = manager.getAdvancement(new ResourceLocation(TitlesAPI.MOD_ID, advancementId));
         if(advancement != null) {
             advancements.grantCriterion(advancement, "code_triggered");
         }

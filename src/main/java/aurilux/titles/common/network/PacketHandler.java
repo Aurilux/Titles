@@ -1,7 +1,9 @@
 package aurilux.titles.common.network;
 
+import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
-import aurilux.titles.common.network.messages.PacketSendDataOnLogin;
+import aurilux.titles.common.network.messages.PacketSyncDataOnLogin;
+import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -14,9 +16,9 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import java.util.Optional;
 
 public class PacketHandler {
-    private static String protocol = "1";
+    private static final String protocol = "1";
     private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(TitlesMod.ID, "main"),
+            new ResourceLocation(TitlesAPI.MOD_ID, "main"),
             () -> protocol,
             protocol::equals,
             protocol::equals
@@ -24,13 +26,16 @@ public class PacketHandler {
 
     public static void init() {
         int id = 0;
-        CHANNEL.registerMessage(id++, PacketSendDataOnLogin.class, PacketSendDataOnLogin::encode,
-                PacketSendDataOnLogin::decode, PacketSendDataOnLogin::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, PacketSyncDataOnLogin.class, PacketSyncDataOnLogin::encode,
+                PacketSyncDataOnLogin::decode, PacketSyncDataOnLogin::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
                 PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         CHANNEL.registerMessage(id++, PacketSyncSelectedTitle.class, PacketSyncSelectedTitle::encode,
                 PacketSyncSelectedTitle::decode, PacketSyncSelectedTitle::handle);
+        CHANNEL.registerMessage(id++, PacketSyncGenderSetting.class, PacketSyncGenderSetting::encode,
+                PacketSyncGenderSetting::decode, PacketSyncGenderSetting::handle);
+
     }
 
     public static void sendToServer(Object msg) {
