@@ -4,7 +4,9 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.Keybinds;
+import aurilux.titles.client.gui.button.SimpleButtonOverride;
 import aurilux.titles.client.gui.button.TitleButton;
+import aurilux.titles.client.gui.button.ToggleImageButton;
 import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
@@ -97,27 +99,27 @@ public class GuiTitleSelection extends Screen {
         addButton(search);
 
         // Action buttons
-        addButton(new Button(leftOffset, buttonFirstRowStart, 60, buttonHeight,
+        addButton(new SimpleButtonOverride(leftOffset, buttonFirstRowStart, 60, buttonHeight,
                 new TranslationTextComponent("gui.titles.random"), button -> chooseRandomTitle()));
-        addButton(new Button(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
+        addButton(new SimpleButtonOverride(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
                 new TranslationTextComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
-        addButton(new Button(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
+        addButton(new SimpleButtonOverride(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
                 new TranslationTextComponent("gui.titles.cancel"), button -> exitScreen(false)));
-        addButton(new Button(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
+        addButton(new SimpleButtonOverride(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
                 new TranslationTextComponent("gui.titles.confirm"), button -> exitScreen(true)));
 
         // Page buttons
-        backButtons.add(addButton(new Button(leftOffset, buttonSecondRowStart, 20, buttonHeight,
+        backButtons.add(addButton(new SimpleButtonOverride(leftOffset, buttonSecondRowStart, 20, buttonHeight,
                 ITextComponent.getTextComponentOrEmpty("<<"), button -> setPage(1))));
-        backButtons.add(addButton(new Button(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight,
+        backButtons.add(addButton(new SimpleButtonOverride(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight,
                 ITextComponent.getTextComponentOrEmpty("<"), button -> setPage(page - 1))));
-        forwardButtons.add(addButton(new Button(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight,
+        forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight,
                 ITextComponent.getTextComponentOrEmpty(">"), button -> setPage(page + 1))));
-        forwardButtons.add(addButton(new Button(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight,
+        forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight,
                 ITextComponent.getTextComponentOrEmpty(">>"), button -> setPage(maxPages))));
 
         // Gender button
-        addButton(new Button(guiLeft - 25, guiTop + 30, 20, buttonHeight, gender ? maleComp : femaleComp, this::genderToggle));
+        addButton(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), gender));
 
         updateButtons();
     }
@@ -126,15 +128,9 @@ public class GuiTitleSelection extends Screen {
         maxPages = Math.max(1, (int) Math.ceil(titlesListFiltered.size() / (double) MAX_PER_PAGE));
     }
 
-    private void genderToggle(Button button) {
-        if (button.getMessage().getString().equals("M")) {
-            button.setMessage(femaleComp);
-            gender = false;
-        }
-        else {
-            button.setMessage(maleComp);
-            gender = true;
-        }
+    private void genderToggle(ToggleImageButton button) {
+        button.toggle();
+        gender = button.getValue();
         updateButtons();
     }
 

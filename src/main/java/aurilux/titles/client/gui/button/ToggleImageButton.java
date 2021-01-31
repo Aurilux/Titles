@@ -6,7 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class ToggleImageButton extends ImageButton {
     private boolean toggle;
 
@@ -26,13 +29,15 @@ public class ToggleImageButton extends ImageButton {
     @Override
     public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft.getInstance().getTextureManager().bindTexture(this.resourceLocation);
-        int startY = yTexStart;
+        int startX = xTexStart;
         if (toggle) {
-            startY += yDiffText;
+            // Just for simplicity's sake, using the yDiffText for the x-axis
+            startX += yDiffText;
         }
+        int i = this.getYImage(this.isHovered());
 
         RenderSystem.enableDepthTest();
-        blit(matrixStack, this.x, this.y, this.xTexStart, startY, this.width, this.height, this.textureWidth, this.textureHeight);
+        blit(matrixStack, this.x, this.y, startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
         if (this.isHovered()) {
             this.renderToolTip(matrixStack, mouseX, mouseY);
         }

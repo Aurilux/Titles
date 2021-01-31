@@ -1,7 +1,9 @@
-1.15.2 - 3.2.0
-Updated to 1.15
+1.16.4 - 3.2.0
+Updated to 1.16
 Added titles for some of the new advancements added to Minecraft
-Refined how titles are added. Details in the wiki.
+Titles Archive is now gone. Loot titles are now obtained by trading emeralds and title fragments with Librarian villagers
+Gender support. For gender-specific titles (Lord vs Lady), or gendered languages such as Spanish. Details in the github repo wiki
+The way mod authors add their own title has been changed. Details in the github repo wiki
 
 1.12.2 - 3.1.0
 Barring any bug fixes, this will be the last version for 1.12.
