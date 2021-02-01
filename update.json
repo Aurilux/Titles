@@ -1,8 +1,13 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
+    "1.16.4-latest": "3.2.0",
+    "1.16.4-recommended": "3.2.0",
     "1.12.2-latest": "3.1.6",
     "1.12.2-recommended": "3.1.6"
+  },
+  "1.16.4": {
+    "3.2.0": "Lots of changes. To see a detailed changelog, go to changelog.txt in the github repo"
   },
   "1.12.2": {
     "3.1.6": "Improved pattern matching to prevent errors of mods with weird lang file entries for advancements",

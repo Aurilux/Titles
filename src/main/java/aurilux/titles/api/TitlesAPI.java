@@ -1,104 +1,86 @@
 package aurilux.titles.api;
 
-import aurilux.titles.api.capability.TitlesImpl;
-import aurilux.titles.api.internal.DummyMethodHandler;
-import aurilux.titles.api.internal.IInternalMethodHandler;
-import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
-import net.minecraft.entity.player.EntityPlayer;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.api.handler.DummyMethodHandler;
+import aurilux.titles.api.handler.IInternalMethodHandler;
+import aurilux.titles.common.impl.TitlesCapImpl;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Rarity;
+import net.minecraft.util.LazyValue;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.LazyOptional;
+import org.apache.logging.log4j.LogManager;
 
 public class TitlesAPI {
-    private static final Map<String, TitleInfo> titlesMap = new HashMap<>();
-    private static final Map<String, TitleInfo> archiveTitles = new HashMap<>();
+    public static final String MOD_ID = "titles";
 
-    public static IInternalMethodHandler internalHandler = new DummyMethodHandler();
+    @CapabilityInject(ITitles.class)
+    public static Capability<ITitles> TITLES_CAPABILITY = null;
 
-    public static void registerTitle(String key) {
-        registerTitle(key, TitleInfo.TitleRarity.COMMON);
+    private static final LazyValue<IInternalMethodHandler> internalHandler = new LazyValue<>(() -> {
+        try {
+            return (IInternalMethodHandler) Class.forName("aurilux.titles.common.impl.InternalHandlerImpl").newInstance();
+        } catch (ReflectiveOperationException e) {
+            LogManager.getLogger().warn("Unable to find InternalHandlerImpl, using a dummy");
+            return new DummyMethodHandler();
+        }
+    });
+
+    public static IInternalMethodHandler internal() {
+        return internalHandler.getValue();
     }
 
-    public static void registerTitle(String key, TitleInfo.TitleRarity titleRarity) {
-        if (!titleRarity.equals(TitleInfo.TitleRarity.UNIQUE)) {
-            titlesMap.put(key, new TitleInfo(key, titleRarity));
+    public static void registerCommonTitles(String modId, String... titles) {
+        registerTitles(modId, Rarity.COMMON, titles);
+    }
+
+    public static void registerUncommonTitles(String modId, String... titles) {
+        registerTitles(modId, Rarity.UNCOMMON, titles);
+    }
+
+    public static void registerRareTitles(String modId, String... titles) {
+        registerTitles(modId, Rarity.RARE, titles);
+    }
+
+    private static void registerTitles(String modId, Rarity rarity, String... titles) {
+        String verifiedModId = modId == null || modId.isEmpty() ? TitlesAPI.MOD_ID : modId;
+        for (String title : titles) {
+            internal().registerTitle(rarity, verifiedModId + ":" + title);
         }
     }
 
-    public static void addArchiveTitle(String key, TitleInfo.TitleRarity titleRarity) {
-        archiveTitles.put(key, new TitleInfo(key, titleRarity));
+    public static LazyOptional<ITitles> getCapability(PlayerEntity player) {
+        return player.getCapability(TitlesAPI.TITLES_CAPABILITY);
     }
 
-    public static Map<String, TitleInfo> getArchiveTitles() {
-        return archiveTitles;
+    public static void setDisplayTitle(PlayerEntity player, String titleKey) {
+        getCapability(player).ifPresent(c -> {
+            c.setDisplayTitle(internal().getTitle(titleKey));
+        });
     }
 
-    public static void addTitleToPlayer(EntityPlayer player, String key) {
-        addTitleToPlayer(player, key, false);
+    public static ITextComponent getFormattedTitle(Title title, boolean isMasculine) {
+        return getFormattedTitle(title, null, isMasculine);
     }
 
-    public static void addTitleToPlayer(EntityPlayer player, String key, boolean announce) {
-        TitleInfo titleInfo = titlesMap.get(key);
-        if (titleInfo == null) {
-            titleInfo = archiveTitles.get(key);
-        }
-
-        if (titleInfo == null || hasTitle(player, titleInfo)) {
-            return;
-        }
-
-        getTitlesCap(player).add(titleInfo);
-
-        if (announce) {
-            internalHandler.sendChatMessageToAllPlayers("chat.title.add", player.getDisplayName(), titleInfo);
-        }
+    public static ITextComponent getFormattedTitle(Title title, PlayerEntity player) {
+        return getFormattedTitle(title, player.getName(), getCapability(player).orElse(new TitlesCapImpl()).getGenderSetting());
     }
 
-    public static void removeTitleFromPlayer(EntityPlayer player, String key) {
-        TitleInfo titleInfo = titlesMap.get(key);
-        if (titleInfo != null && hasTitle(player, titleInfo)) {
-            TitlesImpl.ITitles cap = getTitlesCap(player);
-            cap.remove(titleInfo);
-            if (cap.getDisplayTitle().equals(titleInfo)) {
-                cap.setDisplayTitle(TitleInfo.NULL_TITLE);
-            }
-        }
-    }
-
-    public static TitleInfo getTitleFromKey(String key) {
-        if (key.equals(TitleInfo.NULL_TITLE.getKey())){
-            return TitleInfo.NULL_TITLE;
-        }
-        else if (getRegisteredTitles().containsKey(key)) {
-            return getRegisteredTitles().get(key);
-        }
-        else if (getArchiveTitles().containsKey(key)) {
-            return getArchiveTitles().get(key);
+    public static ITextComponent getFormattedTitle(Title title, ITextComponent playerName, boolean isMasculine) {
+        ITextComponent titleComponent = title.getComponent(isMasculine);
+        if (playerName == null) {
+            return titleComponent;
         }
         else {
-            return internalHandler.getTitleFromKey(key);
+            if (title.isNull()) {
+                return playerName;
+            }
+            else {
+                return playerName.deepCopy().appendString(", ").append(titleComponent);
+            }
         }
-    }
-
-    public static TitleInfo getPlayerDisplayTitle(EntityPlayer player) {
-        return getTitlesCap(player).getDisplayTitle();
-    }
-
-    public static void setPlayerDisplayTitle(EntityPlayer player, TitleInfo titleInfo) {
-        getTitlesCap(player).setDisplayTitle(titleInfo);
-    }
-
-    public static boolean hasTitle(EntityPlayer player, TitleInfo titleInfo) {
-        return getTitlesCap(player).getObtainedTitles().contains(titleInfo);
-    }
-
-    public static TitlesImpl.DefaultImpl getTitlesCap(EntityPlayer player) {
-        return TitlesImpl.getCapability(player);
-    }
-
-    public static Map<String, TitleInfo> getRegisteredTitles() {
-        return Collections.unmodifiableMap(titlesMap);
     }
 }

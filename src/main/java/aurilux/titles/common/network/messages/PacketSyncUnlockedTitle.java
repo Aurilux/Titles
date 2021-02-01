@@ -1,56 +1,38 @@
 package aurilux.titles.common.network.messages;
 
+
 import aurilux.titles.api.TitlesAPI;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class PacketSyncUnlockedTitle implements IMessage {
-    private String titleKey;
+import java.util.function.Supplier;
 
-    public PacketSyncUnlockedTitle() {}
+public class PacketSyncUnlockedTitle {
+    private final String titleKey;
 
     public PacketSyncUnlockedTitle(String titleKey) {
         this.titleKey = titleKey;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        titleKey = ByteBufUtils.readUTF8String(buf);
+    public static void encode(PacketSyncUnlockedTitle msg, PacketBuffer buf) {
+        buf.writeString(msg.titleKey);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeUTF8String(buf, titleKey);
+    public static PacketSyncUnlockedTitle decode(PacketBuffer buf) {
+        return new PacketSyncUnlockedTitle(buf.readString());
     }
 
-    public static class HandlerClient implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    TitlesAPI.addTitleToPlayer(Minecraft.getMinecraft().player, message.titleKey);
-                }
-            });
-            return null;
-        }
-    }
-
-    public static class HandlerServer implements IMessageHandler<PacketSyncUnlockedTitle, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncUnlockedTitle message, MessageContext ctx) {
-            ctx.getServerHandler().player.server.addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    TitlesAPI.addTitleToPlayer(ctx.getServerHandler().player, message.titleKey);
-                }
-            });
-            return null;
-        }
+    public static void handle(PacketSyncUnlockedTitle message, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
+            if (clientPlayer != null) {
+                TitlesAPI.getCapability(clientPlayer).ifPresent(c -> {
+                    c.add(TitlesAPI.internal().getTitle(message.titleKey));
+                });
+            }
+        });
+        ctx.get().setPacketHandled(true);
     }
 }

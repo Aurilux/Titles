@@ -1,27 +1,50 @@
 package aurilux.titles.common.command;
 
-import net.minecraft.command.ICommandSender;
-import net.minecraftforge.server.command.CommandTreeBase;
+import aurilux.titles.api.Title;
+import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.command.argument.TitleArgument;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.server.command.EnumArgument;
 
-public class CommandTitles extends CommandTreeBase {
-    public CommandTitles() {
-        addSubcommand(new CommandAdd());
-        addSubcommand(new CommandRemove());
-        addSubcommand(new CommandRefresh());
+public class CommandTitles {
+    public enum CommandType {
+        remove,
+        add
     }
 
-    @Override
-    public String getName() {
-        return "titles";
+    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+        dispatcher.register(
+                Commands.literal(TitlesAPI.MOD_ID)
+                .requires(s -> s.hasPermissionLevel(2))
+                .then(Commands.argument("command", EnumArgument.enumArgument(CommandType.class))
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("title", TitleArgument.title())
+                                .executes(ctx -> run(ctx,
+                                        EntityArgument.getPlayer(ctx, "player"),
+                                        TitleArgument.getTitle(ctx, "title"))))))
+        );
     }
 
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "commands.titles.usage";
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
+    public static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, Title title) throws CommandSyntaxException {
+        CommandType commandType = context.getArgument("command", CommandType.class);
+        if (commandType.equals(CommandType.add)) {
+            TitlesAPI.getCapability(player).ifPresent(t -> t.add(title));
+            TranslationTextComponent tc = new TranslationTextComponent("commands.titles.add", title.getLangKey(), player.getName());
+            context.getSource().sendFeedback(tc, false);
+        }
+        else if (commandType.equals(CommandType.remove)) {
+            TitlesAPI.getCapability(player).ifPresent(t -> t.remove(title));
+            TranslationTextComponent tc = new TranslationTextComponent("commands.titles.remove", title.getLangKey(), player.getName());
+            context.getSource().sendFeedback(tc, false);
+        }
+        return Command.SINGLE_SUCCESS;
     }
 }

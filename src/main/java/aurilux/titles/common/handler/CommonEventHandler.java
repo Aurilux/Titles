@@ -1,70 +1,83 @@
 package aurilux.titles.common.handler;
 
-import aurilux.titles.api.TitleInfo;
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.TitlesImpl;
-import aurilux.titles.common.Titles;
-import aurilux.titles.common.network.PacketDispatcher;
-import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
-import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
-import aurilux.titles.common.network.messages.PacketSyncTitleData;
-import net.minecraft.client.Minecraft;
+import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
+import aurilux.titles.common.impl.TitlesCapImpl;
+import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.network.messages.PacketSyncDataOnLogin;
+import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import aurilux.titles.common.util.CapabilityHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Rarity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.village.VillagerTradesEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-@Mod.EventBusSubscriber(modid = Titles.MOD_ID)
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+@Mod.EventBusSubscriber(modid = TitlesAPI.MOD_ID)
 public class CommonEventHandler {
     @SubscribeEvent
     public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof EntityPlayer) {
-            event.addCapability(TitlesImpl.NAME, new TitlesImpl.Provider());
+        if (event.getObject() instanceof PlayerEntity) {
+            CapabilityHelper.attach(event, TitlesCapImpl.NAME, TitlesAPI.TITLES_CAPABILITY, new TitlesCapImpl());
         }
     }
 
     @SubscribeEvent
-    //I have to have the full package name for PlayerEvent.Clone here because otherwise it conflicts with
-    //net.minecraftforge.fml.common.gameevent.PlayerEvent.
-    public static void onPlayerClone(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
-        //Get data from the old player...
-        NBTTagCompound data = TitlesImpl.getCapability(event.getOriginal()).serializeNBT();
-        //..and give it to the new clone player
-        TitlesImpl.getCapability(event.getEntityPlayer()).deserializeNBT(data);
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        TitlesAPI.getCapability(event.getOriginal()).ifPresent(oldCap -> {
+            CompoundNBT bags = oldCap.serializeNBT();
+            TitlesAPI.getCapability(event.getPlayer()).ifPresent(newCap -> newCap.deserializeNBT(bags));
+        });
     }
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        ServerPlayerEntity playerLoggingIn = (ServerPlayerEntity) event.getPlayer();
 
-        PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleData(player), player);
-        PacketDispatcher.INSTANCE.sendTo(new PacketSyncAllDisplayTitles(player), player);
-        PacketDispatcher.INSTANCE.sendToAll(new PacketSyncDisplayTitle(player.getUniqueID(),
-                TitlesAPI.getPlayerDisplayTitle(player).getKey()));
+        TitlesAPI.getCapability(playerLoggingIn).ifPresent(loggingInCap -> {
+            Map<UUID, String> allSelectedTitles = new HashMap<>();
+            for (ServerPlayerEntity serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                if (serverPlayer.getUniqueID() != playerLoggingIn.getUniqueID()) {
+                    TitlesAPI.getCapability(serverPlayer).ifPresent(cap -> {
+                        allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getKey());
+                    });
+                }
+            }
+
+            // Send the just-logged-in player's title data that is loaded on the server to them
+            PacketHandler.sendTo(new PacketSyncDataOnLogin(loggingInCap.serializeNBT(), allSelectedTitles), playerLoggingIn);
+            // Then send their display title to everyone else
+            PacketHandler.sendToAll(new PacketSyncSelectedTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getKey()));
+        });
     }
 
-    //I have to have the full package name for PlayerEvent.NameFormat here because otherwise it conflicts with
-    //net.minecraftforge.fml.common.gameevent.PlayerEvent.
     @SubscribeEvent
-    public static void onPlayerNameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
-        TitleInfo currentTitle = TitlesAPI.getPlayerDisplayTitle(event.getEntityPlayer());
-        event.setDisplayname(event.getDisplayname() + TitlesAPI.internalHandler.getFormattedTitle(currentTitle, true));
+    public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
+        PlayerEntity player = event.getPlayer();
+        TitlesAPI.getCapability(player).ifPresent(cap -> {
+            Title currentTitle = cap.getDisplayTitle();
+            event.setDisplayname(TitlesAPI.getFormattedTitle(currentTitle, player));
+        });
     }
 
     @SubscribeEvent
-    public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(Titles.MOD_ID)) {
-            ConfigManager.sync(Titles.MOD_ID, Config.Type.INSTANCE);
+    public static void onVillagerTrades(VillagerTradesEvent event) {
+        if (event.getType().equals(VillagerProfession.LIBRARIAN)) {
+            event.getTrades().get(1).add(new TitleForEmeraldsAndFragmentsTrade(Rarity.COMMON, 3, 5));
+            event.getTrades().get(3).add(new TitleForEmeraldsAndFragmentsTrade(Rarity.UNCOMMON, 2, 10));
+            event.getTrades().get(5).add(new TitleForEmeraldsAndFragmentsTrade(Rarity.RARE, 1, 30));
         }
     }
 }
