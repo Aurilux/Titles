@@ -10,6 +10,7 @@ build/
 gradle/
 .gradle/
 run/
+logs/
 
 # Unique files #
 ######################
