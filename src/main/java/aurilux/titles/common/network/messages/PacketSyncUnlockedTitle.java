@@ -1,9 +1,8 @@
 package aurilux.titles.common.network.messages;
 
-
 import aurilux.titles.api.TitlesAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -25,12 +24,17 @@ public class PacketSyncUnlockedTitle {
     }
 
     public static void handle(PacketSyncUnlockedTitle message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
-            if (clientPlayer != null) {
-                TitlesAPI.getCapability(clientPlayer).ifPresent(c -> {
-                    c.add(TitlesAPI.internal().getTitle(message.titleKey));
-                });
+        ctx.get().enqueueWork(new Runnable() {
+            // Have to use anon class or else it crashes trying to access ClientPlayerEntity from
+            // Minecraft.getInstance().player on the server
+            @Override
+            public void run() {
+                PlayerEntity player = Minecraft.getInstance().player;
+                if (player != null) {
+                    TitlesAPI.getCapability(player).ifPresent(c -> {
+                        c.add(TitlesAPI.internal().getTitle(message.titleKey));
+                    });
+                }
             }
         });
         ctx.get().setPacketHandled(true);

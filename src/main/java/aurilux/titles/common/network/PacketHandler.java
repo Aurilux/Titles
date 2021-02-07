@@ -26,15 +26,16 @@ public class PacketHandler {
 
     public static void init() {
         int id = 0;
-        CHANNEL.registerMessage(id++, PacketSyncDataOnLogin.class, PacketSyncDataOnLogin::encode,
-                PacketSyncDataOnLogin::decode, PacketSyncDataOnLogin::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
-                PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-
         CHANNEL.registerMessage(id++, PacketSyncSelectedTitle.class, PacketSyncSelectedTitle::encode,
                 PacketSyncSelectedTitle::decode, PacketSyncSelectedTitle::handle);
         CHANNEL.registerMessage(id++, PacketSyncGenderSetting.class, PacketSyncGenderSetting::encode,
                 PacketSyncGenderSetting::decode, PacketSyncGenderSetting::handle);
+
+        CHANNEL.registerMessage(id++, PacketSyncUnlockedTitle.class, PacketSyncUnlockedTitle::encode,
+                PacketSyncUnlockedTitle::decode, PacketSyncUnlockedTitle::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        // TODO perhaps turn this into a login packet? (NetworkDirection.LOGIN_TO_CLIENT)
+        CHANNEL.registerMessage(id++, PacketSyncDataOnLogin.class, PacketSyncDataOnLogin::encode,
+                PacketSyncDataOnLogin::decode, PacketSyncDataOnLogin::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
     }
 

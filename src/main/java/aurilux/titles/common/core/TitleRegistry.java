@@ -7,23 +7,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Rarity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 
 public class TitleRegistry {
     public static final TitleRegistry INSTANCE = new TitleRegistry();

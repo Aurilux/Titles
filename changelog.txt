@@ -1,3 +1,6 @@
+1.16.4 - 3.2.1
+Fixed a server crash caused by accessing client-only content on server
+
 1.16.4 - 3.2.0
 Updated to 1.16
 Added titles for some of the new advancements added to Minecraft

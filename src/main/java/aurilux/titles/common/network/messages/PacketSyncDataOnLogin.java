@@ -2,7 +2,6 @@ package aurilux.titles.common.network.messages;
 
 import aurilux.titles.api.TitlesAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -47,16 +46,21 @@ public class PacketSyncDataOnLogin {
     }
 
     public static void handle(PacketSyncDataOnLogin message, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
-            if (clientPlayer != null) {
-                TitlesAPI.getCapability(clientPlayer).ifPresent(cap -> cap.deserializeNBT(message.comp));
+        ctx.get().enqueueWork(new Runnable() {
+            // Have to use anon class or else it crashes trying to access ClientPlayerEntity from
+            // Minecraft.getInstance().player on the server
+            @Override
+            public void run() {
+                PlayerEntity player = Minecraft.getInstance().player;
+                if (player != null) {
+                    TitlesAPI.getCapability(player).ifPresent(cap -> cap.deserializeNBT(message.comp));
 
-                World world = Minecraft.getInstance().world;
-                if (world != null) {
-                    for (Map.Entry<UUID, String> entry : message.playerDisplayTitles.entrySet()) {
-                        PlayerEntity player = world.getPlayerByUuid(entry.getKey());
-                        TitlesAPI.setDisplayTitle(player, entry.getValue());
+                    World world = Minecraft.getInstance().world;
+                    if (world != null) {
+                        for (Map.Entry<UUID, String> entry : message.playerDisplayTitles.entrySet()) {
+                            PlayerEntity otherPlayer = world.getPlayerByUuid(entry.getKey());
+                            TitlesAPI.setDisplayTitle(otherPlayer, entry.getValue());
+                        }
                     }
                 }
             }

@@ -2,7 +2,6 @@ package aurilux.titles.client.gui.button;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
