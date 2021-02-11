@@ -58,10 +58,12 @@ public class AdvancementHandler {
 
     @SubscribeEvent
     public static void onPlayerMount(EntityMountEvent event) {
-        Entity mounted = event.getEntityBeingMounted();
         Entity mounting = event.getEntityMounting();
-        if (mounted instanceof BoatEntity && mounting instanceof PlayerEntity) {
-            grantCriterion((ServerPlayerEntity) mounting, "captain");
+        if (mounting instanceof ServerPlayerEntity) {
+            Entity mounted = event.getEntityBeingMounted();
+            if (mounted instanceof BoatEntity) {
+                grantCriterion((ServerPlayerEntity) mounting, "captain");
+            }
         }
     }
 

@@ -1,12 +1,13 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
-    "1.16.4-latest": "3.2.2",
-    "1.16.4-recommended": "3.2.2",
+    "1.16.4-latest": "3.2.3",
+    "1.16.4-recommended": "3.2.3",
     "1.12.2-latest": "3.1.7",
     "1.12.2-recommended": "3.1.7"
   },
   "1.16.4": {
+    "3.2.3": "Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat",
     "3.2.2": "Now properly syncs title data on respawn and dimension changes",
     "3.2.1": "Fixed a server crash caused by accessing client-only content on server",
     "3.2.0": "Lots of changes. To see a detailed changelog, go to changelog.txt in the github repo"
