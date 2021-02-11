@@ -5,6 +5,7 @@
     "1.12.2-recommended": "3.1.6"
   },
   "1.12.2": {
+    "3.1.7": "Now properly syncs title data on respawn and dimension changes",
     "3.1.6": "Improved pattern matching to prevent errors of mods with weird lang file entries for advancements",
     "3.1.5": "Renamed es_es.lang to es_ES.lang so Minecraft would recognize it",
     "3.1.4": "Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.",

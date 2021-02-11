@@ -44,6 +44,20 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
+    public static void respawnEvent(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event) {
+        EntityPlayer player = event.player;
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleData(player), (EntityPlayerMP) player);
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncAllDisplayTitles(player), (EntityPlayerMP) player);
+    }
+
+    @SubscribeEvent
+    public static void playerChangeDimension(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event)  {
+        EntityPlayer player = event.player;
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncTitleData(player), (EntityPlayerMP) player);
+        PacketDispatcher.INSTANCE.sendTo(new PacketSyncAllDisplayTitles(player), (EntityPlayerMP) player);
+    }
+
+    @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
 
