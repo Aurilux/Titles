@@ -43,24 +43,42 @@ public class CommonEventHandler {
     }
 
     @SubscribeEvent
+    public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+        PlayerEntity player = event.getPlayer();
+        TitlesAPI.getCapability(player).ifPresent(c -> {
+            PacketHandler.sendTo(new PacketSyncDataOnLogin(c.serializeNBT(), getAllDisplayTitles(player)), (ServerPlayerEntity) player);
+        });
+    }
+
+    @SubscribeEvent
+    public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        PlayerEntity player = event.getPlayer();
+        TitlesAPI.getCapability(player).ifPresent(c -> {
+            PacketHandler.sendTo(new PacketSyncDataOnLogin(c.serializeNBT(), getAllDisplayTitles(player)), (ServerPlayerEntity) player);
+        });
+    }
+
+    @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         ServerPlayerEntity playerLoggingIn = (ServerPlayerEntity) event.getPlayer();
-
         TitlesAPI.getCapability(playerLoggingIn).ifPresent(loggingInCap -> {
-            Map<UUID, String> allSelectedTitles = new HashMap<>();
-            for (ServerPlayerEntity serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-                if (serverPlayer.getUniqueID() != playerLoggingIn.getUniqueID()) {
-                    TitlesAPI.getCapability(serverPlayer).ifPresent(cap -> {
-                        allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getKey());
-                    });
-                }
-            }
-
             // Send the just-logged-in player's title data that is loaded on the server to them
-            PacketHandler.sendTo(new PacketSyncDataOnLogin(loggingInCap.serializeNBT(), allSelectedTitles), playerLoggingIn);
+            PacketHandler.sendTo(new PacketSyncDataOnLogin(loggingInCap.serializeNBT(), getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
             // Then send their display title to everyone else
             PacketHandler.sendToAll(new PacketSyncSelectedTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getKey()));
         });
+    }
+
+    private static Map<UUID, String> getAllDisplayTitles(PlayerEntity player) {
+        Map<UUID, String> allSelectedTitles = new HashMap<>();
+        for (ServerPlayerEntity serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (serverPlayer.getUniqueID() != player.getUniqueID()) {
+                TitlesAPI.getCapability(serverPlayer).ifPresent(cap -> {
+                    allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getKey());
+                });
+            }
+        }
+        return allSelectedTitles;
     }
 
     @SubscribeEvent

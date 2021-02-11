@@ -1,16 +1,18 @@
 {
   "homepage": "https://github.com/Aurilux/Titles",
   "promos": {
-    "1.16.4-latest": "3.2.1",
-    "1.16.4-recommended": "3.2.1",
-    "1.12.2-latest": "3.1.6",
-    "1.12.2-recommended": "3.1.6"
+    "1.16.4-latest": "3.2.2",
+    "1.16.4-recommended": "3.2.2",
+    "1.12.2-latest": "3.1.7",
+    "1.12.2-recommended": "3.1.7"
   },
   "1.16.4": {
+    "3.2.2": "Now properly syncs title data on respawn and dimension changes",
     "3.2.1": "Fixed a server crash caused by accessing client-only content on server",
     "3.2.0": "Lots of changes. To see a detailed changelog, go to changelog.txt in the github repo"
   },
   "1.12.2": {
+    "3.1.7": "Now properly syncs title data on respawn and dimension changes",
     "3.1.6": "Improved pattern matching to prevent errors of mods with weird lang file entries for advancements",
     "3.1.5": "Renamed es_es.lang to es_ES.lang so Minecraft would recognize it",
     "3.1.4": "Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.",
