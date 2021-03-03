@@ -26,7 +26,7 @@ public class PacketSyncGenderSetting {
     }
 
     public static PacketSyncGenderSetting decode(PacketBuffer buf) {
-        UUID uuid = UUID.fromString(buf.readString());
+        UUID uuid = UUID.fromString(buf.readString(32767));
         boolean setting = buf.readBoolean();
         return new PacketSyncGenderSetting(uuid, setting);
     }

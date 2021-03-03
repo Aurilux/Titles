@@ -26,8 +26,8 @@ public class PacketSyncSelectedTitle {
     }
 
     public static PacketSyncSelectedTitle decode(PacketBuffer buf) {
-        UUID uuid = UUID.fromString(buf.readString());
-        String titleKey = buf.readString();
+        UUID uuid = UUID.fromString(buf.readString(32767));
+        String titleKey = buf.readString(32767);
         return new PacketSyncSelectedTitle(uuid, titleKey);
     }
 

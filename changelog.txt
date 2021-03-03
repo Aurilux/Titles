@@ -1,3 +1,6 @@
+1.16.4 - 3.2.4
+Fixed a crash caused by calling the wrong method on the server
+
 1.16.4 - 3.2.3
 Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat
 
