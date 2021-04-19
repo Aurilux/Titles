@@ -1,19 +1,18 @@
 package aurilux.titles.common.handler;
 
-import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import aurilux.titles.common.network.PacketHandler;
-import aurilux.titles.common.network.messages.PacketSyncDataOnLogin;
-import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
+import aurilux.titles.common.network.messages.PacketSyncTitles;
+import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.util.CapabilityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Rarity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -36,36 +35,34 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        TitlesAPI.getCapability(event.getOriginal()).ifPresent(oldCap -> {
-            CompoundNBT bags = oldCap.serializeNBT();
-            TitlesAPI.getCapability(event.getPlayer()).ifPresent(newCap -> newCap.deserializeNBT(bags));
-        });
+        TitlesAPI.getCapability(event.getOriginal()).ifPresent(oldCap ->
+            TitlesAPI.getCapability(event.getPlayer()).ifPresent(newCap -> newCap.deserializeNBT(oldCap.serializeNBT())));
     }
 
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         PlayerEntity player = event.getPlayer();
-        TitlesAPI.getCapability(player).ifPresent(c -> {
-            PacketHandler.sendTo(new PacketSyncDataOnLogin(c.serializeNBT(), getAllDisplayTitles(player)), (ServerPlayerEntity) player);
-        });
+        TitlesAPI.getCapability(player).ifPresent(c ->
+                PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), (ServerPlayerEntity) player));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         PlayerEntity player = event.getPlayer();
-        TitlesAPI.getCapability(player).ifPresent(c -> {
-            PacketHandler.sendTo(new PacketSyncDataOnLogin(c.serializeNBT(), getAllDisplayTitles(player)), (ServerPlayerEntity) player);
-        });
+        TitlesAPI.getCapability(player).ifPresent(c ->
+            PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), (ServerPlayerEntity) player));
     }
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         ServerPlayerEntity playerLoggingIn = (ServerPlayerEntity) event.getPlayer();
         TitlesAPI.getCapability(playerLoggingIn).ifPresent(loggingInCap -> {
-            // Send the just-logged-in player's title data that is loaded on the server to them
-            PacketHandler.sendTo(new PacketSyncDataOnLogin(loggingInCap.serializeNBT(), getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
-            // Then send their display title to everyone else
-            PacketHandler.sendToAll(new PacketSyncSelectedTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getKey()));
+            // Send the just-logged-in player's title data that is loaded on the server to them.
+            PacketHandler.sendTo(new PacketSyncTitles(loggingInCap.serializeNBT()), playerLoggingIn);
+            // Also send them the display titles of everyone else currently logged in.
+            PacketHandler.sendTo(new PacketSyncAllDisplayTitles(getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
+            // Then send their display title to everyone else.
+            PacketHandler.sendToAll(new PacketSyncDisplayTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getKey()));
         });
     }
 
@@ -84,10 +81,8 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
         PlayerEntity player = event.getPlayer();
-        TitlesAPI.getCapability(player).ifPresent(cap -> {
-            Title currentTitle = cap.getDisplayTitle();
-            event.setDisplayname(TitlesAPI.getFormattedTitle(currentTitle, player));
-        });
+        TitlesAPI.getCapability(player).ifPresent(cap ->
+            event.setDisplayname(TitlesAPI.getFormattedTitle(cap.getDisplayTitle(), player)));
     }
 
     @SubscribeEvent

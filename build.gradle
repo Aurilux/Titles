@@ -1,5 +1,5 @@
-import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 buildscript {
     repositories {
@@ -9,32 +9,40 @@ buildscript {
     }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
 
+plugins {
+    id "java-library"
+}
+
+// Normally this would be added to the plugins block above, but since ForgeGradle is constantly changing, and the
+// plugin block requires you to specify a version, this allows gradle to get the most up-to-date version.
 apply plugin: "net.minecraftforge.gradle"
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'java-library'
+apply plugin: "com.matthewprenger.cursegradle"
 apply plugin: "idea"
 
-idea.module {
-    for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out", "logs"]) {
-        excludeDirs += file(excludeDirName)
+// Exclude folders whenever the idea module updates, such as during a gradle re-import.
+idea {
+    module {
+        for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out", "logs"]) {
+            excludeDirs += file(excludeDirName)
+        }
     }
 }
 
-//NOTE: build.gradle automatically loads gradle.properties, which holds variables that change between different mods,
-//such as the forge version and mod properties (name, mod id, etc)
+// NOTE: build.gradle automatically loads gradle.properties, which holds variables that change between different mods
 
-//Basic mod setup
-group = "aurilux." + mod_id
+// Basic mod setup
+group = mod_group
 archivesBaseName = mod_name
 version = minecraft_version + "-" + mod_version
 
-//Uncomment if using Eclipse so eclipse task generates correctly.
+// Uncomment if using Eclipse so eclipse task generates correctly.
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
-//Load in the repositories for mods useful in the dev process
+// Load in the repositories for mods useful in the dev process. To add or remove mods, just update the repos.json file.
 def repos = new JsonSlurper().parse(file("repos.json"))
 repositories {
     mavenCentral()
@@ -56,7 +64,7 @@ dependencies {
 }
 
 minecraft {
-    mappings channel: mappings_channel, version: mappings_version
+    mappings channel: "snapshot", version: mappings_version
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -65,6 +73,23 @@ minecraft {
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             properties 'forge.logging.console.level': 'debug'
             properties 'fml.earlyprogresswindow': 'false'
+
+            // These variables allow the use of your actual minecraft profile in-game.
+            // The best place they should be stored is in the gradle.properties file in your gradle user home.
+            // Due to caching, should you change these variables, you need to rerun the gen(Intellij/Eclipse)Runs task.
+            if (project.hasProperty('mc_uuid')) {
+                // Your uuid without any dashes in the middle
+                args '--uuid', project.getProperty('mc_uuid')
+            }
+            if (project.hasProperty('mc_username')) {
+                // Your username/display name, this is the name that shows up in chat
+                // Note: This is not your email, even if you have a Mojang account
+                args '--username', project.getProperty('mc_username')
+            }
+            if (project.hasProperty('mc_accessToken')) {
+                // Your access token, you can find it in your '.minecraft/launcher_profiles.json' file
+                args '--accessToken', project.getProperty('mc_accessToken')
+            }
 
             workingDirectory project.file('run').canonicalPath
             mods {
@@ -84,21 +109,70 @@ minecraft {
                 }
             }
         }
+        data {
+            workingDirectory project.file('run')
+            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', mod_id, '--all',
+                    '--existing', file('src/main/resources'),
+                    '--existing', file('src/generated/resources'),
+                    '--output', file('src/generated/resources')
+            mods {
+                titles {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+// It' i's necessary to add the generated data directory (like below) if you have the generated data output to a different
+// location than your normal resource directory (src/main/resources). As I've done in the 'data' section above.
+sourceSets.main.resources {
+    srcDirs += 'src/generated/resources'
+}
+
+processResources {
+    // Exclude datagenerator .cache directory
+    exclude '.cache'
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'mod_version': getVersion(), 'mod_id': mod_id, 'mod_name': mod_name, 'mod_author': mod_author,
+                'mod_desc': mod_desc, 'mod_url': mod_url, 'issue_url': issue_url, 'update_url': update_url
     }
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title": mod_id,
-                "Specification-Vendor": "Aurilux",
-                "Specification-Version": "1",
-                "Implementation-Title": project.name,
-                "Implementation-Version": mod_version,
-                "Implementation-Vendor" : "Aurilux",
+                "Specification-Title": mod_name,
+                "Specification-Vendor": mod_author,
+                "Specification-Version": getArchiveName(),
+                "Implementation-Title": mod_name,
+                "Implementation-Version": getArchiveName(),
+                "Implementation-Vendor" : mod_author,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+}
+
+task srcJar(type: Jar) {
+    from(sourceSets.main.java)
+    classifier = 'sources'
+}
+
+task apiJar(type: Jar) {
+    // Remove sources from the api jar when MinecraftForge/ForgeGradle#369 is fixed
+    from(sourceSets.main.allJava)
+    from(sourceSets.main.output)
+    include "aurilux/${mod_id}/api/**"
+    classifier = 'api'
+}
+
+artifacts {
+    archives srcJar, apiJar
 }
 
 task updateJson {
@@ -116,4 +190,22 @@ task updateJson {
     }
 }
 
-//build.dependsOn updateJson
+build.dependsOn updateJson
+
+// Just like the minecraft profile variables above (in the minecraft.runs section), the apiKey should be stored in your
+// 'gradle.properties' file inside your gradle user home.
+curseforge {
+    project {
+        apiKey = findProperty('curse_key') ?: 0
+        id = "${curse_id}"
+        releaseType = "release"
+        changelogType = 'markdown'
+        changelog = file('changelog.txt')
+        addArtifact(srcJar)
+        addArtifact(apiJar)
+        addGameVersion "${minecraft_version}"
+    }
+    options {
+        debug = true
+    }
+}

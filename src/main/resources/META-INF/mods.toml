@@ -8,27 +8,27 @@ license="GPL v3"
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]]
     # The modid of the mod
-    modId="titles"
+    modId="${mod_id}"
     # The version number of the mod
-    version="${file.jarVersion}"
+    version="${mod_version}"
     # A display name for the mod
-    displayName="Titles"
+    displayName="${mod_name}"
     # The description text for the mod (multi line!)
     description='''
-    Adds earnable titles that can be displayed next to your username'''
+    ${mod_desc}'''
     ## OPTIONAL
     # A text field displayed in the mod UI
-    authors="Aurilux"
+    authors="${mod_author}"
     # A text field displayed in the mod UI
     #credits="Thanks for this example mod goes to Java"
     # A file name (in the root of the mod JAR) containing a logo for display
-    logoFile="titles_logo.png"
+    logoFile="${mod_id}_logo.png"
     # A URL for the "homepage" for this mod, displayed in the mod UI
-    displayURL="https://minecraft.curseforge.com/projects/titles"
+    displayURL="${mod_url}"
     # A URL to refer people to when problems occur with this mod
-    issueTrackerURL="https://github.com/Aurilux/Titles/issues"
+    issueTrackerURL="${issue_url}"
     # A URL to query for updates for this mod
-    updateJSONURL="https://raw.githubusercontent.com/Aurilux/Titles/master/update.json"
+    updateJSONURL="${update_url}"
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.titles]]

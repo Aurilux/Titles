@@ -11,27 +11,27 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class PacketSyncGenderSetting {
-    private final boolean gender;
+public class PacketSyncDisplayTitle {
     private final UUID playerUUID;
+    private final String selectedTitle;
 
-    public PacketSyncGenderSetting(UUID uuid, boolean setting) {
+    public PacketSyncDisplayTitle(UUID uuid, String titleKey) {
         playerUUID = uuid;
-        gender = setting;
+        selectedTitle = titleKey;
     }
 
-    public static void encode(PacketSyncGenderSetting msg, PacketBuffer buf) {
+    public static void encode(PacketSyncDisplayTitle msg, PacketBuffer buf) {
         buf.writeString(msg.playerUUID.toString());
-        buf.writeBoolean(msg.gender);
+        buf.writeString(msg.selectedTitle);
     }
 
-    public static PacketSyncGenderSetting decode(PacketBuffer buf) {
+    public static PacketSyncDisplayTitle decode(PacketBuffer buf) {
         UUID uuid = UUID.fromString(buf.readString(32767));
-        boolean setting = buf.readBoolean();
-        return new PacketSyncGenderSetting(uuid, setting);
+        String titleKey = buf.readString(32767);
+        return new PacketSyncDisplayTitle(uuid, titleKey);
     }
 
-    public static void handle(PacketSyncGenderSetting msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncDisplayTitle msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(new Runnable() {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
@@ -41,11 +41,11 @@ public class PacketSyncGenderSetting {
                     player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
                 } else {
                     player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    PacketHandler.sendToAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
+                    PacketHandler.sendToAll(new PacketSyncDisplayTitle(msg.playerUUID, msg.selectedTitle));
                 }
 
                 if (player != null) {
-                    TitlesAPI.getCapability(player).ifPresent(cap -> cap.setGenderSetting(msg.gender));
+                    TitlesAPI.setDisplayTitle(player, msg.selectedTitle);
                     player.refreshDisplayName();
                 }
             }

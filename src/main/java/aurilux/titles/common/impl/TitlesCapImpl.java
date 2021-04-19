@@ -69,6 +69,7 @@ public class TitlesCapImpl implements ITitles {
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
+        obtainedTitles.clear();
         genderSetting = nbt.getBoolean(GENDER_SETTING);
         displayTitle = TitlesAPI.internal().getTitle(nbt.getString(DISPLAY_TITLE));
         ListNBT obtained = (ListNBT) nbt.get(OBTAINED_TITLES);
