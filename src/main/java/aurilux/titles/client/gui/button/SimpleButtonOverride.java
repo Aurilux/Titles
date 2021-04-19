@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+//TODO instead make this a subclass of TitleSelectionScreen
 @OnlyIn(Dist.CLIENT)
 public class SimpleButtonOverride extends Button {
     private final ResourceLocation guiLoc = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");

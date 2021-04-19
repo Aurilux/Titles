@@ -4,20 +4,18 @@
 .gradle/
 .idea/
 libs/
+media/
 build/
 run/
 logs/
 
 # Entirely Ignored Extensions and Directories #
 ######################
-*.bat
-*.txt
 *.odt
-media/
 
 # Unique Files #
 ######################
-private.properties
+ToDoList.txt
 
 # Various OS generated files #
 ######################

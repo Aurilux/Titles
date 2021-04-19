@@ -28,11 +28,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 @Mod(TitlesAPI.MOD_ID)
 public class TitlesMod {
     public static final Logger LOG = LogManager.getLogger(TitlesAPI.MOD_ID.toUpperCase());
 
     public static ItemGroup itemGroup = new ItemGroup(TitlesAPI.MOD_ID) {
+        @Nonnull
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());

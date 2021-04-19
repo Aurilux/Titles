@@ -1,30 +1,35 @@
 {
-  "homepage": "https://github.com/Aurilux/Titles",
-  "promos": {
-    "1.16.4-latest": "3.2.4",
-    "1.16.4-recommended": "3.2.4",
-    "1.12.2-latest": "3.1.7",
-    "1.12.2-recommended": "3.1.7"
-  },
-  "1.16.4": {
-    "3.2.4": "Fixed a crash caused by calling the wrong method on the server",
-    "3.2.3": "Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat",
-    "3.2.2": "Now properly syncs title data on respawn and dimension changes",
-    "3.2.1": "Fixed a server crash caused by accessing client-only content on server",
-    "3.2.0": "Lots of changes. To see a detailed changelog, go to changelog.txt in the github repo"
-  },
-  "1.12.2": {
-    "3.1.7": "Now properly syncs title data on respawn and dimension changes",
-    "3.1.6": "Improved pattern matching to prevent errors of mods with weird lang file entries for advancements",
-    "3.1.5": "Renamed es_es.lang to es_ES.lang so Minecraft would recognize it",
-    "3.1.4": "Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.",
-    "3.1.3": "Added es_es.lang, added config option to disable loot, and a few other things",
-    "3.1.2": "Fixed a client side crash. Not even sure what caused it to happen or how what I did fixed it",
-    "3.1.1": "Fixed a server side crash caused by referencing a client only class",
-    "3.1.0": "Titles are now data-driven, making it easier for modpack devs to add their own",
-    "3.0.0": "Lots of changes. See the changelog for details",
-    "2.1.0": "Added page counter and config options to change the title colors",
-    "2.0.1": "Fixed a crash while on a server due to call to client side only class",
-    "2.0.0": "BIG Minecraft version jump. New GUI."
-  }
+    "homepage": "https://github.com/Aurilux/Titles",
+    "promos": {
+        "1.16.4-latest": "3.2.4",
+        "1.16.4-recommended": "3.2.4",
+        "1.12.2-latest": "3.1.7",
+        "1.12.2-recommended": "3.1.7",
+        "1.16.5-latest": "3.2.5",
+        "1.16.5-recommended": "3.2.5"
+    },
+    "1.16.5": {
+        "3.2.5": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information."
+    },
+    "1.16.4": {
+        "3.2.4": "Fixed a crash caused by calling the wrong method on the server",
+        "3.2.3": "Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat",
+        "3.2.2": "Now properly syncs title data on respawn and dimension changes",
+        "3.2.1": "Fixed a server crash caused by accessing client-only content on server",
+        "3.2.0": "Lots of changes. To see a detailed changelog, go to changelog.txt in the github repo"
+    },
+    "1.12.2": {
+        "3.1.7": "Now properly syncs title data on respawn and dimension changes",
+        "3.1.6": "Improved pattern matching to prevent errors of mods with weird lang file entries for advancements",
+        "3.1.5": "Renamed es_es.lang to es_ES.lang so Minecraft would recognize it",
+        "3.1.4": "Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.",
+        "3.1.3": "Added es_es.lang, added config option to disable loot, and a few other things",
+        "3.1.2": "Fixed a client side crash. Not even sure what caused it to happen or how what I did fixed it",
+        "3.1.1": "Fixed a server side crash caused by referencing a client only class",
+        "3.1.0": "Titles are now data-driven, making it easier for modpack devs to add their own",
+        "3.0.0": "Lots of changes. See the changelog for details",
+        "2.1.0": "Added page counter and config options to change the title colors",
+        "2.0.1": "Fixed a crash while on a server due to call to client side only class",
+        "2.0.0": "BIG Minecraft version jump. New GUI."
+    }
 }

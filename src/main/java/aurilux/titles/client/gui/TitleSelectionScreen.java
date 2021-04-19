@@ -9,7 +9,7 @@ import aurilux.titles.client.gui.button.TitleButton;
 import aurilux.titles.client.gui.button.ToggleImageButton;
 import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
-import aurilux.titles.common.network.messages.PacketSyncSelectedTitle;
+import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,16 +20,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiTitleSelection extends Screen {
+public class TitleSelectionScreen extends Screen {
     private final ResourceLocation bgTexture = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");
 
     private final int NUM_COLS = 2;
@@ -63,10 +63,7 @@ public class GuiTitleSelection extends Screen {
 
     private TextFieldWidget search;
 
-    private final ITextComponent maleComp = new StringTextComponent("M").mergeStyle(TextFormatting.BLUE);
-    private final ITextComponent femaleComp = new StringTextComponent("F").mergeStyle(TextFormatting.RED);
-
-    public GuiTitleSelection(PlayerEntity player, ITitles cap) {
+    public TitleSelectionScreen(PlayerEntity player, ITitles cap) {
         super(new StringTextComponent("Title Selection"));
         this.player = player;
         gender = cap.getGenderSetting();
@@ -135,7 +132,7 @@ public class GuiTitleSelection extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // Renders the background tint
         renderBackground(matrixStack);
         RenderSystem.color4f(1, 1, 1, 1);
@@ -162,7 +159,7 @@ public class GuiTitleSelection extends Screen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            PacketHandler.sendToServer(new PacketSyncSelectedTitle(player.getUniqueID(), temporaryTitle.getKey()));
+            PacketHandler.sendToServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getKey()));
         }
         PacketHandler.sendToServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
         closeScreen();

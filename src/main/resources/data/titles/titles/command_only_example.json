@@ -1,0 +1,23 @@
+{
+  "COMMON": [
+    "The format for command only titles follows just like loot titles. Just put the title as you want to see it in-game.",
+    "Like the example below:",
+
+    "the Commander",
+
+    "Titles converts that into a key using the format command.titles.<title>.",
+    "Using the above example it'll generate: command.titles.commander. You use that to unlock it using the '/titles add' command.",
+
+    "If the title has more than one word, it'll replace each space with an underscore, like the examples below:",
+
+    "the Hydro Homie",
+    "becomes: command.titles.hydro_homie",
+
+    "the One Who Hides",
+    "becomes: command.titles.one_who_hides. Etc, etc."
+  ],
+  "UNCOMMON": [
+  ],
+  "RARE": [
+  ]
+}

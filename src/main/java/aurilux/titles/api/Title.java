@@ -1,9 +1,7 @@
 package aurilux.titles.api;
 
-import net.minecraft.client.resources.ClientLanguageMap;
 import net.minecraft.item.Rarity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 
 import java.util.Comparator;
 
@@ -13,11 +11,14 @@ public class Title {
     private String modid;
     private String langKey;
     private Rarity rarity;
+    // For titles loaded through the json data files
+    private boolean isDataLoaded = false;
 
     public Title() {}
 
     public Title(String key, Rarity rarity) {
         this.key = key;
+        this.rarity = rarity;
         int colonIndex = key.indexOf(":");
         // This is used for NULL_TITLE, loot, and contributor titles as neither needs unique translations
         if (colonIndex == -1) {
@@ -25,10 +26,17 @@ public class Title {
             langKey = key;
         }
         else {
-            this.modid = key.substring(0, colonIndex);
-            this.langKey = "title." + key.replaceAll("[\\s]", "_").replaceAll("[\\W]", ".");
+            modid = key.substring(0, colonIndex);
+            langKey = "title." + key.replaceAll("[\\s]", "_").replaceAll("[\\W]", ".");
         }
+    }
+
+    public Title(String key, String translation, Rarity rarity) {
+        this.key = key;
         this.rarity = rarity;
+        this.isDataLoaded = true;
+        modid = TitlesAPI.MOD_ID;
+        langKey = translation;
     }
 
     public String getKey() {
@@ -48,11 +56,18 @@ public class Title {
     }
 
     public ITextComponent getComponent(boolean isMasculine) {
-        String modifiedLangKey = getLangKey();
-        if (!isMasculine && ClientLanguageMap.getInstance().func_230506_b_(getLangKey() + ".f")) {
-            modifiedLangKey += ".f";
+        TextComponent component;
+        if (isDataLoaded) {
+            component = new StringTextComponent(getLangKey());
         }
-        return new TranslationTextComponent(modifiedLangKey).mergeStyle(getRarity().color);
+        else {
+            String modifiedLangKey = getLangKey();
+            if (!isMasculine && LanguageMap.getInstance().func_230506_b_(getLangKey() + ".f")) {
+                modifiedLangKey += ".f";
+            }
+            component = new TranslationTextComponent(modifiedLangKey);
+        }
+        return component.mergeStyle(getRarity().color);
     }
 
     @Override

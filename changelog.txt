@@ -1,65 +1,70 @@
-1.16.4 - 3.2.4
-Fixed a crash caused by calling the wrong method on the server
+## 1.16.4 - 3.2.5
+- Fixed another server crash caused by calling client-only code
+- Added a feminine variant for "the Huntsman" title: "the Huntress"
+- Made it easier for modpack makers to add titles. Just modify the files in data/titles/titles (not the example ones)
+- For right now, feminine variants cannot be done with data loaded titles. This will be added later.
 
-1.16.4 - 3.2.3
-Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat
+## 1.16.4 - 3.2.4
+- Fixed a crash caused by calling the wrong method on the server
 
-1.16.4 - 3.2.2
-Now properly syncs title data on respawn and dimension changes. How this wasn't reported sooner, I have no idea.
+## 1.16.4 - 3.2.3
+- Fixed an error earning the 'Captain' advancement that prevented players from getting in a boat
 
-1.16.4 - 3.2.1
-Fixed a server crash caused by accessing client-only content on server
+## 1.16.4 - 3.2.2
+- Now properly syncs title data on respawn and dimension changes. How this wasn't reported sooner, I have no idea.
 
-1.16.4 - 3.2.0
-Updated to 1.16
-Added titles for some of the new advancements added to Minecraft
-Titles Archive is now gone. Loot titles are now obtained by trading emeralds and title fragments with Librarian villagers
-Gender support. For gender-specific titles (Lord vs Lady), or gendered languages such as Spanish. Details in the github repo wiki
-The way mod authors add their own title has been changed. Details in the github repo wiki
+## 1.16.4 - 3.2.1
+- Fixed a server crash caused by accessing client-only content on server
 
-1.12.2 - 3.1.7
-Now properly syncs title data on respawn and dimension changes. How this wasn't reported sooner, I have no idea.
+## 1.16.4 - 3.2.0
+- Updated to 1.16
+- Added titles for some of the new advancements added to Minecraft
+- Titles Archive is now gone. Loot titles are now obtained by trading emeralds and title fragments with Librarian villagers
+- Gender support. For gender-specific titles (Lord vs Lady), or gendered languages such as Spanish. Details in the github repo wiki
+- The way mod authors add their own title has been changed. Details in the github repo wiki
 
-1.12.2 - 3.1.6
-Improved pattern matching to prevent errors with mods with weird lang file entries for advancements.
+## 1.12.2 - 3.1.7
+- Now properly syncs title data on respawn and dimension changes. How this wasn't reported sooner, I have no idea.
 
-1.12.2 - 3.1.5
-Renamed es_es.lang to es_ES.lang so Minecraft would recognize it
+## 1.12.2 - 3.1.6
+- Improved pattern matching to prevent errors with mods with weird lang file entries for advancements.
 
-1.12.2 - 3.1.4
-Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.
+## 1.12.2 - 3.1.5
+- Renamed es_es.lang to es_ES.lang so Minecraft would recognize it
 
-1.12.2 - 3.1.3
-Added es_es.lang (Thanks Alfkors!)
-Added a command to load advancement-based titles in existing worlds (/titles refresh)
-Added a config option to disable archive fragments being added to loot
-Removed the config option to change rarity colors. There was just no good way to make it update in chat as well.
-    *Note: this may comeback in 1.15, but we'll see
+## 1.12.2 - 3.1.4
+- Somehow I deleted the @SubscribeEvent annotation from the method that updates the player's name. Derp.
 
-1.12.2 - 3.1.2
-Fixed a client side crash. Not even sure what caused it to happen or how what I did fixed it
+## 1.12.2 - 3.1.3
+- Added es_es.lang (Thanks Alfkors!)
+- Added a command to load advancement-based titles in existing worlds (/titles refresh)
+- Added a config option to disable archive fragments being added to loot
+- Removed the config option to change rarity colors. There was just no good way to make it update in chat as well.
+- Note: this may comeback in 1.15, but we'll see
 
-1.12.2 - 3.1.1
-Fixed a server side crash caused by referencing a client only class
+## 1.12.2 - 3.1.2
+- Fixed a client side crash. Not even sure what caused it to happen or how what I did fixed it
 
-1.12.2 - 3.1.0
-Barring any bug fixes, this will be the last version for 1.12.
-Forgot the Title Archive gui. Whoops.
-Titles are now also data driven. This means you can add titles through json files in the
-    Titles config directory, in addition to the API
+## 1.12.2 - 3.1.1
+- Fixed a server side crash caused by referencing a client only class
 
-1.12.2 - 3.0.0
-Added commands. Details in the wiki.
-Fixed a problem with sending packets that caused a server crash.
-Added an API which should make it easier for mod authors to add their own titles.
-Added some of my own advancements to unlock additional titles. Most are RL references.
-Titles are no longer limited to just advancements. Details in the wiki.
-Added the Titles Archive - an item that lets you purchase generic titles with Archive Fragments which are found as loot.
-For modpack makers: titles available in the Archive are loaded from archiveTitles.json, which is in the config directory
+## 1.12.2 - 3.1.0
+- Barring any bug fixes, this will be the last version for 1.12.
+- Forgot the Title Archive gui. Whoops.
+- Titles are now also data driven. This means you can add titles through json files in the Titles config directory, in addition to the API
 
-1.12.2 - 2.1.0
-Added a page counter to the title selection GUI
-Added missing mcmod.info file
-Players can now change the color for each type of title through the config (common, uncommon, rare, unique)
-    You are only able to choose from the lighter chat colors due to text drop shadow
-On the backend, title data is now a capability. Was player NBT data.
+## 1.12.2 - 3.0.0
+- Added commands. Details in the wiki.
+- Fixed a problem with sending packets that caused a server crash.
+- Added an API which should make it easier for mod authors to add their own titles.
+- Added some of my own advancements to unlock additional titles. Most are RL references.
+- Titles are no longer limited to just advancements. Details in the wiki.
+- Added the Titles Archive - an item that lets you purchase generic titles with Archive Fragments which are found as loot.
+- For modpack makers: titles available in the Archive are loaded from archiveTitles.json, which is in the config directory
+
+## 1.12.2 - 2.1.0
+- Added a page counter to the title selection GUI
+- Added missing mcmod.info file
+- Players can now change the color for each type of title through the config (common, uncommon, rare, unique)
+- You are only able to choose from the lighter chat colors due to text drop shadow
+- On the backend, title data is now a capability. Was player NBT data.

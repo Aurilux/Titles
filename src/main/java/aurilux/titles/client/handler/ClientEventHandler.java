@@ -3,7 +3,7 @@ package aurilux.titles.client.handler;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.Keybinds;
-import aurilux.titles.client.gui.GuiTitleSelection;
+import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.impl.TitlesCapImpl;
@@ -29,11 +29,15 @@ import java.util.stream.Collectors;
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+
         if (Keybinds.openTitleSelection.isPressed()) {
             PlayerEntity player = Minecraft.getInstance().player;
             if (player != null) {
                 TitlesAPI.getCapability(player).ifPresent(cap -> {
-                    Minecraft.getInstance().displayGuiScreen(new GuiTitleSelection(player, cap));
+                    Minecraft.getInstance().displayGuiScreen(new TitleSelectionScreen(player, cap));
                 });
             }
         }
@@ -101,7 +105,7 @@ public class ClientEventHandler {
         else {
             for (String modId : modList) {
                 String testKey = modId + ":" + String.join("/", keyParts);
-                if (TitleRegistry.INSTANCE.getObjectiveTitles().containsKey(testKey)) {
+                if (TitleRegistry.INSTANCE.getAdvancementTitles().containsKey(testKey)) {
                     return testKey;
                 }
             }

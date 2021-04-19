@@ -20,7 +20,7 @@ public interface ITitles extends INBTSerializable<CompoundNBT> {
     Title getDisplayTitle();
 
     // True = male, false = female
-    // This is just a setting for gender-specific titles (Lord vs Lady), or gendered languages such as Spanish
+    // This is a setting for gender-specific titles (Lord vs Lady), or gendered languages such as Spanish
     boolean getGenderSetting();
 
     void setGenderSetting(boolean newSetting);
