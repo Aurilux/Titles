@@ -15,8 +15,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 //TODO instead make this a subclass of TitleSelectionScreen
 @OnlyIn(Dist.CLIENT)
 public class SimpleButtonOverride extends Button {
-    private final ResourceLocation guiLoc = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");
-    private final int buttonStartY = 220;
+    protected final ResourceLocation guiLoc = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");
+    protected final int buttonStartY = 220;
 
     public SimpleButtonOverride(int x, int y, int width, int height, ITextComponent title, IPressable pressedAction) {
         super(x, y, width, height, title, pressedAction);
@@ -27,7 +27,7 @@ public class SimpleButtonOverride extends Button {
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         FontRenderer fontrenderer = minecraft.fontRenderer;
         minecraft.getTextureManager().bindTexture(guiLoc);

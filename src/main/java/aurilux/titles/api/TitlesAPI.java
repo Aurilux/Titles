@@ -5,14 +5,15 @@ import aurilux.titles.api.handler.DummyMethodHandler;
 import aurilux.titles.api.handler.IInternalMethodHandler;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Rarity;
 import net.minecraft.util.LazyValue;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.LogManager;
 
+// TODO review and clean up. Might be a few things I no longer need.
 public class TitlesAPI {
     public static final String MOD_ID = "titles";
 
@@ -32,30 +33,11 @@ public class TitlesAPI {
         return internalHandler.getValue();
     }
 
-    public static void registerCommonTitles(String modId, String... titles) {
-        registerTitles(modId, Rarity.COMMON, titles);
-    }
-
-    public static void registerUncommonTitles(String modId, String... titles) {
-        registerTitles(modId, Rarity.UNCOMMON, titles);
-    }
-
-    public static void registerRareTitles(String modId, String... titles) {
-        registerTitles(modId, Rarity.RARE, titles);
-    }
-
-    private static void registerTitles(String modId, Rarity rarity, String... titles) {
-        String verifiedModId = modId == null || modId.isEmpty() ? TitlesAPI.MOD_ID : modId;
-        for (String title : titles) {
-            internal().registerTitle(rarity, verifiedModId + ":" + title);
-        }
-    }
-
     public static LazyOptional<ITitles> getCapability(PlayerEntity player) {
         return player.getCapability(TitlesAPI.TITLES_CAPABILITY);
     }
 
-    public static void setDisplayTitle(PlayerEntity player, String titleKey) {
+    public static void setDisplayTitle(PlayerEntity player, ResourceLocation titleKey) {
         getCapability(player).ifPresent(c -> {
             c.setDisplayTitle(internal().getTitle(titleKey));
         });
@@ -79,7 +61,7 @@ public class TitlesAPI {
                 return playerName;
             }
             else {
-                return playerName.deepCopy().appendString(", ").append(titleComponent);
+                return playerName.deepCopy().appendString(", ").appendSibling(titleComponent);
             }
         }
     }

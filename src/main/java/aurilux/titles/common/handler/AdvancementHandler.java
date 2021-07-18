@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.BoatEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +29,7 @@ public class AdvancementHandler {
     public static void onAdvancement(AdvancementEvent event) {
         ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
         Advancement advancement = event.getAdvancement();
-        TitlesAPI.internal().unlockTitle(player, advancement.getId().toString());
+        TitlesAPI.internal().unlockTitle(player, advancement.getId());
     }
 
     @SubscribeEvent

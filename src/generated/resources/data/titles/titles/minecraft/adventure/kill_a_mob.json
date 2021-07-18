@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.minecraft.adventure.kill_a_mob",
+    "variant": "title.minecraft.adventure.kill_a_mob.v"
+  }
+}

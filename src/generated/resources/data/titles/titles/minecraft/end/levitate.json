@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "rarity": "rare",
+  "display": {
+    "default": "title.minecraft.end.levitate"
+  }
+}

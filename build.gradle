@@ -205,7 +205,4 @@ curseforge {
         addArtifact(apiJar)
         addGameVersion "${minecraft_version}"
     }
-    options {
-        debug = true
-    }
 }

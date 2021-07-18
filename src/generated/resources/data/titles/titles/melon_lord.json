@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.titles.melon_lord",
+    "flavor": "title.titles.melon_lord.flavor"
+  }
+}
