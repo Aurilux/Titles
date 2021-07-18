@@ -1,4 +1,14 @@
-## 1.16.4 - 3.2.5
+## 1.16.5 - 3.3.0
+- Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have it's own json. Similar to how vanilla does advancements and recipes.
+- Added a Title data provider and a builder class in the Title class for modders to easily generate titles for their mods.
+- There is a new command called "/titles refresh". This will go through the player's completed advancements and reward their respective titles.
+
+## 1.16.5 - 3.2.6
+- Changed the Shieldbearer title slightly to Shield Bearer
+- Also added its feminine variant: Shield Maiden
+- Added a new title for the "This Boat has Legs" advancement: the Strider Rider
+
+## 1.16.5 - 3.2.5
 - Fixed another server crash caused by calling client-only code
 - Added a feminine variant for "the Huntsman" title: "the Huntress"
 - Made it easier for modpack makers to add titles. Just modify the files in data/titles/titles (not the example ones)

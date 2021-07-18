@@ -27,7 +27,7 @@ public class ToggleImageButton extends ImageButton {
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft.getInstance().getTextureManager().bindTexture(this.resourceLocation);
         int startX = xTexStart;
         if (toggle) {

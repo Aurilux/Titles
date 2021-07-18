@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.minecraft.nether.charge_respawn_anchor"
+  }
+}

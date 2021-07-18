@@ -3,15 +3,16 @@ package aurilux.titles.common.impl;
 import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.api.handler.IInternalMethodHandler;
-import aurilux.titles.common.core.TitleRegistry;
+import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Rarity;
+import net.minecraft.util.ResourceLocation;
 
 public class InternalHandlerImpl implements IInternalMethodHandler {
+    // TODO Is there a way to optimize by searching the titles by the AwardType?
     @Override
-    public void unlockTitle(ServerPlayerEntity player, String titleKey) {
+    public void unlockTitle(ServerPlayerEntity player, ResourceLocation titleKey) {
         Title title = TitlesAPI.internal().getTitle(titleKey);
         TitlesAPI.getCapability(player).ifPresent(c -> {
             if (c.add(title)) {
@@ -21,12 +22,7 @@ public class InternalHandlerImpl implements IInternalMethodHandler {
     }
 
     @Override
-    public Title getTitle(String titleKey) {
-        return TitleRegistry.INSTANCE.getTitle(titleKey);
-    }
-
-    @Override
-    public void registerTitle(Rarity rarity, String titleKey) {
-        TitleRegistry.INSTANCE.registerTitle(rarity, titleKey);
+    public Title getTitle(ResourceLocation titleKey) {
+        return TitleManager.INSTANCE.getTitle(titleKey);
     }
 }

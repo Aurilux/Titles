@@ -5,14 +5,15 @@ import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmen
 import aurilux.titles.common.impl.TitlesCapImpl;
 import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
-import aurilux.titles.common.network.messages.PacketSyncTitles;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
+import aurilux.titles.common.network.messages.PacketSyncTitles;
 import aurilux.titles.common.util.CapabilityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Rarity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -62,16 +63,16 @@ public class CommonEventHandler {
             // Also send them the display titles of everyone else currently logged in.
             PacketHandler.sendTo(new PacketSyncAllDisplayTitles(getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
             // Then send their display title to everyone else.
-            PacketHandler.sendToAll(new PacketSyncDisplayTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getKey()));
+            PacketHandler.sendToAll(new PacketSyncDisplayTitle(playerLoggingIn.getUniqueID(), loggingInCap.getDisplayTitle().getID()));
         });
     }
 
-    private static Map<UUID, String> getAllDisplayTitles(PlayerEntity player) {
-        Map<UUID, String> allSelectedTitles = new HashMap<>();
+    private static Map<UUID, ResourceLocation> getAllDisplayTitles(PlayerEntity player) {
+        Map<UUID, ResourceLocation> allSelectedTitles = new HashMap<>();
         for (ServerPlayerEntity serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (serverPlayer.getUniqueID() != player.getUniqueID()) {
                 TitlesAPI.getCapability(serverPlayer).ifPresent(cap -> {
-                    allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getKey());
+                    allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getID());
                 });
             }
         }

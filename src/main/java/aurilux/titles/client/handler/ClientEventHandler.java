@@ -5,10 +5,11 @@ import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
-import aurilux.titles.common.core.TitleRegistry;
+import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -43,6 +44,7 @@ public class ClientEventHandler {
         }
     }
 
+    // TODO review. Seems a bit complex, might be able to simplify
     @SubscribeEvent
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
         IFormattableTextComponent component = event.getMessage().copyRaw();
@@ -62,10 +64,11 @@ public class ClientEventHandler {
                         .filter(tc -> tc instanceof TranslationTextComponent)
                         .map(tc -> ((TranslationTextComponent) tc).getKey())
                         .map(ClientEventHandler::processKey)
+                        .map(ResourceLocation::new)
                         .map(TitlesAPI.internal()::getTitle)
                         .filter(title -> !title.isNull())
                         .findFirst().ifPresent(title -> {
-                            component.append(new TranslationTextComponent("chat.advancement.append",
+                            component.appendSibling(new TranslationTextComponent("chat.advancement.append",
                                     TitlesAPI.getFormattedTitle(title, playerCap.getGenderSetting())));
                             event.setMessage(component);
                         });
@@ -105,7 +108,7 @@ public class ClientEventHandler {
         else {
             for (String modId : modList) {
                 String testKey = modId + ":" + String.join("/", keyParts);
-                if (TitleRegistry.INSTANCE.getAdvancementTitles().containsKey(testKey)) {
+                if (TitleManager.INSTANCE.getAdvancementTitles().containsKey(testKey)) {
                     return testKey;
                 }
             }

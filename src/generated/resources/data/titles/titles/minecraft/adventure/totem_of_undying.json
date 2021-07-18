@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "rarity": "uncommon",
+  "display": {
+    "default": "title.minecraft.adventure.totem_of_undying"
+  }
+}

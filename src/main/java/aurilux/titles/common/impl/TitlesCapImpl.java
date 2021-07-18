@@ -58,10 +58,10 @@ public class TitlesCapImpl implements ITitles {
     public CompoundNBT serializeNBT() {
         CompoundNBT data = new CompoundNBT();
         data.putBoolean(GENDER_SETTING, genderSetting);
-        data.putString(DISPLAY_TITLE, getDisplayTitle().getKey());
+        data.putString(DISPLAY_TITLE, getDisplayTitle().getID().toString());
         ListNBT obtained = new ListNBT();
         for (Title title : obtainedTitles) {
-            obtained.add(StringNBT.valueOf(title.getKey()));
+            obtained.add(StringNBT.valueOf(title.getID().toString()));
         }
         data.put(OBTAINED_TITLES, obtained);
         return data;
@@ -71,10 +71,10 @@ public class TitlesCapImpl implements ITitles {
     public void deserializeNBT(CompoundNBT nbt) {
         obtainedTitles.clear();
         genderSetting = nbt.getBoolean(GENDER_SETTING);
-        displayTitle = TitlesAPI.internal().getTitle(nbt.getString(DISPLAY_TITLE));
+        displayTitle = TitlesAPI.internal().getTitle(new ResourceLocation(nbt.getString(DISPLAY_TITLE)));
         ListNBT obtained = (ListNBT) nbt.get(OBTAINED_TITLES);
         for (int i = 0; i < obtained.size(); i++) {
-            Title title = TitlesAPI.internal().getTitle(obtained.getString(i));
+            Title title = TitlesAPI.internal().getTitle(new ResourceLocation(obtained.getString(i)));
             add(title);
         }
     }

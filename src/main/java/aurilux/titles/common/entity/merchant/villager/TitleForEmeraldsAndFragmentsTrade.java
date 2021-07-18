@@ -1,6 +1,6 @@
 package aurilux.titles.common.entity.merchant.villager;
 
-import aurilux.titles.common.item.ModItems;
+import aurilux.titles.common.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.item.ItemStack;
