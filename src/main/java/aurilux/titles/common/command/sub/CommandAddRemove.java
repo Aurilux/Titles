@@ -12,6 +12,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -35,17 +36,19 @@ public class CommandAddRemove {
 
     private static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, Title title) {
         final CommandType commandType = context.getArgument("command", CommandType.class);
+        // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
         final TextComponent[] response = {new StringTextComponent("Error completing command")};
-        TitlesAPI.getCapability(player).ifPresent(t -> {
+        TitlesAPI.getCapability(player).ifPresent(c -> {
+            ITextComponent formattedTitle = TitlesAPI.getFormattedTitle(title, c.getGenderSetting());
             if (commandType.equals(CommandType.add)) {
-                t.add(title);
-                response[0] = new TranslationTextComponent("commands.titles.add", title.getDefaultDisplay(), player.getName());
+                c.add(title);
+                response[0] = new TranslationTextComponent("commands.titles.add", formattedTitle, player.getName());
             }
             else if (commandType.equals(CommandType.remove)) {
-                t.remove(title);
-                response[0] = new TranslationTextComponent("commands.titles.remove", title.getDefaultDisplay(), player.getName());
+                c.remove(title);
+                response[0] = new TranslationTextComponent("commands.titles.remove", formattedTitle, player.getName());
             }
-            PacketHandler.sendTo(new PacketSyncTitles(t.serializeNBT()), player);
+            PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), player);
         });
         context.getSource().sendFeedback(response[0], false);
         return Command.SINGLE_SUCCESS;

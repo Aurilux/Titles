@@ -29,7 +29,7 @@ public class AdvancementHandler {
     public static void onAdvancement(AdvancementEvent event) {
         ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
         Advancement advancement = event.getAdvancement();
-        TitlesAPI.internal().unlockTitle(player, advancement.getId());
+        TitlesAPI.unlockTitle(player, advancement.getId());
     }
 
     @SubscribeEvent

@@ -65,7 +65,7 @@ public class ClientEventHandler {
                         .map(tc -> ((TranslationTextComponent) tc).getKey())
                         .map(ClientEventHandler::processKey)
                         .map(ResourceLocation::new)
-                        .map(TitlesAPI.internal()::getTitle)
+                        .map(TitlesAPI::getTitle)
                         .filter(title -> !title.isNull())
                         .findFirst().ifPresent(title -> {
                             component.appendSibling(new TranslationTextComponent("chat.advancement.append",
@@ -107,15 +107,15 @@ public class ClientEventHandler {
         }
         else {
             for (String modId : modList) {
-                String testKey = modId + ":" + String.join("/", keyParts);
+                ResourceLocation testKey = new ResourceLocation(modId + ":" + String.join("/", keyParts));
                 if (TitleManager.INSTANCE.getAdvancementTitles().containsKey(testKey)) {
-                    return testKey;
+                    return testKey.toString();
                 }
             }
         }
 
         // Follows a pattern we're not familiar with.
-        TitlesMod.LOG.debug("Advancement key follows an unfamiliar pattern");
+        TitlesMod.LOG.debug("Advancement key ({}) follows an unfamiliar pattern", key);
         return "";
     }
 }

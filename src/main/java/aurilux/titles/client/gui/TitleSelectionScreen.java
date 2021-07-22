@@ -71,7 +71,7 @@ public class TitleSelectionScreen extends Screen {
 
         titlesListCache = new ArrayList<>(cap.getObtainedTitles());
         String playerName = player.getName().getString();
-        Title possibleContributor = TitlesAPI.internal().getTitle(new ResourceLocation("titles:" + playerName.toLowerCase()));
+        Title possibleContributor = TitlesAPI.getTitle(new ResourceLocation("titles:" + playerName.toLowerCase()));
         if (!possibleContributor.isNull()) {
             titlesListCache.add(possibleContributor);
         }

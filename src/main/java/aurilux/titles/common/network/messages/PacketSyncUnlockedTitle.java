@@ -32,7 +32,7 @@ public class PacketSyncUnlockedTitle {
                 PlayerEntity player = Minecraft.getInstance().player;
                 if (player != null) {
                     TitlesAPI.getCapability(player).ifPresent(c ->
-                            c.add(TitlesAPI.internal().getTitle(new ResourceLocation(msg.titleKey))));
+                            c.add(TitlesAPI.getTitle(new ResourceLocation(msg.titleKey))));
                 }
             }
         });

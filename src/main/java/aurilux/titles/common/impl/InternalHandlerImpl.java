@@ -13,9 +13,8 @@ public class InternalHandlerImpl implements IInternalMethodHandler {
     // TODO Is there a way to optimize by searching the titles by the AwardType?
     @Override
     public void unlockTitle(ServerPlayerEntity player, ResourceLocation titleKey) {
-        Title title = TitlesAPI.internal().getTitle(titleKey);
         TitlesAPI.getCapability(player).ifPresent(c -> {
-            if (c.add(title)) {
+            if (c.add(getTitle(titleKey))) {
                 PacketHandler.sendTo(new PacketSyncUnlockedTitle(titleKey), player);
             }
         });

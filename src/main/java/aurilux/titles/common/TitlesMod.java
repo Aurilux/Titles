@@ -7,6 +7,7 @@ import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.core.TitlesConfig;
+import aurilux.titles.common.handler.CommonEventHandler;
 import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import aurilux.titles.common.init.ModItems;
@@ -57,6 +58,7 @@ public class TitlesMod {
         //  stronghold_corridor, etc), so this is still necessary until they change it.
         if (TitlesConfig.COMMON.fragmentLoot.get()) {
             forgeBus.addListener(LootHandler::addLoot);
+            forgeBus.addListener(CommonEventHandler::onVillagerTrades);
         }
     }
 

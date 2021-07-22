@@ -5,6 +5,7 @@ import aurilux.titles.api.handler.DummyMethodHandler;
 import aurilux.titles.api.handler.IInternalMethodHandler;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -13,13 +14,16 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.LazyOptional;
 import org.apache.logging.log4j.LogManager;
 
-// TODO review and clean up. Might be a few things I no longer need.
 public class TitlesAPI {
     public static final String MOD_ID = "titles";
 
     @CapabilityInject(ITitles.class)
     public static Capability<ITitles> TITLES_CAPABILITY = null;
 
+    // This allows access to parts of the mod that shouldn't be exposed in an API to prevent abuse. By redirecting certain
+    // calls through an internal method handler, it limits what can be exploited by bad actors. Otherwise, there would be
+    // many core things, such as network packets and the titles database, that could be manipulated in ways beyond the
+    // design and intent of the mod, or ways for them to cheat rewards such as contributor titles.
     private static final LazyValue<IInternalMethodHandler> internalHandler = new LazyValue<>(() -> {
         try {
             return (IInternalMethodHandler) Class.forName("aurilux.titles.common.impl.InternalHandlerImpl").newInstance();
@@ -29,20 +33,31 @@ public class TitlesAPI {
         }
     });
 
-    public static IInternalMethodHandler internal() {
+    private static IInternalMethodHandler internal() {
         return internalHandler.getValue();
     }
 
+    public static void unlockTitle(ServerPlayerEntity player, ResourceLocation titleKey) {
+        internal().unlockTitle(player, titleKey);
+    }
+
+    public static Title getTitle(ResourceLocation titleKey) {
+        return internal().getTitle(titleKey);
+    }
+
+    // Simple utility getter method for obtaining the titles capabilty for a player.
     public static LazyOptional<ITitles> getCapability(PlayerEntity player) {
         return player.getCapability(TitlesAPI.TITLES_CAPABILITY);
     }
 
     public static void setDisplayTitle(PlayerEntity player, ResourceLocation titleKey) {
         getCapability(player).ifPresent(c -> {
-            c.setDisplayTitle(internal().getTitle(titleKey));
+            c.setDisplayTitle(getTitle(titleKey));
         });
     }
 
+    // This overloaded method is used to get the title without the player's name included. Used in the title selection
+    // screen for the list of obtained titles the player can choose from.
     public static ITextComponent getFormattedTitle(Title title, boolean isMasculine) {
         return getFormattedTitle(title, null, isMasculine);
     }

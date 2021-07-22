@@ -26,7 +26,7 @@ public class TitleArgument implements ArgumentType<Title> {
 
     @Override
     public Title parse(StringReader reader) throws CommandSyntaxException {
-        return TitlesAPI.internal().getTitle(ResourceLocation.read(reader));
+        return TitlesAPI.getTitle(ResourceLocation.read(reader));
     }
 
     @Override
