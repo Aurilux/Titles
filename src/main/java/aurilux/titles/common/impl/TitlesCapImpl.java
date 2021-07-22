@@ -71,10 +71,10 @@ public class TitlesCapImpl implements ITitles {
     public void deserializeNBT(CompoundNBT nbt) {
         obtainedTitles.clear();
         genderSetting = nbt.getBoolean(GENDER_SETTING);
-        displayTitle = TitlesAPI.internal().getTitle(new ResourceLocation(nbt.getString(DISPLAY_TITLE)));
+        displayTitle = TitlesAPI.getTitle(new ResourceLocation(nbt.getString(DISPLAY_TITLE)));
         ListNBT obtained = (ListNBT) nbt.get(OBTAINED_TITLES);
         for (int i = 0; i < obtained.size(); i++) {
-            Title title = TitlesAPI.internal().getTitle(new ResourceLocation(obtained.getString(i)));
+            Title title = TitlesAPI.getTitle(new ResourceLocation(obtained.getString(i)));
             add(title);
         }
     }

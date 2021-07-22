@@ -86,7 +86,6 @@ public class CommonEventHandler {
             event.setDisplayname(TitlesAPI.getFormattedTitle(cap.getDisplayTitle(), player)));
     }
 
-    @SubscribeEvent
     public static void onVillagerTrades(VillagerTradesEvent event) {
         if (event.getType().equals(VillagerProfession.LIBRARIAN)) {
             event.getTrades().get(1).add(new TitleForEmeraldsAndFragmentsTrade(Rarity.COMMON, 3, 5));

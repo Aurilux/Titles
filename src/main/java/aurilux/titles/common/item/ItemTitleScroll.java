@@ -36,7 +36,7 @@ public class ItemTitleScroll extends Item {
                 .filter(t -> t.getRarity().equals(this.getRarity(itemStack)))
                 .findAny();
         if (optional.isPresent()) {
-            TitlesAPI.internal().unlockTitle((ServerPlayerEntity) player, optional.get().getID());
+            TitlesAPI.unlockTitle((ServerPlayerEntity) player, optional.get().getID());
             player.sendMessage(new TranslationTextComponent("chat.scroll.success", TitlesAPI.getFormattedTitle(optional.get(), titles.getGenderSetting())), player.getUniqueID());
             itemStack.setCount(0);
             return ActionResult.resultConsume(itemStack);

@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TitleManager extends JsonReloadListener {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private Map<Title.AwardType, Map<ResourceLocation, Title>> titles = ImmutableMap.of();
@@ -59,29 +58,30 @@ public class TitleManager extends JsonReloadListener {
         Path titlesPath = getTitleDataPath(TitlesAPI.MOD_ID);
         String[] templateFolders = titlesPath.toFile().list((current, name) -> new File(current, name).isDirectory());
 
-        LOGGER.debug("Title sub directories are: {}, {}", titlesPath, Arrays.toString(templateFolders));
+        TitlesMod.LOG.debug("Title template directories are: {}", Arrays.toString(templateFolders));
         filteredAndMapped.forEach((res, json) -> {
-            LOGGER.debug("ResourceLocation is: {}", res);
-            // Grab the title templates for other mods, primarily minecraft. If a mod has the titles data folder, my
-            // template is ignored.
+            // Grab the title templates for other mods, primarily minecraft. If a mod has the titles data folder, the
+            // template folder is ignored.
             ResourceLocation actualLoc = res;
             if (res.getNamespace().equals("titles") && res.getPath().contains("/")) {
                 List<String> parts = Arrays.asList(res.getPath().split("/"));
                 String possibleModId = parts.get(0);
                 if (templateFolders != null && Arrays.asList(templateFolders).contains(possibleModId)) {
-                    LOGGER.debug("Template folder exists for: {}", res);
+                    TitlesMod.LOG.debug("Template folder exists for: {}", possibleModId);
                     if (modsWithTitles.contains(possibleModId)) {
+                        TitlesMod.LOG.debug("Mod '{}' has it's own titles. Ignoring template folder", possibleModId);
                         return;
                     }
                     else {
                         Path modTitlesPath = getTitleDataPath(possibleModId);
                         if (modTitlesPath != null && Files.exists(modTitlesPath)) {
+                            TitlesMod.LOG.debug("Mod '{}' has it's own titles. Ignoring template folder", possibleModId);
                             modsWithTitles.add(possibleModId);
                             return;
                         }
                         else {
                             actualLoc = new ResourceLocation(parts.get(0), String.join("/", parts.subList(1, parts.size())));
-                            LOGGER.debug("Template exists and is not overwritten by actual mod: {}, {}", possibleModId, actualLoc);
+                            TitlesMod.LOG.debug("Template exists and is not overwritten by actual mod: {}, {}", possibleModId, actualLoc);
                         }
                     }
                 }
@@ -92,14 +92,14 @@ public class TitleManager extends JsonReloadListener {
                 processed.computeIfAbsent(title.getType(), t -> ImmutableMap.builder()).put(actualLoc, title);
             }
             catch (IllegalArgumentException | JsonParseException ex) {
-                LOGGER.error("Parsing error loading title json {}", actualLoc, ex);
+                TitlesMod.LOG.error("Parsing error loading title json {}", actualLoc, ex);
             }
         });
 
         processed.computeIfAbsent(Title.AwardType.CONTRIBUTOR,  t -> ImmutableMap.builder()).putAll(contributorTitles);
         this.titles = processed.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey,
                 (titleEntry) -> titleEntry.getValue().build()));
-        LOGGER.info("Loaded {} titles", processed.size());
+        TitlesMod.LOG.info("Loaded {} titles", processed.size());
         profilerIn.endSection();
     }
 

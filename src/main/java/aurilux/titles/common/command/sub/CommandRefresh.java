@@ -1,5 +1,6 @@
 package aurilux.titles.common.command.sub;
 
+import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.PacketHandler;
@@ -23,14 +24,14 @@ public class CommandRefresh {
         try {
             ServerPlayerEntity player = context.getSource().asPlayer();
             TitlesAPI.getCapability(player).ifPresent(c -> {
+                c.getObtainedTitles().removeIf(t -> t.getType().equals(Title.AwardType.ADVANCEMENT));
                 PlayerAdvancements playerAdvancements = player.getAdvancements();
-                context.getSource().getServer().getAdvancementManager().getAllAdvancements()
-                        .forEach(advancement -> {
-                            if (playerAdvancements.getProgress(advancement).isDone()) {
-                                TitlesAPI.internal().unlockTitle(player, advancement.getId());
-                            }
-                        });
-                context.getSource().sendFeedback(new StringTextComponent("Refreshed advancement titles!"), true);
+                TitlesMod.LOG.debug("Titles capability found for player {}. Iterating through their advancements", player.getName().getString());
+                context.getSource().getServer().getAdvancementManager().getAllAdvancements().stream()
+                        .filter(advancement -> playerAdvancements.getProgress(advancement).isDone())
+                        .peek(a -> TitlesMod.LOG.debug("Refreshing title for advancement {}", a.getId()))
+                        .forEach(advancement -> c.add(TitlesAPI.getTitle(advancement.getId())));
+                context.getSource().sendFeedback(new StringTextComponent("Finished refreshing advancement titles!"), true);
                 PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), player);
             });
         }
