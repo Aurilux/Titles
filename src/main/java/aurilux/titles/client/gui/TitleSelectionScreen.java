@@ -8,8 +8,8 @@ import aurilux.titles.client.gui.button.SimpleButtonOverride;
 import aurilux.titles.client.gui.button.TitleButton;
 import aurilux.titles.client.gui.button.ToggleImageButton;
 import aurilux.titles.common.network.PacketHandler;
-import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
+import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
@@ -71,7 +71,7 @@ public class TitleSelectionScreen extends Screen {
 
         titlesListCache = new ArrayList<>(cap.getObtainedTitles());
         String playerName = player.getName().getString();
-        Title possibleContributor = TitlesAPI.internal().getTitle(playerName);
+        Title possibleContributor = TitlesAPI.getTitle(new ResourceLocation("titles:" + playerName.toLowerCase()));
         if (!possibleContributor.isNull()) {
             titlesListCache.add(possibleContributor);
         }
@@ -159,7 +159,7 @@ public class TitleSelectionScreen extends Screen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            PacketHandler.sendToServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getKey()));
+            PacketHandler.sendToServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
         }
         PacketHandler.sendToServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
         closeScreen();

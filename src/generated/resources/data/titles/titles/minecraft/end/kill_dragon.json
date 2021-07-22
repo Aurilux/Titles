@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.minecraft.end.kill_dragon"
+  }
+}

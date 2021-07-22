@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.minecraft.story.deflect_arrow",
+    "variant": "title.minecraft.story.deflect_arrow.v"
+  }
+}

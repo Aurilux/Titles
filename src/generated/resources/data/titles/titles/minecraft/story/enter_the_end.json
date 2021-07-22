@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "rarity": "common",
+  "display": {
+    "default": "title.minecraft.story.enter_the_end",
+    "flavor": "title.minecraft.story.enter_the_end.flavor"
+  }
+}

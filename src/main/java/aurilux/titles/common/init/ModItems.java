@@ -1,7 +1,9 @@
-package aurilux.titles.common.item;
+package aurilux.titles.common.init;
 
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
+import aurilux.titles.common.item.ItemTitleFragment;
+import aurilux.titles.common.item.ItemTitleScroll;
 import net.minecraft.item.Item;
 import net.minecraft.item.Rarity;
 import net.minecraftforge.eventbus.api.IEventBus;

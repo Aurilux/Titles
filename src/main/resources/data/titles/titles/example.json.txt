@@ -1,0 +1,35 @@
+{
+  // For advancement-unlocked titles, the name of this json must match the advancement's resource location.
+  // For example, to make a title for the advancement "mine_stone", there must be a subfolder in the "titles" folder called
+  // "story", with a title json also called "mine_stone". You can find further examples in this mod's data folder, or
+  // the source code available here: https://github.com/Aurilux/Titles/tree/master/src/main/resources/data/titles/titles;
+
+  // This value determines how the title can be unlocked. There are three options:
+  // "advancement": The title will automatically be unlocked when the player completes the associated advancement.
+  // "loot": The title can only be obtained by purchasing it from villagers or defeating Titled mobs
+  // "command": The title can only be unlocked using the "/titles add" command. Good for quest mods or other rewards.
+  "type": "loot",
+
+  // The rarity of the title, matching vanilla's rarity values (common, uncommon, rare). Epic rarity is reserved for
+  // contributors and will be defaulted to common if put as a value here.
+  // For advancement-unlocked titles, normal advancements should be common, goal should be uncommon, and challenge should be rare.
+  // I can't enforce this pattern (at least not yet), but I encourage you to follow it.
+  "rarity": "common",
+
+  "display": {
+    // What is displayed next to the player's name. Titles will try to translate the value to the current language, so you
+    // can give it a lang value,  e.x. "default": "titles.title.tester". Or you can give it a direct value like below.
+    // I suggest modders use lang translations to make it easier on translators, while modpack makers can use direct values
+    // since it would be easier for them.
+    "default": "The Tester",
+
+    // For gendered languages, this follows the same rules as "default". While default is considered the masculine/neutral
+    // translation, this is for feminine variants. This is an optional entry and does not have to be in the json.
+    // Yes, this is a subtle Loki reference.
+    "variant": "The Testeress",
+
+    // Also an optional entry, this is just flavor text that gets displayed under the title itself in the title
+    // selection screen.
+    "flavor": "How much testing could a tester test, if a tester could test tests?"
+  }
+}

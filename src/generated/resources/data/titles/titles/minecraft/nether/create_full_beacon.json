@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "rarity": "uncommon",
+  "display": {
+    "default": "title.minecraft.nether.create_full_beacon"
+  }
+}
