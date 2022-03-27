@@ -3,6 +3,7 @@ package aurilux.titles.common.core;
 import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
+import aurilux.titles.common.network.messages.PacketSyncLoadedTitles;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
@@ -11,6 +12,8 @@ import net.minecraft.item.Rarity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
@@ -99,7 +102,7 @@ public class TitleManager extends JsonReloadListener {
         processed.computeIfAbsent(Title.AwardType.CONTRIBUTOR,  t -> ImmutableMap.builder()).putAll(contributorTitles);
         this.titles = processed.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey,
                 (titleEntry) -> titleEntry.getValue().build()));
-        TitlesMod.LOG.info("Loaded {} titles", processed.size());
+        TitlesMod.LOG.info("Loaded {} titles", (int) titles.values().stream().mapToLong(m -> m.values().size()).sum());
         profilerIn.endSection();
     }
 
@@ -119,6 +122,10 @@ public class TitleManager extends JsonReloadListener {
         return titles.get(Title.AwardType.ADVANCEMENT);
     }
 
+    public Map<ResourceLocation, Title> getCommandTitles() {
+        return titles.get(Title.AwardType.COMMAND);
+    }
+
     public Map<ResourceLocation, Title> getContributorTitles() {
         return titles.get(Title.AwardType.CONTRIBUTOR);
     }
@@ -129,6 +136,11 @@ public class TitleManager extends JsonReloadListener {
 
     public Map<ResourceLocation, Title> getRegisteredTitles() {
         return titles.values().stream().flatMap(e -> e.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void processServerData(Map<Title.AwardType, Map<ResourceLocation, Title>> serverData) {
+        this.titles = ImmutableMap.copyOf(serverData);
     }
 
     private class ThreadContributorLoader extends Thread {
@@ -154,7 +166,6 @@ public class TitleManager extends JsonReloadListener {
                                     .id(res)
                                     .rarity(Rarity.EPIC)
                                     .defaultDisplay(value));
-                    TitlesMod.LOG.debug("Loaded contributor title {}", title.toString());
                     contributorTitles.put(res, title);
                 }
             }
