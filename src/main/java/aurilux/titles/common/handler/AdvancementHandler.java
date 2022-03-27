@@ -1,6 +1,7 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.init.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.advancements.PlayerAdvancements;
@@ -10,11 +11,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -70,9 +73,8 @@ public class AdvancementHandler {
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         Block placedBlock = event.getPlacedBlock().getBlock();
         Set<ResourceLocation> blockTags = placedBlock.getTags();
-        ResourceLocation opulentTag = new ResourceLocation(TitlesAPI.MOD_ID, "opulent");
-        ResourceLocation beaconBaseTag = new ResourceLocation("minecraft", "beacon_base_blocks");
-        boolean beaconBaseAndOpulent = blockTags.contains(opulentTag) && blockTags.contains(beaconBaseTag);
+        boolean beaconBaseAndOpulent = blockTags.contains(ModTags.Blocks.OPULENT.getName())
+                && blockTags.contains(BlockTags.BEACON_BASE_BLOCKS.getName());
         if (placedBlock != Blocks.BEACON && !beaconBaseAndOpulent) {
             return;
         }

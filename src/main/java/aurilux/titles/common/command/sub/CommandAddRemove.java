@@ -48,7 +48,7 @@ public class CommandAddRemove {
                 c.remove(title);
                 response[0] = new TranslationTextComponent("commands.titles.remove", formattedTitle, player.getName());
             }
-            PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), player);
+            PacketHandler.toPlayer(new PacketSyncTitles(c.serializeNBT()), player);
         });
         context.getSource().sendFeedback(response[0], false);
         return Command.SINGLE_SUCCESS;

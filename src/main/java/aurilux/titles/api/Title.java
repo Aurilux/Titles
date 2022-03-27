@@ -5,6 +5,7 @@ import net.minecraft.item.Rarity;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
 public class Title {
     public final static Title NULL_TITLE = new Title(new Builder(AwardType.ADVANCEMENT)
             .id("titles:null")
+            .defaultDisplay("")
             .rarity(Rarity.COMMON));
 
     private final AwardType type;
@@ -59,7 +61,7 @@ public class Title {
         return this.equals(NULL_TITLE);
     }
 
-    public ITextComponent getComponent(boolean isMasculine) {
+    public IFormattableTextComponent getTextComponent(boolean isMasculine) {
         String translatable = getDefaultDisplay();
         if (!isMasculine && !StringUtils.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();

@@ -41,7 +41,7 @@ public class PacketSyncGenderSetting {
                     player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
                 } else {
                     player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    PacketHandler.sendToAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
+                    PacketHandler.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
                 }
 
                 if (player != null) {

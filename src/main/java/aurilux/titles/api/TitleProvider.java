@@ -30,9 +30,13 @@ public abstract class TitleProvider implements IDataProvider {
         Path path = this.generator.getOutputFolder();
         Set<ResourceLocation> set = Sets.newHashSet();
         registerTitles((title) -> {
+            if (title.getID() == null || title.getType() == null || title.getRarity() == null || title.getDefaultDisplay() == null) {
+                throw new IllegalStateException("One or more mandatory values have not been set! (Either id, type, rarity, or default display)");
+            }
+
             ResourceLocation res = title.getID();
             if (!set.add(res)) {
-                throw new IllegalStateException("Duplicate recipe " + res);
+                throw new IllegalStateException("Duplicate recipe: " + res);
             }
             else {
                 saveTitle(cache, title.serializeJSON(),
