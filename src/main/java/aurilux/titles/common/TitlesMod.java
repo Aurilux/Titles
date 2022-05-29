@@ -58,7 +58,7 @@ public class TitlesMod {
         //  stronghold_corridor, etc), so this is still necessary until they change it.
         if (TitlesConfig.COMMON.fragmentLoot.get()) {
             forgeBus.addListener(LootHandler::addLoot);
-            forgeBus.addListener(CommonEventHandler::onVillagerTrades);
+            forgeBus.addListener(LootHandler::onVillagerTrades);
         }
     }
 

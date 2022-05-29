@@ -159,9 +159,9 @@ public class TitleSelectionScreen extends Screen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            PacketHandler.sendToServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
+            PacketHandler.toServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
         }
-        PacketHandler.sendToServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
+        PacketHandler.toServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
         closeScreen();
     }
 

@@ -5,7 +5,7 @@ import net.minecraft.item.Rarity;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Comparator;
@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 public class Title {
     public final static Title NULL_TITLE = new Title(new Builder(AwardType.ADVANCEMENT)
             .id("titles:null")
+            .defaultDisplay("")
             .rarity(Rarity.COMMON));
 
     private final AwardType type;
@@ -59,7 +60,7 @@ public class Title {
         return this.equals(NULL_TITLE);
     }
 
-    public ITextComponent getComponent(boolean isMasculine) {
+    public IFormattableTextComponent getTextComponent(boolean isMasculine) {
         String translatable = getDefaultDisplay();
         if (!isMasculine && !StringUtils.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();
@@ -72,9 +73,10 @@ public class Title {
         return String.format("(%s, %s)", getID(), getRarity());
     }
 
-    public JsonObject serializeJSON() {
+    public JsonObject serialize() {
         JsonObject json = new JsonObject();
         json.addProperty("type", getType().toString().toLowerCase());
+        json.addProperty("id", getID().toString());
         json.addProperty("rarity", getRarity().toString().toLowerCase());
         JsonObject display = new JsonObject();
         display.addProperty("default", getDefaultDisplay());
@@ -86,6 +88,23 @@ public class Title {
         }
         json.add("display", display);
         return json;
+    }
+
+    public static Title deserialize(JsonObject json) {
+        Title.Builder builder = Builder.create(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                .id(JSONUtils.getString(json, "id"))
+                .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
+
+        JsonObject display = JSONUtils.getJsonObject(json, "display");
+        builder.defaultDisplay(JSONUtils.getString(display, "default"));
+        if (json.has("variant")) {
+            builder.variantDisplay(JSONUtils.getString(display, "variant"));
+        }
+        if (json.has("flavor")) {
+            builder.flavorText(JSONUtils.getString(display, "flavor"));
+        }
+
+        return new Title(builder);
     }
 
     @Override
@@ -186,26 +205,6 @@ public class Title {
         public Builder flavorText(String s) {
             flavorText = s;
             return this;
-        }
-
-        public static Title deserializeJSON(ResourceLocation res, JsonObject json) {
-            AwardType testType = AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase());
-            Builder builder = create(testType.equals(AwardType.CONTRIBUTOR) ? AwardType.COMMAND : testType)
-                    .id(res);
-
-            Rarity testRarity = Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase());
-            builder.rarity(testRarity.equals(Rarity.EPIC) ? Rarity.COMMON : testRarity);
-
-            JsonObject display = JSONUtils.getJsonObject(json, "display");
-            builder.defaultDisplay(JSONUtils.getString(display, "default"));
-            if (json.has("variant")) {
-                builder.variantDisplay(JSONUtils.getString(display, "variant"));
-            }
-            if (json.has("flavor")) {
-                builder.flavorText(JSONUtils.getString(display, "flavor"));
-            }
-
-            return new Title(builder);
         }
 
         public Title build(Consumer<Title> consumer) {

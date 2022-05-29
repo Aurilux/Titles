@@ -1,6 +1,7 @@
 package aurilux.titles.common.network.messages;
 
 import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,8 +28,8 @@ public class PacketSyncDisplayTitle {
     }
 
     public static PacketSyncDisplayTitle decode(PacketBuffer buf) {
-        UUID uuid = UUID.fromString(buf.readString(32767));
-        String titleKey = buf.readString(32767);
+        UUID uuid = UUID.fromString(buf.readString());
+        String titleKey = buf.readString();
         return new PacketSyncDisplayTitle(uuid, new ResourceLocation(titleKey));
     }
 
@@ -40,14 +41,29 @@ public class PacketSyncDisplayTitle {
                 PlayerEntity player;
                 if (ctx.get().getDirection().getReceptionSide().isClient()) {
                     player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
-                } else {
+                }
+                else {
                     player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    PacketHandler.sendToAll(new PacketSyncDisplayTitle(msg.playerUUID, new ResourceLocation(msg.selectedTitle)));
+                    PacketHandler.toAll(new PacketSyncDisplayTitle(msg.playerUUID, new ResourceLocation(msg.selectedTitle)));
                 }
 
                 if (player != null) {
                     TitlesAPI.setDisplayTitle(player, new ResourceLocation(msg.selectedTitle));
                     player.refreshDisplayName();
+                    if (ctx.get().getDirection().getReceptionSide().isClient()) {
+                        TitlesMod.LOG.debug("Display title {} for player {} synced to client {}",
+                                msg.selectedTitle,
+                                player.getName().getString(),
+                                Minecraft.getInstance().player.getName().getString());
+                    }
+                    else {
+                        TitlesMod.LOG.debug("Display title for player {} being sent to all clients", player.getName().getString());
+                    }
+                    TitlesAPI.getCapability(player).ifPresent(c -> {
+                        TitlesMod.LOG.debug("Capability exists for {}, and their current display titles is {}",
+                                player.getName().getString(),
+                                TitlesAPI.getFormattedTitle(c.getDisplayTitle(), c.getGenderSetting()).getString());
+                    });
                 }
             }
         });

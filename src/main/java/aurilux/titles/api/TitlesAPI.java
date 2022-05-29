@@ -6,9 +6,12 @@ import aurilux.titles.api.handler.IInternalMethodHandler;
 import aurilux.titles.common.impl.TitlesCapImpl;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Rarity;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.util.LazyOptional;
@@ -16,6 +19,8 @@ import org.apache.logging.log4j.LogManager;
 
 public class TitlesAPI {
     public static final String MOD_ID = "titles";
+
+    public static final Rarity MYTHIC = Rarity.create("MYTHIC", TextFormatting.GOLD);
 
     @CapabilityInject(ITitles.class)
     public static Capability<ITitles> TITLES_CAPABILITY = null;
@@ -58,22 +63,22 @@ public class TitlesAPI {
 
     // This overloaded method is used to get the title without the player's name included. Used in the title selection
     // screen for the list of obtained titles the player can choose from.
-    public static ITextComponent getFormattedTitle(Title title, boolean isMasculine) {
+    public static IFormattableTextComponent getFormattedTitle(Title title, boolean isMasculine) {
         return getFormattedTitle(title, null, isMasculine);
     }
 
-    public static ITextComponent getFormattedTitle(Title title, PlayerEntity player) {
+    public static IFormattableTextComponent getFormattedTitle(Title title, PlayerEntity player) {
         return getFormattedTitle(title, player.getName(), getCapability(player).orElse(new TitlesCapImpl()).getGenderSetting());
     }
 
-    public static ITextComponent getFormattedTitle(Title title, ITextComponent playerName, boolean isMasculine) {
-        ITextComponent titleComponent = title.getComponent(isMasculine);
+    public static IFormattableTextComponent getFormattedTitle(Title title, ITextComponent playerName, boolean isMasculine) {
+        IFormattableTextComponent titleComponent = title.getTextComponent(isMasculine);
         if (playerName == null) {
             return titleComponent;
         }
         else {
             if (title.isNull()) {
-                return playerName;
+                return playerName.deepCopy();
             }
             else {
                 return playerName.deepCopy().appendString(", ").appendSibling(titleComponent);

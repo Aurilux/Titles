@@ -8,6 +8,8 @@
   "commands.titles.usage": "/titles <add|remove> <player> <titleKey>",
   "commands.titles.add": "Added title [%s] to player %s.",
   "commands.titles.remove": "Removed title [%s] from player %s.",
+  "commands.display.error": "You have not earned the title [%s]",
+  "commands.display.success": "Changed your display title to [%s]",
   
   "_Items": "",
   "itemGroup.titles": "Titles",

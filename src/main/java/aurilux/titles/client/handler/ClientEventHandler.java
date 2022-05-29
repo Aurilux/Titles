@@ -12,7 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -52,12 +54,14 @@ public class ClientEventHandler {
             TranslationTextComponent textComponent = (TranslationTextComponent) component;
             // Check if the lang key is of the advancement variety (task/challenge/goal).
             if (textComponent.getKey().contains("chat.type.advancement.")) {
-                // Go through the args of this text component so we can find the TranslationTextComponent with the
-                // key for the advancement that was just unlocked.
+                // Go through the args of this text component to find the TranslationTextComponent with the key for the
+                // advancement that was just unlocked.
                 String playerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0).getUnformattedComponentText();
                 PlayerEntity player = Minecraft.getInstance().player.world.getPlayers().stream()
                         .filter(pe -> pe.getName().getUnformattedComponentText().equals(playerName))
                         .findFirst().orElse(null);
+                // Throws a NPE when player is null because getCapability doesn't handle the null value well
+                // https://pcminecraft-mods.com/blazeandcaves-advancements-data-pack-mc-1-16-1-15-2/
                 ITitles playerCap = TitlesAPI.getCapability(player).orElse(new TitlesCapImpl());
                 TranslationTextComponent advancementComp = (TranslationTextComponent) textComponent.getFormatArgs()[1];
                 Arrays.stream(advancementComp.getFormatArgs())
@@ -68,8 +72,9 @@ public class ClientEventHandler {
                         .map(TitlesAPI::getTitle)
                         .filter(title -> !title.isNull())
                         .findFirst().ifPresent(title -> {
-                            component.appendSibling(new TranslationTextComponent("chat.advancement.append",
-                                    TitlesAPI.getFormattedTitle(title, playerCap.getGenderSetting())));
+                            IFormattableTextComponent formattedTitle = TitlesAPI.getFormattedTitle(title, playerCap.getGenderSetting());
+                            formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + title.getID().toString())));
+                            component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
                             event.setMessage(component);
                         });
             }

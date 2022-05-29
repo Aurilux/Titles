@@ -1,3 +1,11 @@
+## 1.16.5 - 3.3.2
+- Fixes a bug where unlocking titles on a server won't update until they are also unlocked in single player (#26)
+
+## 1.16.5 - 3.3.1
+- Added a new command to set your display title. It's a faster way to change your display title if you know what you are looking for, but also has uses in quest mods.
+- You can now change your display title to one you just earned from an advancement by clicking on it in the chat message (it uses the command from above).
+- Added a new contributor "mythic" rarity for a new, higher tier Patreon reward
+
 ## 1.16.5 - 3.3.0
 - Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have it's own json. Similar to how vanilla does advancements and recipes.
 - Added a Title data provider and a builder class in the Title class for modders to easily generate titles for their mods.

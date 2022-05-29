@@ -4,7 +4,7 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.command.argument.TitleArgument;
 import aurilux.titles.common.network.PacketHandler;
-import aurilux.titles.common.network.messages.PacketSyncTitles;
+import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -48,7 +48,7 @@ public class CommandAddRemove {
                 c.remove(title);
                 response[0] = new TranslationTextComponent("commands.titles.remove", formattedTitle, player.getName());
             }
-            PacketHandler.sendTo(new PacketSyncTitles(c.serializeNBT()), player);
+            PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), player);
         });
         context.getSource().sendFeedback(response[0], false);
         return Command.SINGLE_SUCCESS;

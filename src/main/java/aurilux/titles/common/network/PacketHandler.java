@@ -36,10 +36,15 @@ public class PacketHandler {
                 PacketSyncAllDisplayTitles::decode,
                 PacketSyncAllDisplayTitles::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(index++, PacketSyncTitles.class,
-                PacketSyncTitles::encode,
-                PacketSyncTitles::decode,
-                PacketSyncTitles::handle,
+        CHANNEL.registerMessage(index++, PacketSyncTitlesCapability.class,
+                PacketSyncTitlesCapability::encode,
+                PacketSyncTitlesCapability::decode,
+                PacketSyncTitlesCapability::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(index++, PacketSyncLoadedTitles.class,
+                PacketSyncLoadedTitles::encode,
+                PacketSyncLoadedTitles::decode,
+                PacketSyncLoadedTitles::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         // To server
@@ -55,25 +60,25 @@ public class PacketHandler {
                 PacketSyncGenderSetting::handle);
     }
 
-    public static void sendToServer(Object msg) {
+    public static void toServer(Object msg) {
         CHANNEL.sendToServer(msg);
     }
 
-    public static void sendTo(Object msg, ServerPlayerEntity player) {
+    public static void toPlayer(Object msg, ServerPlayerEntity player) {
         CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
-    public static void sendToAll(Object msg) {
-        sendToAllExcept(msg, null);
+    public static void toAll(Object msg) {
+        toAllExcept(msg, null);
     }
 
-    public static void sendToAllExcept(Object msg, ServerPlayerEntity ignoredPlayer) {
+    public static void toAllExcept(Object msg, ServerPlayerEntity ignoredPlayer) {
         for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (ignoredPlayer == null || player != ignoredPlayer) {
-                CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+                toPlayer(msg, player);
             }
             else {
-                TitlesMod.LOG.debug("Ignored Player: " + ignoredPlayer.getDisplayName().getString());
+                TitlesMod.LOG.debug("Ignored specified player: {}", ignoredPlayer.getDisplayName().getString());
             }
         }
     }
