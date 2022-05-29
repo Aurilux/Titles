@@ -7,7 +7,7 @@ import aurilux.titles.common.network.PacketHandler;
 import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.network.messages.PacketSyncLoadedTitles;
-import aurilux.titles.common.network.messages.PacketSyncTitles;
+import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import aurilux.titles.common.util.CapabilityHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,14 +42,14 @@ public class CommonEventHandler {
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         PlayerEntity player = event.getPlayer();
         TitlesAPI.getCapability(player).ifPresent(c ->
-                PacketHandler.toPlayer(new PacketSyncTitles(c.serializeNBT()), (ServerPlayerEntity) player));
+                PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), (ServerPlayerEntity) player));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         PlayerEntity player = event.getPlayer();
         TitlesAPI.getCapability(player).ifPresent(c ->
-            PacketHandler.toPlayer(new PacketSyncTitles(c.serializeNBT()), (ServerPlayerEntity) player));
+            PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), (ServerPlayerEntity) player));
     }
 
     @SubscribeEvent
@@ -57,7 +57,7 @@ public class CommonEventHandler {
         ServerPlayerEntity playerLoggingIn = (ServerPlayerEntity) event.getPlayer();
         TitlesAPI.getCapability(playerLoggingIn).ifPresent(loggingInCap -> {
             // Send the just-logged-in player's title data that is loaded on the server to them.
-            PacketHandler.toPlayer(new PacketSyncTitles(loggingInCap.serializeNBT()), playerLoggingIn);
+            PacketHandler.toPlayer(new PacketSyncTitlesCapability(loggingInCap.serializeNBT()), playerLoggingIn);
             // Also send them the display titles of everyone else currently logged in.
             PacketHandler.toPlayer(new PacketSyncAllDisplayTitles(getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
             // Then send their display title to everyone else.
@@ -71,7 +71,7 @@ public class CommonEventHandler {
         // in an update to Minecraft or Forge.
         if (!playerLoggingIn.getServer().isServerOwner(playerLoggingIn.getGameProfile())) {
             PacketHandler.toPlayer(new PacketSyncLoadedTitles(), playerLoggingIn);
-            TitlesMod.LOG.info("Synced loaded title data from server to {}", playerLoggingIn.getName().toString());
+            TitlesMod.LOG.debug("Synced loaded title data from server to {}", playerLoggingIn.getName().getString());
         }
     }
 

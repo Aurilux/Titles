@@ -36,10 +36,10 @@ public abstract class TitleProvider implements IDataProvider {
 
             ResourceLocation res = title.getID();
             if (!set.add(res)) {
-                throw new IllegalStateException("Duplicate recipe: " + res);
+                throw new IllegalStateException("Duplicate title: " + res);
             }
             else {
-                saveTitle(cache, title.serializeJSON(),
+                saveTitle(cache, title.serialize(),
                         path.resolve(String.format("data/%s/titles/%s.json", res.getNamespace(), res.getPath())));
             }
         });

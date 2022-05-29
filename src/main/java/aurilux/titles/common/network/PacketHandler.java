@@ -36,10 +36,15 @@ public class PacketHandler {
                 PacketSyncAllDisplayTitles::decode,
                 PacketSyncAllDisplayTitles::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(index++, PacketSyncTitles.class,
-                PacketSyncTitles::encode,
-                PacketSyncTitles::decode,
-                PacketSyncTitles::handle,
+        CHANNEL.registerMessage(index++, PacketSyncTitlesCapability.class,
+                PacketSyncTitlesCapability::encode,
+                PacketSyncTitlesCapability::decode,
+                PacketSyncTitlesCapability::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(index++, PacketSyncLoadedTitles.class,
+                PacketSyncLoadedTitles::encode,
+                PacketSyncLoadedTitles::decode,
+                PacketSyncLoadedTitles::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         // To server

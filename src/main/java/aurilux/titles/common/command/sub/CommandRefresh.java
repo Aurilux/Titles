@@ -4,7 +4,7 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.PacketHandler;
-import aurilux.titles.common.network.messages.PacketSyncTitles;
+import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -47,7 +47,7 @@ public class CommandRefresh {
                         });
                 context.getSource().sendFeedback(new StringTextComponent("Finished refreshing advancement titles!"), true);
                 TitlesMod.LOG.debug("Player's total obtained titles after re-awarding advancement titles: {}", c.getObtainedTitles().size());
-                PacketHandler.toPlayer(new PacketSyncTitles(c.serializeNBT()), player);
+                PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), player);
             });
         }
         catch (CommandSyntaxException ex) {

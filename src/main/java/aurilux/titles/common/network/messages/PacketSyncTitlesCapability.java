@@ -9,22 +9,22 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketSyncTitles {
+public class PacketSyncTitlesCapability {
     private final CompoundNBT comp;
 
-    public PacketSyncTitles(CompoundNBT comp) {
+    public PacketSyncTitlesCapability(CompoundNBT comp) {
         this.comp = comp;
     }
 
-    public static void encode(PacketSyncTitles msg, PacketBuffer buf) {
+    public static void encode(PacketSyncTitlesCapability msg, PacketBuffer buf) {
         buf.writeCompoundTag(msg.comp);
     }
 
-    public static PacketSyncTitles decode(PacketBuffer buf) {
-        return new PacketSyncTitles(buf.readCompoundTag());
+    public static PacketSyncTitlesCapability decode(PacketBuffer buf) {
+        return new PacketSyncTitlesCapability(buf.readCompoundTag());
     }
 
-    public static void handle(PacketSyncTitles msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketSyncTitlesCapability msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(new Runnable() {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override

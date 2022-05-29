@@ -3,7 +3,6 @@ package aurilux.titles.common.core;
 import aurilux.titles.api.Title;
 import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
-import aurilux.titles.common.network.messages.PacketSyncLoadedTitles;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
@@ -11,14 +10,13 @@ import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.item.Rarity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,11 +48,16 @@ public class TitleManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> dataFromMods, IResourceManager resourceManagerIn, IProfiler profilerIn) {
         profilerIn.startSection("titleLoader");
-        Map<ResourceLocation, JsonObject> filteredAndMapped = objectIn.entrySet().stream()
+
+        TitlesMod.LOG.info("Object in: " + Arrays.toString(dataFromMods.entrySet().toArray()));
+
+        Map<ResourceLocation, JsonObject> filteredAndMapped = dataFromMods.entrySet().stream()
                 .filter(e -> !e.getKey().getPath().startsWith("_") && e.getValue().isJsonObject())
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getAsJsonObject()));
+
+        TitlesMod.LOG.info("Filtered and mapped: " + Arrays.toString(filteredAndMapped.entrySet().toArray()));
 
         Map<Title.AwardType, ImmutableMap.Builder<ResourceLocation, Title>> processed = Maps.newHashMap();
         Set<String> modsWithTitles = new HashSet<>();
@@ -91,7 +94,7 @@ public class TitleManager extends JsonReloadListener {
             }
 
             try {
-                Title title = Title.Builder.deserializeJSON(actualLoc, json);
+                Title title = deserializeTitleJSON(actualLoc, json);
                 processed.computeIfAbsent(title.getType(), t -> ImmutableMap.builder()).put(actualLoc, title);
             }
             catch (IllegalArgumentException | JsonParseException ex) {
@@ -100,9 +103,8 @@ public class TitleManager extends JsonReloadListener {
         });
 
         processed.computeIfAbsent(Title.AwardType.CONTRIBUTOR,  t -> ImmutableMap.builder()).putAll(contributorTitles);
-        this.titles = processed.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey,
-                (titleEntry) -> titleEntry.getValue().build()));
-        TitlesMod.LOG.info("Loaded {} titles", (int) titles.values().stream().mapToLong(m -> m.values().size()).sum());
+        resolveLoadedData(processed);
+
         profilerIn.endSection();
     }
 
@@ -112,6 +114,25 @@ public class TitleManager extends JsonReloadListener {
             return modFileInfo.getFile().getFilePath().resolve(String.format("data/%s/titles", modId));
         }
         return null;
+    }
+
+    public Title deserializeTitleJSON(ResourceLocation res, JsonObject json) {
+        Title.Builder builder = Title.Builder.create(Title.AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                .id(res);
+
+        Rarity testRarity = Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase());
+        builder.rarity(testRarity.equals(Rarity.EPIC) ? Rarity.COMMON : testRarity);
+
+        JsonObject display = JSONUtils.getJsonObject(json, "display");
+        builder.defaultDisplay(JSONUtils.getString(display, "default"));
+        if (json.has("variant")) {
+            builder.variantDisplay(JSONUtils.getString(display, "variant"));
+        }
+        if (json.has("flavor")) {
+            builder.flavorText(JSONUtils.getString(display, "flavor"));
+        }
+
+        return new Title(builder);
     }
 
     public Title getTitle(ResourceLocation titleKey) {
@@ -139,8 +160,19 @@ public class TitleManager extends JsonReloadListener {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void processServerData(Map<Title.AwardType, Map<ResourceLocation, Title>> serverData) {
-        this.titles = ImmutableMap.copyOf(serverData);
+    public void processServerData(Map<ResourceLocation, Title> serverData) {
+        Map<Title.AwardType, ImmutableMap.Builder<ResourceLocation, Title>> temp = new HashMap<>();
+        for (Map.Entry<ResourceLocation, Title> entry : serverData.entrySet()) {
+            temp.computeIfAbsent(entry.getValue().getType(), t -> ImmutableMap.builder()).put(entry.getKey(), entry.getValue());
+        }
+        this.titles = temp.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey,
+                (titleEntry) -> titleEntry.getValue().build()));
+    }
+
+    private void resolveLoadedData(Map<Title.AwardType, ImmutableMap.Builder<ResourceLocation, Title>> toResolve) {
+        this.titles = toResolve.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey,
+                (titleEntry) -> titleEntry.getValue().build()));
+        TitlesMod.LOG.info("Loaded {} titles", (int) titles.values().stream().mapToLong(m -> m.values().size()).sum());
     }
 
     private class ThreadContributorLoader extends Thread {

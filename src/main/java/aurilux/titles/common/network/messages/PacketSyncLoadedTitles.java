@@ -1,20 +1,14 @@
 package aurilux.titles.common.network.messages;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.core.TitleManager;
-import com.google.common.collect.ImmutableMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PacketSyncLoadedTitles {
@@ -33,16 +27,21 @@ public class PacketSyncLoadedTitles {
     public static void encode(PacketSyncLoadedTitles msg, PacketBuffer buf) {
         buf.writeInt(msg.count);
         for (Map.Entry<ResourceLocation, Title> entry : msg.allLoadedTitles.entrySet()) {
-            buf.writeString(entry.getKey().toString());
-            buf.writeString(entry.getValue().serializeJSON().getAsString());
+            String test = entry.getKey().toString();
+            buf.writeString(test);
+            String test2 = entry.getValue().serialize().toString();
+            buf.writeString(test2);
         }
     }
 
     public static PacketSyncLoadedTitles decode(PacketBuffer buf) {
         Map<ResourceLocation, Title> temp = new HashMap<>();
-        for (int i = 0; i < buf.readInt(); i++) {
-            ResourceLocation res = new ResourceLocation(buf.readString());
-            temp.put(res, Title.Builder.deserializeJSON(res, JSONUtils.fromJson(buf.readString())));
+        int testInt = buf.readInt();
+        for (int i = 0; i < testInt; i++) {
+            String test = buf.readString();
+            ResourceLocation res = new ResourceLocation(test);
+            String test2 = buf.readString();
+            temp.put(res, Title.deserialize(JSONUtils.fromJson(test2)));
         }
         return new PacketSyncLoadedTitles(temp);
     }
@@ -52,12 +51,7 @@ public class PacketSyncLoadedTitles {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
             public void run() {
-                Map<Title.AwardType, Map<ResourceLocation, Title>> temp = new HashMap<>();
-                for (Map.Entry<ResourceLocation, Title> entry : msg.allLoadedTitles.entrySet()) {
-                    Title titleEntry = entry.getValue();
-                    temp.put(titleEntry.getType(), ImmutableMap.of(entry.getKey(), titleEntry));
-                }
-                TitleManager.INSTANCE.processServerData(temp);
+                TitleManager.INSTANCE.processServerData(msg.allLoadedTitles);
             }
         });
         ctx.get().setPacketHandled(true);
