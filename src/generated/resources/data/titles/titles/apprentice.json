@@ -1,7 +1,6 @@
 {
   "type": "loot",
+  "id": "titles:apprentice",
   "rarity": "common",
-  "display": {
-    "default": "the Apprentice"
-  }
+  "defaultDisplay": "the Apprentice"
 }

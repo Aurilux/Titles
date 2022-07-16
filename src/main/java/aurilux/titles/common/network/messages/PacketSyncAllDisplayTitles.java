@@ -1,6 +1,6 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -47,7 +47,8 @@ public class PacketSyncAllDisplayTitles {
                 if (world != null) {
                     for (Map.Entry<UUID, ResourceLocation> entry : msg.playerDisplayTitles.entrySet()) {
                         PlayerEntity otherPlayer = world.getPlayerByUuid(entry.getKey());
-                        TitlesAPI.setDisplayTitle(otherPlayer, entry.getValue());
+                        TitleManager.doIfPresent(otherPlayer, cap ->
+                                cap.setDisplayTitle(TitleManager.getTitle(entry.getValue())));
                     }
                 }
             }

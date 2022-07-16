@@ -46,6 +46,9 @@ version = minecraft_version + "-" + mod_version
 def repos = new JsonSlurper().parse(file("repos.json"))
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
     repos.each { n, u ->
         maven {
             name = n

@@ -1,6 +1,6 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -31,7 +31,7 @@ public class PacketSyncTitlesCapability {
             public void run() {
                 PlayerEntity player = Minecraft.getInstance().player;
                 if (player != null) {
-                    TitlesAPI.getCapability(player).ifPresent(cap -> cap.deserializeNBT(msg.comp));
+                    TitleManager.doIfPresent(player, cap -> cap.deserializeNBT(msg.comp));
                 }
             }
         });

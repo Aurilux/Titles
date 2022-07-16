@@ -1,9 +1,9 @@
 package aurilux.titles.common.command.sub;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -28,26 +28,26 @@ public class CommandRefresh {
     private static int run(CommandContext<CommandSource> context) {
         try {
             ServerPlayerEntity player = context.getSource().asPlayer();
-            TitlesAPI.getCapability(player).ifPresent(c -> {
-                TitlesAPI.setDisplayTitle(player, Title.NULL_TITLE.getID());
-                TitlesMod.LOG.debug("Player's total obtained titles: {}", c.getObtainedTitles().size());
-                c.getObtainedTitles().removeIf(t -> t.getType().equals(Title.AwardType.ADVANCEMENT));
-                TitlesMod.LOG.debug("Player's total obtained titles after removing all advancement titles: {}", c.getObtainedTitles().size());
+            TitleManager.doIfPresent(player, cap -> {
+                TitleManager.setDisplayTitle(player, Title.NULL_TITLE.getID());
+                TitlesMod.LOG.debug("Player's total obtained titles: {}", cap.getObtainedTitles().size());
+                cap.getObtainedTitles().removeIf(t -> t.getType().equals(Title.AwardType.ADVANCEMENT));
+                TitlesMod.LOG.debug("Player's total obtained titles after removing all advancement titles: {}", cap.getObtainedTitles().size());
                 PlayerAdvancements playerAdvancements = player.getAdvancements();
                 TitlesMod.LOG.debug("Titles capability found for player {}. Iterating through their advancements", player.getName().getString());
                 Collection<Advancement> allAdvancements = context.getSource().getServer().getAdvancementManager().getAllAdvancements();
                 allAdvancements = allAdvancements.stream()
                         .filter(advancement -> playerAdvancements.getProgress(advancement).isDone()
-                                && !TitlesAPI.getTitle(advancement.getId()).isNull())
+                                && !TitleManager.getTitle(advancement.getId()).isNull())
                         .collect(Collectors.toCollection(ArrayList::new));
                 TitlesMod.LOG.debug("After filtering, how many advancement-earned titles are there?: {}", allAdvancements.size());
                 allAdvancements.forEach(advancement -> {
                             TitlesMod.LOG.debug("Re-awarding title for advancement {}", advancement.getId());
-                            c.add(TitlesAPI.getTitle(advancement.getId()));
+                            cap.add(TitleManager.getTitle(advancement.getId()));
                         });
                 context.getSource().sendFeedback(new StringTextComponent("Finished refreshing advancement titles!"), true);
-                TitlesMod.LOG.debug("Player's total obtained titles after re-awarding advancement titles: {}", c.getObtainedTitles().size());
-                PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), player);
+                TitlesMod.LOG.debug("Player's total obtained titles after re-awarding advancement titles: {}", cap.getObtainedTitles().size());
+                TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
             });
         }
         catch (CommandSyntaxException ex) {

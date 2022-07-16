@@ -16,20 +16,18 @@
   // I can't enforce this pattern (at least not yet), but I encourage you to follow it.
   "rarity": "common",
 
-  "display": {
-    // What is displayed next to the player's name. Titles will try to translate the value to the current language, so you
-    // can give it a lang value,  e.x. "default": "titles.title.tester". Or you can give it a direct value like below.
-    // I suggest modders use lang translations to make it easier on translators, while modpack makers can use direct values
-    // since it would be easier for them.
-    "default": "The Tester",
+  // What is displayed next to the player's name. Titles will try to translate the value to the current language, so you
+  // can give it a lang value,  e.x. "default": "titles.title.tester". Or you can give it a direct value like below.
+  // I suggest modders use lang translations to make it easier on translators, while modpack makers can use direct values
+  // since it would be easier for them.
+  "defaultDisplay": "The Tester",
 
-    // For gendered languages, this follows the same rules as "default". While default is considered the masculine/neutral
-    // translation, this is for feminine variants. This is an optional entry and does not have to be in the json.
-    // Yes, this is a subtle Loki reference.
-    "variant": "The Testeress",
+  // For gendered languages, this follows the same rules as "default". While default is considered the masculine/neutral
+  // translation, this is for feminine variants. This is an optional entry and does not have to be in the json.
+  // Yes, this is a subtle Loki reference.
+  "variantDisplay": "The Testeress",
 
-    // Also an optional entry, this is just flavor text that gets displayed under the title itself in the title
-    // selection screen.
-    "flavor": "How much testing could a tester test, if a tester could test tests?"
-  }
+  // Also an optional entry, this is just flavor text that gets displayed under the title itself in the title
+  // selection screen.
+  "flavorText": "How much testing could a tester test, if a tester could test tests?"
 }

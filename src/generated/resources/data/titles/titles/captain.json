@@ -1,7 +1,6 @@
 {
   "type": "advancement",
+  "id": "titles:captain",
   "rarity": "common",
-  "display": {
-    "default": "title.titles.captain"
-  }
+  "defaultDisplay": "title.titles.captain"
 }

@@ -1,3 +1,7 @@
+## 1.16.5 - 3.4.0
+- Refactored nearly every class. Probably includes some performance improvement, but was done primarily for flow and readability.
+-
+
 ## 1.16.5 - 3.3.2
 - Fixes a bug where unlocking titles on a server won't update until they are also unlocked in single player (#26)
 
@@ -7,9 +11,9 @@
 - Added a new contributor "mythic" rarity for a new, higher tier Patreon reward
 
 ## 1.16.5 - 3.3.0
-- Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have it's own json. Similar to how vanilla does advancements and recipes.
-- Added a Title data provider and a builder class in the Title class for modders to easily generate titles for their mods.
-- There is a new command called "/titles refresh". This will go clear the player's completed advancements, and then re-award titles for their completed advancements.
+- Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have its own json. Similar to how vanilla does advancements and recipes.
+- Added a Title data provider and a builder class in the API for modders to easily generate titles for their mods.
+- There is a new command called "/titles refresh". This will go clear the player's earned titles, and then re-award titles for their completed advancements.
 - Villager title scroll trades are no longer added if the fragment loot config options is set to false.
 
 ## 1.16.5 - 3.2.6

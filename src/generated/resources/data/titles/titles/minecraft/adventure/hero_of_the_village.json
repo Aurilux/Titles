@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "rarity": "rare",
-  "display": {
-    "default": "title.minecraft.adventure.hero_of_the_village"
-  }
-}

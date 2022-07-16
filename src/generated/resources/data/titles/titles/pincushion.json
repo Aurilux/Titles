@@ -1,7 +1,7 @@
 {
   "type": "advancement",
+  "id": "titles:pincushion",
   "rarity": "uncommon",
-  "display": {
-    "default": "title.titles.pincushion"
-  }
+  "defaultDisplay": "title.titles.pincushion",
+  "flavorText": "title.titles.pincushion.flavor"
 }

@@ -1,10 +1,10 @@
 package aurilux.titles.common.command.sub;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.command.argument.TitleArgument;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -26,16 +26,16 @@ public class CommandDisplay {
     private static int run(CommandContext<CommandSource> context, Title title) {
         try {
             ServerPlayerEntity player = context.getSource().asPlayer();
-            TitlesAPI.getCapability(player).ifPresent(c -> {
+            TitleManager.doIfPresent(player, cap -> {
                 TranslationTextComponent feedback = new TranslationTextComponent("commands.display.success",
-                        TitlesAPI.getFormattedTitle(title, player));
-                if (c.hasTitle(title)) {
-                    TitlesAPI.setDisplayTitle(player, title.getID());
-                    PacketHandler.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
+                        TitleManager.getFormattedTitle(title, player));
+                if (cap.hasTitle(title)) {
+                    TitleManager.setDisplayTitle(player, title.getID());
+                    TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
                 }
                 else {
                     feedback = new TranslationTextComponent("commands.display.error",
-                            TitlesAPI.getFormattedTitle(title, c.getGenderSetting()));
+                            TitleManager.getFormattedTitle(title, cap.getGenderSetting()));
 
                 }
                 context.getSource().sendFeedback(feedback, true);

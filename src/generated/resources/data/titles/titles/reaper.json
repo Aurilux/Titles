@@ -1,7 +1,7 @@
 {
   "type": "loot",
+  "id": "titles:reaper",
   "rarity": "rare",
-  "display": {
-    "default": "the Reaper"
-  }
+  "defaultDisplay": "the Reaper",
+  "flavorText": "Don\u0027t fear it"
 }

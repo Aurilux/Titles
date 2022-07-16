@@ -1,18 +1,16 @@
 package aurilux.titles.client.handler;
 
-import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.ITitles;
+import aurilux.titles.api.Title;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
-import aurilux.titles.common.impl.TitlesCapImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,13 +20,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Mod.EventBusSubscriber(modid = TitlesAPI.MOD_ID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
@@ -39,21 +36,42 @@ public class ClientEventHandler {
         if (Keybinds.openTitleSelection.isPressed()) {
             PlayerEntity player = Minecraft.getInstance().player;
             if (player != null) {
-                TitlesAPI.getCapability(player).ifPresent(cap -> {
+                TitleManager.getCapability(player).ifPresent(cap -> {
                     Minecraft.getInstance().displayGuiScreen(new TitleSelectionScreen(player, cap));
                 });
             }
         }
     }
 
-    // TODO review. Seems a bit complex, might be able to simplify
     @SubscribeEvent
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
         IFormattableTextComponent component = event.getMessage().copyRaw();
         if (component instanceof TranslationTextComponent) {
             TranslationTextComponent textComponent = (TranslationTextComponent) component;
+            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
+                // I wish there was a more flexible, elegant way to identify the correct sub-components
+                ITextComponent targetPlayerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0);
+                Title unlockedTitle = processKey(((TranslationTextComponent)((TranslationTextComponent) textComponent.getFormatArgs()[1])
+                        .getFormatArgs()[0]).getKey());
+                if (!unlockedTitle.isNull()) {
+                    TitleManager.doIfPresent(Minecraft.getInstance().player, cap -> {
+                        IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                        if (Minecraft.getInstance().player.getName().equals(targetPlayerName)) {
+                            formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
+                        }
+                        component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
+                        event.setMessage(component);
+                    });
+                }
+            }
+        }
+        /*
+        IFormattableTextComponent component = event.getMessage().copyRaw();
+        TitlesMod.LOG.info("Client message components: {}", component);
+        if (component instanceof TranslationTextComponent) {
+            TranslationTextComponent textComponent = (TranslationTextComponent) component;
             // Check if the lang key is of the advancement variety (task/challenge/goal).
-            if (textComponent.getKey().contains("chat.type.advancement.")) {
+            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // Go through the args of this text component to find the TranslationTextComponent with the key for the
                 // advancement that was just unlocked.
                 String playerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0).getUnformattedComponentText();
@@ -62,29 +80,27 @@ public class ClientEventHandler {
                         .findFirst().orElse(null);
                 // Throws a NPE when player is null because getCapability doesn't handle the null value well
                 // https://pcminecraft-mods.com/blazeandcaves-advancements-data-pack-mc-1-16-1-15-2/
-                ITitles playerCap = TitlesAPI.getCapability(player).orElse(new TitlesCapImpl());
+                TitlesCapability playerCap = TitleManager.getCapability(player).orElse(new TitlesCapability());
                 TranslationTextComponent advancementComp = (TranslationTextComponent) textComponent.getFormatArgs()[1];
                 Arrays.stream(advancementComp.getFormatArgs())
                         .filter(tc -> tc instanceof TranslationTextComponent)
                         .map(tc -> ((TranslationTextComponent) tc).getKey())
                         .map(ClientEventHandler::processKey)
                         .map(ResourceLocation::new)
-                        .map(TitlesAPI::getTitle)
+                        .map(TitleManager::getTitle)
                         .filter(title -> !title.isNull())
                         .findFirst().ifPresent(title -> {
-                            IFormattableTextComponent formattedTitle = TitlesAPI.getFormattedTitle(title, playerCap.getGenderSetting());
+                            IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(title, playerCap.getGenderSetting());
                             formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + title.getID().toString())));
                             component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
                             event.setMessage(component);
                         });
             }
         }
+         */
     }
 
-    // Once we get the lang key for the advancement that was sent with the text component, we need to do some
-    // processing and find an applicable title, if any.
-    // TODO might be better for this to return a title directly
-    private static String processKey(String key) {
+    private static Title processKey(String key) {
         List<String> keyParts = new ArrayList<>(Arrays.asList(key.split("[/.:]")));
 
         // Mod authors alternate using "advancement" or "advancements" for their advancement lang keys. Also remove
@@ -106,21 +122,20 @@ public class ClientEventHandler {
             }
         }
 
+        String titleString = "";
         if (!possibleModId.equals("")) {
             keyParts.remove(possibleModId);
-            return possibleModId + ":" + String.join("/", keyParts);
+            titleString = possibleModId + ":" + String.join("/", keyParts);
         }
         else {
             for (String modId : modList) {
                 ResourceLocation testKey = new ResourceLocation(modId + ":" + String.join("/", keyParts));
-                if (TitleManager.INSTANCE.getAdvancementTitles().containsKey(testKey)) {
-                    return testKey.toString();
+                if (TitleManager.getTitlesOfType(Title.AwardType.ADVANCEMENT).containsKey(testKey)) {
+                    titleString = testKey.toString();
+                    break;
                 }
             }
         }
-
-        // Follows a pattern we're not familiar with.
-        TitlesMod.LOG.debug("Advancement key ({}) follows an unfamiliar pattern", key);
-        return "";
+        return TitleManager.getTitle(titleString);
     }
 }

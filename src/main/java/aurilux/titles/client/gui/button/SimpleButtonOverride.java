@@ -1,6 +1,6 @@
 package aurilux.titles.client.gui.button;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.TitlesMod;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -12,10 +12,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-//TODO instead make this a subclass of TitleSelectionScreen
 @OnlyIn(Dist.CLIENT)
 public class SimpleButtonOverride extends Button {
-    protected final ResourceLocation guiLoc = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");
+    protected final ResourceLocation guiLoc = TitlesMod.prefix("textures/gui/title_selection.png");
     protected final int buttonStartY = 220;
 
     public SimpleButtonOverride(int x, int y, int width, int height, ITextComponent title, IPressable pressedAction) {

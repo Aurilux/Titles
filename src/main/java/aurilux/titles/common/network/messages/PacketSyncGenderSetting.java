@@ -1,7 +1,7 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -39,13 +39,14 @@ public class PacketSyncGenderSetting {
                 PlayerEntity player;
                 if (ctx.get().getDirection().getReceptionSide().isClient()) {
                     player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
-                } else {
+                }
+                else {
                     player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    PacketHandler.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
+                    TitlesNetwork.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
                 }
 
                 if (player != null) {
-                    TitlesAPI.getCapability(player).ifPresent(cap -> cap.setGenderSetting(msg.gender));
+                    TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
                     player.refreshDisplayName();
                 }
             }
