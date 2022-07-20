@@ -1,6 +1,6 @@
 ## 1.16.5 - 3.4.0
 - Refactored nearly every class. Probably includes some performance improvement, but was done primarily for flow and readability.
--
+- Removed most of the API. I kept the Title and TitleProvider classes so modders can add their own titles, but I wasn't sure if the rest of it was even being used.
 
 ## 1.16.5 - 3.3.2
 - Fixes a bug where unlocking titles on a server won't update until they are also unlocked in single player (#26)

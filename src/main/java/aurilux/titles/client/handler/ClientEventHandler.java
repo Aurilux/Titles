@@ -53,12 +53,14 @@ public class ClientEventHandler {
                 ITextComponent targetPlayerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0);
                 Title unlockedTitle = processKey(((TranslationTextComponent)((TranslationTextComponent) textComponent.getFormatArgs()[1])
                         .getFormatArgs()[0]).getKey());
-                if (!unlockedTitle.isNull()) {
-                    TitleManager.doIfPresent(Minecraft.getInstance().player, cap -> {
+                PlayerEntity clientPlayer = Minecraft.getInstance().player;
+                if (!unlockedTitle.isNull() && clientPlayer != null) {
+                    TitleManager.doIfPresent(clientPlayer, cap -> {
                         IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                        if (Minecraft.getInstance().player.getName().equals(targetPlayerName)) {
+                        if (clientPlayer.getName().equals(targetPlayerName)) {
                             formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
                         }
+                        TitlesMod.LOG.info("Key after processing: {}", formattedTitle);
                         component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
                         event.setMessage(component);
                     });

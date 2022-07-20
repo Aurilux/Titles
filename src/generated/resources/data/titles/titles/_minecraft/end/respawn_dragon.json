@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/end/respawn_dragon",
   "rarity": "uncommon",
-  "defaultDisplay": "title.titles._minecraft/end/respawn_dragon"
+  "defaultDisplay": "title.titles.minecraft.end.respawn_dragon"
 }

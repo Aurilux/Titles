@@ -1,5 +1,6 @@
 package aurilux.titles.common.network.messages;
 
+import aurilux.titles.api.Title;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.client.Minecraft;
@@ -36,15 +37,8 @@ public class PacketSyncGenderSetting {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
             public void run() {
-                PlayerEntity player;
-                if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                    player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
-                }
-                else {
-                    player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    TitlesNetwork.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
-                }
-
+                boolean clientSide = ctx.get().getDirection().getReceptionSide().isClient();
+                PlayerEntity player = TitlesNetwork.getPlayerByUUID(clientSide, msg.playerUUID);
                 if (player != null) {
                     TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
                     player.refreshDisplayName();

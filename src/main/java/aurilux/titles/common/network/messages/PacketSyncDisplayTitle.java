@@ -39,22 +39,15 @@ public class PacketSyncDisplayTitle {
             @Override
             public void run() {
                 boolean clientSide = ctx.get().getDirection().getReceptionSide().isClient();
-                PlayerEntity player = clientSide ? Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID) :
-                        ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
+                PlayerEntity player = TitlesNetwork.getPlayerByUUID(clientSide, msg.playerUUID);
 
                 if (player != null) {
                     TitleManager.doIfPresent(player, cap ->
                             cap.setDisplayTitle(TitleManager.getTitle(msg.selectedTitle)));
                     player.refreshDisplayName();
-                    if (clientSide) {
-                        TitlesMod.LOG.debug("Display title {} for player {} synced to client {}",
-                                msg.selectedTitle,
-                                player.getName().getString(),
-                                Minecraft.getInstance().player.getName().getString());
-                    }
-                    else {
+
+                    if (!clientSide) {
                         TitlesNetwork.toAll(new PacketSyncDisplayTitle(msg.playerUUID, msg.selectedTitle));
-                        TitlesMod.LOG.debug("Display title for player {} being sent to all clients", player.getName().getString());
                     }
                 }
             }

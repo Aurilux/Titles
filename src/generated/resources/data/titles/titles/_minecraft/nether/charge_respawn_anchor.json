@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/nether/charge_respawn_anchor",
   "rarity": "common",
-  "defaultDisplay": "title.titles._minecraft/nether/charge_respawn_anchor"
+  "defaultDisplay": "title.titles.minecraft.nether.charge_respawn_anchor"
 }

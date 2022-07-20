@@ -184,7 +184,7 @@ public class Title {
 
         public Builder genWithName(String name, boolean variant, boolean flavor) {
             id(new ResourceLocation(modId, name))
-                    .defaultDisplay(String.format("title.%s.%s", modId, name));
+                    .defaultDisplay(String.format("title.%s.%s", modId, convertToLang(name)));
 
             if (variant) {
                 variantDisplay(getDefaultDisplay() + ".variant");
@@ -194,6 +194,14 @@ public class Title {
                 flavorText(getDefaultDisplay() + ".flavor");
             }
             return this;
+        }
+
+        private String convertToLang(String name) {
+            String conversion = name;
+            if (conversion.startsWith("_")) {
+                conversion = conversion.substring(1);
+            }
+            return conversion.replaceAll("[/:]", ".");
         }
 
         public Builder id(String s) {

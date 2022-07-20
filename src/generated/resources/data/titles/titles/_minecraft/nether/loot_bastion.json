@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/nether/loot_bastion",
   "rarity": "common",
-  "defaultDisplay": "title.titles._minecraft/nether/loot_bastion"
+  "defaultDisplay": "title.titles.minecraft.nether.loot_bastion"
 }

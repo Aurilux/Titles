@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/adventure/trade",
   "rarity": "common",
-  "defaultDisplay": "title.titles._minecraft/adventure/trade"
+  "defaultDisplay": "title.titles.minecraft.adventure.trade"
 }

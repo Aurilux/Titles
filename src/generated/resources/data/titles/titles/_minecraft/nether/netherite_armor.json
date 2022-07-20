@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/nether/netherite_armor",
   "rarity": "rare",
-  "defaultDisplay": "title.titles._minecraft/nether/netherite_armor"
+  "defaultDisplay": "title.titles.minecraft.nether.netherite_armor"
 }

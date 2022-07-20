@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/end/dragon_egg",
   "rarity": "uncommon",
-  "defaultDisplay": "title.titles._minecraft/end/dragon_egg"
+  "defaultDisplay": "title.titles.minecraft.end.dragon_egg"
 }

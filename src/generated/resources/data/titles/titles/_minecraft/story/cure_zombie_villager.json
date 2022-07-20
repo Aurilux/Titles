@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/story/cure_zombie_villager",
   "rarity": "uncommon",
-  "defaultDisplay": "title.titles._minecraft/story/cure_zombie_villager"
+  "defaultDisplay": "title.titles.minecraft.story.cure_zombie_villager"
 }

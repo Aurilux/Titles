@@ -2,5 +2,5 @@
   "type": "advancement",
   "id": "titles:_minecraft/husbandry/balanced_diet",
   "rarity": "rare",
-  "defaultDisplay": "title.titles._minecraft/husbandry/balanced_diet"
+  "defaultDisplay": "title.titles.minecraft.husbandry.balanced_diet"
 }
