@@ -67,6 +67,7 @@ public class ClientEventHandler {
                 }
             }
         }
+        // TODO verify this is complete and the commented code is no longer needed
         /*
         IFormattableTextComponent component = event.getMessage().copyRaw();
         TitlesMod.LOG.info("Client message components: {}", component);

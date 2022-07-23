@@ -19,6 +19,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -32,6 +33,12 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class TitleSelectionScreen extends Screen {
     private final ResourceLocation bgTexture = TitlesMod.prefix("textures/gui/title_selection.png");
+    private final Button.ITooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
+        String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
+        if (button.active && !StringUtils.isNullOrEmpty(titleButtonFlavorText)) {
+            this.renderTooltip(matrixStack,this.minecraft.fontRenderer.trimStringToWidth(new TranslationTextComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
+        }
+    };
 
     private final int NUM_COLS = 2;
     private final int NUM_ROWS = 6;
@@ -292,7 +299,8 @@ public class TitleSelectionScreen extends Screen {
             int row = i / NUM_COLS;
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
-            Button button = addButton(new TitleButton(x, y, titleButtonWidth, buttonHeight, b -> temporaryTitle = ((TitleButton) b).getTitle(), titlesToDisplay.get(i), gender));
+            Button button = addButton(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
+                    gender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
             titleButtons.add(button);
         }
         buttons.addAll(titleButtons);
