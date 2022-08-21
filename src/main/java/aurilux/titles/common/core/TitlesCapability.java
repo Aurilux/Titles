@@ -39,12 +39,8 @@ public class TitlesCapability {
         obtainedTitles.remove(title);
     }
 
-    public boolean hasTitle(Title title) {
-        return obtainedTitles.contains(title);
-    }
-
     public Set<Title> getObtainedTitles() {
-        return new HashSet<>(obtainedTitles);
+        return obtainedTitles;
     }
 
     public void setDisplayTitle(Title newTitle) {

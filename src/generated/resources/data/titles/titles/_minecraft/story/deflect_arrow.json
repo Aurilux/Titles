@@ -3,5 +3,6 @@
   "id": "titles:_minecraft/story/deflect_arrow",
   "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.story.deflect_arrow",
-  "variantDisplay": "title.titles.minecraft.story.deflect_arrow.variant"
+  "variantDisplay": "title.titles.minecraft.story.deflect_arrow.variant",
+  "flavorText": "title.titles.minecraft.story.deflect_arrow.flavor"
 }

@@ -58,7 +58,15 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:" + minecraft_version + "-" + forge_version
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    compile fg.deobf("vazkii.botania:botania:1.16.5-420.2")
+    compile fg.deobf("blusunrize.immersiveengineering:immersiveengineering:1.16.5-5.1.0-148")
+    compile fg.deobf("slimeknights.tconstruct:tconstruct:1.16.5-3.3.4.335")
+    compile fg.deobf("twilightforest:twilightforest:1.16.5-4.0.870:universal")
+    compile fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.8.2")
+    compile fg.deobf("slimeknights.mantle:mantle:1.16.5-1.6.157")
+    compile fg.deobf("vazkii.patchouli:patchouli:1.16.4-53.3")
 
     repos.each { n, l ->
         compileOnly fg.deobf(l.lib + ":api")
@@ -72,10 +80,13 @@ minecraft {
 
     runs {
         client = {
+            workingDirectory project.file('run').canonicalPath
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'forge.logging.console.level': 'debug'
-            properties 'fml.earlyprogresswindow': 'false'
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // These variables allow the use of your actual minecraft profile in-game.
             // The best place they should be stored is in the gradle.properties file in your gradle user home.
@@ -93,8 +104,6 @@ minecraft {
                 // Your access token, you can find it in your '.minecraft/launcher_profiles.json' file
                 args '--accessToken', project.getProperty('mc_accessToken')
             }
-
-            workingDirectory project.file('run').canonicalPath
             mods {
                 titles {
                     source sourceSets.main
@@ -102,10 +111,12 @@ minecraft {
             }
         }
         server = {
+            workingDirectory project.file('run').canonicalPath
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            properties 'forge.logging.console.level': 'debug'
-            workingDirectory project.file('run').canonicalPath
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 titles {
                     source sourceSets.main
@@ -116,6 +127,8 @@ minecraft {
             workingDirectory project.file('run')
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             args '--mod', mod_id, '--all',
                     '--existing', file('src/main/resources'),

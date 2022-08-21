@@ -178,11 +178,11 @@ public class Title {
             return rarity;
         }
 
-        public Builder genWithName(String n) {
+        public Title genWithName(String n) {
             return genWithName(n, false, false);
         }
 
-        public Builder genWithName(String name, boolean variant, boolean flavor) {
+        public Title genWithName(String name, boolean variant, boolean flavor) {
             id(new ResourceLocation(modId, name))
                     .defaultDisplay(String.format("title.%s.%s", modId, convertToLang(name)));
 
@@ -193,7 +193,7 @@ public class Title {
             if (flavor) {
                 flavorText(getDefaultDisplay() + ".flavor");
             }
-            return this;
+            return this.build();
         }
 
         private String convertToLang(String name) {

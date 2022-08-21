@@ -2,8 +2,6 @@ package aurilux.titles.common.network;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.messages.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -84,18 +82,5 @@ public class TitlesNetwork {
                 TitlesMod.LOG.info("Ignored specified player: {}", ignoredPlayer.getDisplayName().getString());
             }
         }
-    }
-
-    public static PlayerEntity getPlayerByUUID(boolean clientSide, UUID uuid) {
-        if (clientSide) {
-            World world = Minecraft.getInstance().world;
-            if (world != null) {
-                return world.getPlayerByUuid(uuid);
-            }
-        }
-        else {
-            return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
-        }
-        return null;
     }
 }

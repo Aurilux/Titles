@@ -22,9 +22,9 @@ public class LangGenerator extends LanguageProvider {
 
         // Commands
         add("commands.titles.usage", "/titles <add|remove> <player> <titleKey>");
+        add("commands.titles.addremove.fail", "This command failed for an unknown reason");
         add("commands.titles.add", "Added title [%s] to player %s.");
         add("commands.titles.remove", "Removed title [%s] from player %s.");
-        add("commands.display.error", "You have not earned the title [%s]");
         add("commands.display.success", "Changed your display title to [%s]");
 
         // Keybindings
@@ -68,10 +68,68 @@ public class LangGenerator extends LanguageProvider {
         addTitle(keyPath + "melon_lord", "the Melon Lord", "", "I am not Toph! I am MELON LORD!");
         add(keyPath + "pincushion", "the Pincushion");
 
+        minecraftTemplateTitles(keyPath);
+        botaniaTemplateTitles(keyPath);
+        IETemplateTitles(keyPath);
+        TFTemplateTitles(keyPath);
+    }
+
+    private void TFTemplateTitles(String keyPath) {
+        String twilightKeyPath = keyPath + "twilightforest.";
+        add(twilightKeyPath + "quest_ram", "the Multicolored");
+        add(twilightKeyPath + "progress_troll", "the Troll Slayer");
+
+        add(twilightKeyPath + "progress_naga", "the Naga Slayer");
+        add(twilightKeyPath + "progress_lich", "the Lich Slayer");
+        add(twilightKeyPath + "progress_yeti", "the Yeti Slayer");
+        addTitle(twilightKeyPath + "progress_glacier", "the Queen Slayer", "", "Jaime would be proud.");
+        add(twilightKeyPath + "progress_knight", "the Knight Slayer");
+        add(twilightKeyPath + "progress_ur_ghast", "the Ur-Ghast Slayer");
+
+        add(twilightKeyPath + "mazebreaker", "the Vault Breaker");
+        add(twilightKeyPath + "fiery_set", "the Flame-forged");
+    }
+
+    private void IETemplateTitles(String keyPath) {
+        String immersiveKeyPath = keyPath + "immersiveengineering.main.";
+        add(immersiveKeyPath + "connect_wire", "the Live Wire");
+        add(immersiveKeyPath + "place_windmill", "the Tilted");
+        add(immersiveKeyPath + "place_floodlight", "the Illuminated");
+
+        add(immersiveKeyPath + "secret_luckofthedraw", "the Gambler");
+        add(immersiveKeyPath + "secret_birthdayparty", "the Party Popper");
+        addTitle(immersiveKeyPath + "secret_drillbreak", "the Heaven-piercer", "", "Let me see you grit those teeth!");
+        add(immersiveKeyPath + "mb_excavator", "the Quarrier");
+    }
+
+    private void botaniaTemplateTitles(String keyPath) {
+        String botaniaKeyPath = keyPath + "botania.main.";
+        add(botaniaKeyPath + "flower_pickup", "the Flower Picker");
+        addTitle(botaniaKeyPath + "cacophonium_craft", "the Noisy", "", "Let me play you the song of my people.");
+        add(botaniaKeyPath + "rune_pickup", "the Runechild");
+        add(botaniaKeyPath + "tiny_potato_pet", "the Spud Bud");
+        add(botaniaKeyPath + "pollidisiac_pickup", "the Matchmaker");
+        add(botaniaKeyPath + "manaweave_armor_craft", "the Manaweaver");
+        add(botaniaKeyPath + "spark_craft", "the Sparkling");
+        add(botaniaKeyPath + "alf_portal_open", "the Midgardian Trader");
+        add(botaniaKeyPath + "heisei_dream_pickup", "the Maddening");
+        addTitle(botaniaKeyPath + "dandelifeon_pickup", "the Wheel Spinner", "", "Collect beaucoup bucks!");
+        add(botaniaKeyPath + "luminizer_ride", "the Light Treader");
+
+        botaniaKeyPath = keyPath + "botania.challenge.";
+        add(botaniaKeyPath + "gaia_guardian_hardmode", "the Gaia Slayer");
+        add(botaniaKeyPath + "gaia_guardian_no_armor", "the Exhibitionist");
+        addTitle(botaniaKeyPath + "alf_portal_bread", "the Midgardian Baker", "", "WHAT IS YOUR PROFESSION?!");
+        add(botaniaKeyPath + "super_corporea_request", "the Stockpiler");
+        add(botaniaKeyPath + "pinkinator", "the Rosy");
+        add(botaniaKeyPath + "king_key", "the Babylonian");
+    }
+
+    private void minecraftTemplateTitles(String keyPath) {
         String minecraftKeyPath = keyPath + "minecraft.story.";
         add(minecraftKeyPath + "iron_tools", "the Miner");
         add(minecraftKeyPath + "obtain_armor", "the Armorer");
-        addTitle(minecraftKeyPath + "deflect_arrow", "the Shield Bearer", "the Shield Maiden", "As you wish, my Thane");
+        addTitle(minecraftKeyPath + "deflect_arrow", "the Shield Bearer", "the Shield Maiden", "As you wish, my Thane.");
         addTitle(minecraftKeyPath + "enchant_item", "the Enchanter", "the Enchantress", "");
         add(minecraftKeyPath + "cure_zombie_villager", "the Purifier");
         addTitle(minecraftKeyPath + "enter_the_end", "the Puddle Jumper", "", "Flight, this is... Puddle Jumper.");

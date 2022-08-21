@@ -1,6 +1,9 @@
 ## 1.16.5 - 3.4.0
 - Refactored nearly every class. Probably includes some performance improvement, but was done primarily for flow and readability.
 - Removed most of the API. I kept the Title and TitleProvider classes so modders can add their own titles, but I wasn't sure if the rest of it was even being used.
+- Flavor text has now been implemented. Hovering over an underlined title will show a tooltip with its flavor text.
+- I've added template title packs for Botania, Immersive Engineering, and Twilight Forest as they were very popular and ones I am familiar with. Template just means they are there to show what this mod is capable of. Once the actual mods add their own, mine will be removed.
+- Commands were broken for a while - they now work properly.
 
 ## 1.16.5 - 3.3.2
 - Fixes a bug where unlocking titles on a server won't update until they are also unlocked in single player (#26)

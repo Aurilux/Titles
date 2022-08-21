@@ -51,64 +51,44 @@ public class ClientEventHandler {
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components
                 ITextComponent targetPlayerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0);
+                TitlesMod.LOG.info(component.toString());
                 Title unlockedTitle = processKey(((TranslationTextComponent)((TranslationTextComponent) textComponent.getFormatArgs()[1])
                         .getFormatArgs()[0]).getKey());
                 PlayerEntity clientPlayer = Minecraft.getInstance().player;
                 if (!unlockedTitle.isNull() && clientPlayer != null) {
                     TitleManager.doIfPresent(clientPlayer, cap -> {
                         IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                        if (clientPlayer.getName().equals(targetPlayerName)) {
+                        if (clientPlayer.getName().getString().equals(targetPlayerName.getUnformattedComponentText())) {
                             formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
                         }
-                        TitlesMod.LOG.info("Key after processing: {}", formattedTitle);
                         component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
                         event.setMessage(component);
                     });
                 }
             }
         }
-        // TODO verify this is complete and the commented code is no longer needed
-        /*
-        IFormattableTextComponent component = event.getMessage().copyRaw();
-        TitlesMod.LOG.info("Client message components: {}", component);
-        if (component instanceof TranslationTextComponent) {
-            TranslationTextComponent textComponent = (TranslationTextComponent) component;
-            // Check if the lang key is of the advancement variety (task/challenge/goal).
-            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
-                // Go through the args of this text component to find the TranslationTextComponent with the key for the
-                // advancement that was just unlocked.
-                String playerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0).getUnformattedComponentText();
-                PlayerEntity player = Minecraft.getInstance().player.world.getPlayers().stream()
-                        .filter(pe -> pe.getName().getUnformattedComponentText().equals(playerName))
-                        .findFirst().orElse(null);
-                // Throws a NPE when player is null because getCapability doesn't handle the null value well
-                // https://pcminecraft-mods.com/blazeandcaves-advancements-data-pack-mc-1-16-1-15-2/
-                TitlesCapability playerCap = TitleManager.getCapability(player).orElse(new TitlesCapability());
-                TranslationTextComponent advancementComp = (TranslationTextComponent) textComponent.getFormatArgs()[1];
-                Arrays.stream(advancementComp.getFormatArgs())
-                        .filter(tc -> tc instanceof TranslationTextComponent)
-                        .map(tc -> ((TranslationTextComponent) tc).getKey())
-                        .map(ClientEventHandler::processKey)
-                        .map(ResourceLocation::new)
-                        .map(TitleManager::getTitle)
-                        .filter(title -> !title.isNull())
-                        .findFirst().ifPresent(title -> {
-                            IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(title, playerCap.getGenderSetting());
-                            formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + title.getID().toString())));
-                            component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
-                            event.setMessage(component);
-                        });
-            }
-        }
-         */
     }
 
     private static Title processKey(String key) {
         List<String> keyParts = new ArrayList<>(Arrays.asList(key.split("[/.:]")));
-
-        // Mod authors alternate using "advancement" or "advancements" for their advancement lang keys. Also remove
-        // common suffixes to the lang key such as "title" and "name".
-        keyParts.removeIf(part -> part.startsWith("advancement") || part.equals("title") || part.equals("name"));
+        TitlesMod.LOG.info(Arrays.toString(keyParts.toArray()));
+        keyParts = keyParts.stream()
+                // Mod authors alternate using "advancement" or "advancements" for their advancement lang keys. Also
+                // remove common suffixes to the lang key such as "title" and "name".
+                .filter(part -> !(part.startsWith("advancement") || part.equals("title") || part.equals("name")))
+                // A little more processing to protect from an edge case, such as in Botania, where their advancements
+                // are in the format "spark_craft", but their lang entries are "sparkCraft"
+                .map(part -> {
+                    if (part.chars().anyMatch(Character::isUpperCase)) {
+                        List<String> words = new ArrayList<>(Arrays.asList(part.split("(?=\\p{javaUpperCase})")));
+                        words.replaceAll(String::toLowerCase);
+                        return String.join("_", words);
+                    }
+                    else {
+                        return part;
+                    }
+                })
+                .collect(Collectors.toList());
 
         // Get a list of all mod id's, removing those that shouldn't have title data.
         List<String> modList = ModList.get().getMods().stream()

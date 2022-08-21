@@ -4,27 +4,31 @@ import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PacketSyncDisplayTitle {
     private final UUID playerUUID;
-    private final ResourceLocation selectedTitle;
+    private final ResourceLocation displayTitle;
 
     public PacketSyncDisplayTitle(UUID uuid, ResourceLocation titleKey) {
         playerUUID = uuid;
-        selectedTitle = titleKey;
+        displayTitle = titleKey;
     }
 
     public static void encode(PacketSyncDisplayTitle msg, PacketBuffer buf) {
         buf.writeString(msg.playerUUID.toString());
-        buf.writeString(msg.selectedTitle.toString());
+        buf.writeString(msg.displayTitle.toString());
     }
 
     public static PacketSyncDisplayTitle decode(PacketBuffer buf) {
@@ -34,22 +38,12 @@ public class PacketSyncDisplayTitle {
     }
 
     public static void handle(PacketSyncDisplayTitle msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(new Runnable() {
-            // Have to use anon class instead of lambda or else we'll get classloading issues
-            @Override
-            public void run() {
-                boolean clientSide = ctx.get().getDirection().getReceptionSide().isClient();
-                PlayerEntity player = TitlesNetwork.getPlayerByUUID(clientSide, msg.playerUUID);
+        ctx.get().enqueueWork(() -> {
+            PlayerEntity player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
+            TitleManager.setDisplayTitle(player, msg.displayTitle);
 
-                if (player != null) {
-                    TitleManager.doIfPresent(player, cap ->
-                            cap.setDisplayTitle(TitleManager.getTitle(msg.selectedTitle)));
-                    player.refreshDisplayName();
-
-                    if (!clientSide) {
-                        TitlesNetwork.toAll(new PacketSyncDisplayTitle(msg.playerUUID, msg.selectedTitle));
-                    }
-                }
+            if (ctx.get().getDirection().getReceptionSide().isServer()) {
+                TitlesNetwork.toAll(new PacketSyncDisplayTitle(msg.playerUUID, msg.displayTitle));
             }
         });
         ctx.get().setPacketHandled(true);

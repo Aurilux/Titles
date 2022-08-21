@@ -47,8 +47,7 @@ public class PacketSyncAllDisplayTitles {
                 if (world != null) {
                     for (Map.Entry<UUID, ResourceLocation> entry : msg.playerDisplayTitles.entrySet()) {
                         PlayerEntity otherPlayer = world.getPlayerByUuid(entry.getKey());
-                        TitleManager.doIfPresent(otherPlayer, cap ->
-                                cap.setDisplayTitle(TitleManager.getTitle(entry.getValue())));
+                        TitleManager.setDisplayTitle(otherPlayer, entry.getValue());
                     }
                 }
             }

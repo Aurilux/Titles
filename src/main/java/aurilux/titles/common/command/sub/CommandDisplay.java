@@ -23,22 +23,16 @@ public class CommandDisplay {
 
     }
 
-    private static int run(CommandContext<CommandSource> context, Title title) {
+    private static int run(CommandContext<CommandSource> ctx, Title title) {
         try {
-            ServerPlayerEntity player = context.getSource().asPlayer();
+            ServerPlayerEntity player = ctx.getSource().asPlayer();
             TitleManager.doIfPresent(player, cap -> {
+                TitleManager.setDisplayTitle(player, title.getID());
+                TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
+
                 TranslationTextComponent feedback = new TranslationTextComponent("commands.display.success",
                         TitleManager.getFormattedTitle(title, player));
-                if (cap.hasTitle(title)) {
-                    TitleManager.setDisplayTitle(player, title.getID());
-                    TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
-                }
-                else {
-                    feedback = new TranslationTextComponent("commands.display.error",
-                            TitleManager.getFormattedTitle(title, cap.getGenderSetting()));
-
-                }
-                context.getSource().sendFeedback(feedback, true);
+                ctx.getSource().sendFeedback(feedback, true);
             });
         }
         catch (CommandSyntaxException ex) {

@@ -37,9 +37,13 @@ public class CommandAddRemove {
     private static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, Title title) {
         final CommandType commandType = context.getArgument("command", CommandType.class);
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
-        final TextComponent[] response = {new StringTextComponent("Error completing command")};
+        final TextComponent[] response = {new TranslationTextComponent("commands.titles.addremove.fail")};
         TitleManager.doIfPresent(player, cap -> {
             ITextComponent formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
+            if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
+                return;
+            }
+
             if (commandType.equals(CommandType.add)) {
                 cap.add(title);
                 response[0] = new TranslationTextComponent("commands.titles.add", formattedTitle, player.getName());

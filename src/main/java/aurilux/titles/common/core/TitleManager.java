@@ -33,9 +33,10 @@ public class TitleManager {
                 ));
     }
 
-    public static void setDisplayTitle(ServerPlayerEntity player, ResourceLocation id) {
+    public static void setDisplayTitle(PlayerEntity player, ResourceLocation id) {
         doIfPresent(player, cap -> {
             cap.setDisplayTitle(getTitle(id));
+            player.refreshDisplayName();
         });
     }
 
@@ -68,13 +69,11 @@ public class TitleManager {
         if (playerName == null) {
             return titleComponent;
         }
+        else if (title.isNull()) {
+            return playerName.deepCopy();
+        }
         else {
-            if (title.isNull()) {
-                return playerName.deepCopy();
-            }
-            else {
-                return playerName.deepCopy().appendString(", ").appendSibling(titleComponent);
-            }
+            return playerName.deepCopy().appendString(", ").appendSibling(titleComponent);
         }
     }
 }

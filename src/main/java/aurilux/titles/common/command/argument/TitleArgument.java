@@ -31,7 +31,9 @@ public class TitleArgument implements ArgumentType<Title> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return ISuggestionProvider.suggest(TitleRegistry.get().getTitles().keySet().stream().map(ResourceLocation::toString), builder);
+        return ISuggestionProvider.suggest(TitleRegistry.get().getTitles().values().stream()
+                .filter(t -> !t.getType().equals(Title.AwardType.CONTRIBUTOR))
+                .map(t -> t.getID().toString()), builder);
     }
 
     @Override

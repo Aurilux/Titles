@@ -1,5 +1,6 @@
 package aurilux.titles.common;
 
+import aurilux.titles.client.ClientProxy;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
@@ -15,6 +16,8 @@ import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -23,6 +26,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -33,11 +37,22 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+
 @Mod(TitlesMod.MOD_ID)
 public class TitlesMod {
     public static final String MOD_ID = "titles";
     public static final Logger LOG = LogManager.getLogger(MOD_ID.toUpperCase());
     public static final Rarity MYTHIC = Rarity.create("MYTHIC", TextFormatting.GOLD);
+    public static final CommonProxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+    public static final ItemGroup TAB = new ItemGroup(TitlesMod.MOD_ID) {
+        @Nonnull
+        @Override
+        public ItemStack createIcon() {
+            return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());
+        }
+    };
+
 
     public TitlesMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);

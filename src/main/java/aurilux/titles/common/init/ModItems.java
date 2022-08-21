@@ -15,14 +15,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 
 public class ModItems {
-    private static final ItemGroup itemGroup = new ItemGroup(TitlesMod.MOD_ID) {
-        @Nonnull
-        @Override
-        public ItemStack createIcon() {
-            return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());
-        }
-    };
-
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesMod.MOD_ID);
 
     public static final RegistryObject<ItemTitleFragment> TITLE_FRAGMENT = ITEMS.register("title_fragment", () ->
@@ -39,7 +31,7 @@ public class ModItems {
     }
 
     private static Item.Properties baseProp() {
-        return new Item.Properties().group(itemGroup);
+        return new Item.Properties().group(TitlesMod.TAB);
     }
 
     private static Item.Properties unstackable() {
