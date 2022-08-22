@@ -1,7 +1,6 @@
 {
   "type": "loot",
+  "id": "titles:brute",
   "rarity": "common",
-  "display": {
-    "default": "the Brute"
-  }
+  "defaultDisplay": "the Brute"
 }

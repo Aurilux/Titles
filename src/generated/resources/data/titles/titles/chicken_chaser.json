@@ -1,7 +1,7 @@
 {
   "type": "advancement",
+  "id": "titles:chicken_chaser",
   "rarity": "common",
-  "display": {
-    "default": "title.titles.chicken_chaser"
-  }
+  "defaultDisplay": "title.titles.chicken_chaser",
+  "flavorText": "title.titles.chicken_chaser.flavor"
 }

@@ -1,0 +1,6 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/story/obtain_armor",
+  "rarity": "common",
+  "defaultDisplay": "title.titles.minecraft.story.obtain_armor"
+}

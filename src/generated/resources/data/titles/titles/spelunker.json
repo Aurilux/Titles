@@ -1,7 +1,6 @@
 {
   "type": "advancement",
+  "id": "titles:spelunker",
   "rarity": "common",
-  "display": {
-    "default": "title.titles.spelunker"
-  }
+  "defaultDisplay": "title.titles.spelunker"
 }

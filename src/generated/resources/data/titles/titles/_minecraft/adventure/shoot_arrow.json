@@ -1,0 +1,6 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/adventure/shoot_arrow",
+  "rarity": "common",
+  "defaultDisplay": "title.titles.minecraft.adventure.shoot_arrow"
+}

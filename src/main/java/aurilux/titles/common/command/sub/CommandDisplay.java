@@ -1,10 +1,10 @@
 package aurilux.titles.common.command.sub;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.command.argument.TitleArgument;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -23,22 +23,16 @@ public class CommandDisplay {
 
     }
 
-    private static int run(CommandContext<CommandSource> context, Title title) {
+    private static int run(CommandContext<CommandSource> ctx, Title title) {
         try {
-            ServerPlayerEntity player = context.getSource().asPlayer();
-            TitlesAPI.getCapability(player).ifPresent(c -> {
-                TranslationTextComponent feedback = new TranslationTextComponent("commands.display.success",
-                        TitlesAPI.getFormattedTitle(title, player));
-                if (c.hasTitle(title)) {
-                    TitlesAPI.setDisplayTitle(player, title.getID());
-                    PacketHandler.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
-                }
-                else {
-                    feedback = new TranslationTextComponent("commands.display.error",
-                            TitlesAPI.getFormattedTitle(title, c.getGenderSetting()));
+            ServerPlayerEntity player = ctx.getSource().asPlayer();
+            TitleManager.doIfPresent(player, cap -> {
+                TitleManager.setDisplayTitle(player, title.getID());
+                TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
 
-                }
-                context.getSource().sendFeedback(feedback, true);
+                TranslationTextComponent feedback = new TranslationTextComponent("commands.display.success",
+                        TitleManager.getFormattedTitle(title, player));
+                ctx.getSource().sendFeedback(feedback, true);
             });
         }
         catch (CommandSyntaxException ex) {

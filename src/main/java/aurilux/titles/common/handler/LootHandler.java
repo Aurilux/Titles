@@ -1,6 +1,6 @@
 package aurilux.titles.common.handler;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.Rarity;
@@ -28,7 +28,7 @@ public class LootHandler {
     }
 
     private static LootPool getInjectPool(String entryName) {
-        ResourceLocation table = new ResourceLocation(TitlesAPI.MOD_ID, "inject/" + entryName);
+        ResourceLocation table = TitlesMod.prefix("inject/" + entryName);
         LootEntry.Builder<?> entry = TableLootEntry.builder(table).weight(1);
         return LootPool.builder()
                 .addEntry(entry)

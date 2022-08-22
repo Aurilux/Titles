@@ -1,7 +1,7 @@
 {
   "type": "loot",
+  "id": "titles:knight",
   "rarity": "rare",
-  "display": {
-    "default": "the Knight"
-  }
+  "defaultDisplay": "the Knight",
+  "flavorText": "...in shining armor"
 }

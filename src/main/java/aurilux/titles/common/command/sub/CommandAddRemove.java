@@ -1,9 +1,9 @@
 package aurilux.titles.common.command.sub;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.command.argument.TitleArgument;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -37,18 +37,22 @@ public class CommandAddRemove {
     private static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, Title title) {
         final CommandType commandType = context.getArgument("command", CommandType.class);
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
-        final TextComponent[] response = {new StringTextComponent("Error completing command")};
-        TitlesAPI.getCapability(player).ifPresent(c -> {
-            ITextComponent formattedTitle = TitlesAPI.getFormattedTitle(title, c.getGenderSetting());
+        final TextComponent[] response = {new TranslationTextComponent("commands.titles.addremove.fail")};
+        TitleManager.doIfPresent(player, cap -> {
+            ITextComponent formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
+            if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
+                return;
+            }
+
             if (commandType.equals(CommandType.add)) {
-                c.add(title);
+                cap.add(title);
                 response[0] = new TranslationTextComponent("commands.titles.add", formattedTitle, player.getName());
             }
             else if (commandType.equals(CommandType.remove)) {
-                c.remove(title);
+                cap.remove(title);
                 response[0] = new TranslationTextComponent("commands.titles.remove", formattedTitle, player.getName());
             }
-            PacketHandler.toPlayer(new PacketSyncTitlesCapability(c.serializeNBT()), player);
+            TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
         });
         context.getSource().sendFeedback(response[0], false);
         return Command.SINGLE_SUCCESS;

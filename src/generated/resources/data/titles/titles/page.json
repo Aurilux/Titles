@@ -1,7 +1,6 @@
 {
   "type": "loot",
+  "id": "titles:page",
   "rarity": "common",
-  "display": {
-    "default": "the Page"
-  }
+  "defaultDisplay": "the Page"
 }

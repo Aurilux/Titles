@@ -1,5 +1,6 @@
 package aurilux.titles.api;
 
+import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
 import net.minecraft.item.Rarity;
 import net.minecraft.util.JSONUtils;
@@ -12,10 +13,14 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class Title {
-    public final static Title NULL_TITLE = new Title(new Builder(AwardType.ADVANCEMENT)
-            .id("titles:null")
-            .defaultDisplay("")
-            .rarity(Rarity.COMMON));
+    public final static Title NULL_TITLE = new Title(Builder.create(TitlesMod.MOD_ID).id(TitlesMod.prefix("null")));
+
+    public enum AwardType {
+        ADVANCEMENT,
+        COMMAND,
+        CONTRIBUTOR,
+        LOOT
+    }
 
     private final AwardType type;
     private final ResourceLocation id;
@@ -28,7 +33,7 @@ public class Title {
     public Title(Builder builder) {
         type = builder.getType();
         id = builder.getID();
-        modid = id.getNamespace();
+        modid = builder.getModId();
         defaultDisplay = builder.getDefaultDisplay();
         variantDisplay = builder.getVariantDisplay();
         flavorText = builder.getFlavorText();
@@ -78,30 +83,29 @@ public class Title {
         json.addProperty("type", getType().toString().toLowerCase());
         json.addProperty("id", getID().toString());
         json.addProperty("rarity", getRarity().toString().toLowerCase());
-        JsonObject display = new JsonObject();
-        display.addProperty("default", getDefaultDisplay());
+        json.addProperty("defaultDisplay", getDefaultDisplay());
         if (!StringUtils.isNullOrEmpty(getVariantDisplay())) {
-            display.addProperty("variant", getVariantDisplay());
+            json.addProperty("variantDisplay", getVariantDisplay());
         }
         if (!StringUtils.isNullOrEmpty(getFlavorText())) {
-            display.addProperty("flavor", getFlavorText());
+            json.addProperty("flavorText", getFlavorText());
         }
-        json.add("display", display);
         return json;
     }
 
     public static Title deserialize(JsonObject json) {
-        Title.Builder builder = Builder.create(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
-                .id(JSONUtils.getString(json, "id"))
+        ResourceLocation id = new ResourceLocation(JSONUtils.getString(json, "id"));
+        Title.Builder builder = Builder.create(id.getNamespace())
+                .type(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                .id(id)
                 .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
 
-        JsonObject display = JSONUtils.getJsonObject(json, "display");
-        builder.defaultDisplay(JSONUtils.getString(display, "default"));
-        if (json.has("variant")) {
-            builder.variantDisplay(JSONUtils.getString(display, "variant"));
+        builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
+        if (json.has("variantDisplay")) {
+            builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
         }
-        if (json.has("flavor")) {
-            builder.flavorText(JSONUtils.getString(display, "flavor"));
+        if (json.has("flavorText")) {
+            builder.flavorText(JSONUtils.getString(json, "flavorText"));
         }
 
         return new Title(builder);
@@ -131,48 +135,38 @@ public class Title {
         }
     }
 
-    public enum AwardType {
-        ADVANCEMENT,
-        COMMAND,
-        CONTRIBUTOR,
-        LOOT
-    }
-
     public static class Builder {
-        private AwardType type;
+        private AwardType type = AwardType.ADVANCEMENT;
+        private Rarity rarity = Rarity.COMMON;
         private ResourceLocation id;
+        private String modId;
         private String defaultDisplay;
         private String variantDisplay;
         private String flavorText;
-        private Rarity rarity;
+        private Consumer<Title> buildValidator;
 
-        private Builder(AwardType type) {
-            this.type = type;
+        private Builder() {}
+
+        public static Builder create(String modId) {
+            return new Builder().modId(modId);
         }
 
-        public static Builder create(AwardType type) {
-            return new Builder(type);
+        public Builder modId(String m) {
+            modId = m;
+            return this;
+        }
+
+        public String getModId() {
+            return modId;
+        }
+
+        public Builder type(AwardType t) {
+            type = t;
+            return this;
         }
 
         public AwardType getType() {
             return type;
-        }
-
-        public ResourceLocation getID() {
-            return id;
-        }
-
-        public Builder id(String s) {
-            return id(new ResourceLocation(s));
-        }
-
-        public Builder id(ResourceLocation r) {
-            id = r;
-            return this;
-        }
-
-        public Rarity getRarity() {
-            return rarity;
         }
 
         public Builder rarity(Rarity r) {
@@ -180,12 +174,60 @@ public class Title {
             return this;
         }
 
+        public Rarity getRarity() {
+            return rarity;
+        }
+
+        public Title genWithName(String n) {
+            return genWithName(n, false, false);
+        }
+
+        public Title genWithName(String name, boolean variant, boolean flavor) {
+            id(new ResourceLocation(modId, name))
+                    .defaultDisplay(String.format("title.%s.%s", modId, convertToLang(name)));
+
+            if (variant) {
+                variantDisplay(getDefaultDisplay() + ".variant");
+            }
+
+            if (flavor) {
+                flavorText(getDefaultDisplay() + ".flavor");
+            }
+            return this.build();
+        }
+
+        private String convertToLang(String name) {
+            String conversion = name;
+            if (conversion.startsWith("_")) {
+                conversion = conversion.substring(1);
+            }
+            return conversion.replaceAll("[/:]", ".");
+        }
+
+        public Builder id(String s) {
+            return id(TitlesMod.prefix(s));
+        }
+
+        public Builder id(ResourceLocation r) {
+            id = r;
+            return this;
+        }
+
+        public ResourceLocation getID() {
+            return id;
+        }
+
+        public Builder defaultDisplay(String d) {
+            defaultDisplay = d;
+            return this;
+        }
+
         public String getDefaultDisplay() {
             return defaultDisplay;
         }
 
-        public Builder defaultDisplay(String s) {
-            defaultDisplay = s;
+        public Builder variantDisplay(String v) {
+            variantDisplay = v;
             return this;
         }
 
@@ -193,8 +235,8 @@ public class Title {
             return variantDisplay;
         }
 
-        public Builder variantDisplay(String s) {
-            variantDisplay = s;
+        public Builder flavorText(String f) {
+            flavorText = f;
             return this;
         }
 
@@ -202,14 +244,26 @@ public class Title {
             return flavorText;
         }
 
-        public Builder flavorText(String s) {
-            flavorText = s;
+        public Builder withBuildValidator(Consumer<Title> consumer) {
+            buildValidator = consumer;
             return this;
         }
 
-        public Title build(Consumer<Title> consumer) {
+        private void reset() {
+            defaultDisplay = "";
+            variantDisplay = "";
+            flavorText = "";
+        }
+
+        public Title build() {
+            if (getID() == null || getType() == null || getRarity() == null || getDefaultDisplay() == null) {
+                throw new IllegalArgumentException("Missing one or more mandatory values while building a title (Either id, type, rarity, or default display)!");
+            }
             Title title = new Title(this);
-            consumer.accept(title);
+            if (buildValidator != null) {
+                buildValidator.accept(title);
+            }
+            reset();
             return title;
         }
     }

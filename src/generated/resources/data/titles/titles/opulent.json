@@ -1,8 +1,7 @@
 {
   "type": "advancement",
+  "id": "titles:opulent",
   "rarity": "rare",
-  "display": {
-    "default": "title.titles.opulent",
-    "flavor": "title.titles.opulent.flavor"
-  }
+  "defaultDisplay": "title.titles.opulent",
+  "flavorText": "title.titles.opulent.flavor"
 }

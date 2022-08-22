@@ -1,7 +1,6 @@
 {
   "type": "loot",
+  "id": "titles:squire",
   "rarity": "uncommon",
-  "display": {
-    "default": "the Squire"
-  }
+  "defaultDisplay": "the Squire"
 }

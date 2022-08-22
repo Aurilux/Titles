@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "rarity": "uncommon",
-  "display": {
-    "default": "title.minecraft.end.dragon_breath"
-  }
-}

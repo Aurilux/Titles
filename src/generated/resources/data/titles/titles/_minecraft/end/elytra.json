@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/end/elytra",
+  "rarity": "uncommon",
+  "defaultDisplay": "title.titles.minecraft.end.elytra",
+  "flavorText": "title.titles.minecraft.end.elytra.flavor"
+}

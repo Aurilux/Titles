@@ -1,0 +1,6 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/story/enchant_item",
+  "rarity": "common",
+  "defaultDisplay": "title.titles.minecraft.story.enchant_item"
+}

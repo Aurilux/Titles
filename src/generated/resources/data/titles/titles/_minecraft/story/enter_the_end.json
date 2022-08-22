@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/story/enter_the_end",
+  "rarity": "common",
+  "defaultDisplay": "title.titles.minecraft.story.enter_the_end",
+  "flavorText": "title.titles.minecraft.story.enter_the_end.flavor"
+}

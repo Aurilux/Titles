@@ -1,14 +1,19 @@
 package aurilux.titles.common.network.messages;
 
-import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.TitlesMod;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PacketSyncGenderSetting {
@@ -32,22 +37,13 @@ public class PacketSyncGenderSetting {
     }
 
     public static void handle(PacketSyncGenderSetting msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(new Runnable() {
-            // Have to use anon class instead of lambda or else we'll get classloading issues
-            @Override
-            public void run() {
-                PlayerEntity player;
-                if (ctx.get().getDirection().getReceptionSide().isClient()) {
-                    player = Minecraft.getInstance().world.getPlayerByUuid(msg.playerUUID);
-                } else {
-                    player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(msg.playerUUID);
-                    PacketHandler.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
-                }
+        ctx.get().enqueueWork(() -> {
+            PlayerEntity player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
+            TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
+            player.refreshDisplayName();
 
-                if (player != null) {
-                    TitlesAPI.getCapability(player).ifPresent(cap -> cap.setGenderSetting(msg.gender));
-                    player.refreshDisplayName();
-                }
+            if (ctx.get().getDirection().getReceptionSide().isServer()) {
+                TitlesNetwork.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
             }
         });
         ctx.get().setPacketHandled(true);

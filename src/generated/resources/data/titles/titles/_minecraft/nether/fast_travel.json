@@ -1,0 +1,6 @@
+{
+  "type": "advancement",
+  "id": "titles:_minecraft/nether/fast_travel",
+  "rarity": "rare",
+  "defaultDisplay": "title.titles.minecraft.nether.fast_travel"
+}

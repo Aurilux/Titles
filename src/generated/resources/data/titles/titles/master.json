@@ -1,7 +1,6 @@
 {
   "type": "loot",
+  "id": "titles:master",
   "rarity": "rare",
-  "display": {
-    "default": "the Master"
-  }
+  "defaultDisplay": "the Master"
 }

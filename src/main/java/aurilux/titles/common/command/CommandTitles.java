@@ -1,6 +1,6 @@
 package aurilux.titles.common.command;
 
-import aurilux.titles.api.TitlesAPI;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.command.sub.CommandAddRemove;
 import aurilux.titles.common.command.sub.CommandDisplay;
 import aurilux.titles.common.command.sub.CommandRefresh;
@@ -11,7 +11,7 @@ import net.minecraft.command.Commands;
 public class CommandTitles {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal(TitlesAPI.MOD_ID)
+                Commands.literal(TitlesMod.MOD_ID)
                 .then(CommandAddRemove.register())
                 .then(CommandRefresh.register())
                 .then(CommandDisplay.register())

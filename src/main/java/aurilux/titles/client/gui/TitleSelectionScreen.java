@@ -1,13 +1,14 @@
 package aurilux.titles.client.gui;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.api.TitlesAPI;
-import aurilux.titles.api.capability.ITitles;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.client.gui.button.SimpleButtonOverride;
 import aurilux.titles.client.gui.button.TitleButton;
 import aurilux.titles.client.gui.button.ToggleImageButton;
-import aurilux.titles.common.network.PacketHandler;
+import aurilux.titles.common.TitlesMod;
+import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.core.TitlesCapability;
+import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -18,6 +19,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -30,7 +32,13 @@ import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class TitleSelectionScreen extends Screen {
-    private final ResourceLocation bgTexture = new ResourceLocation(TitlesAPI.MOD_ID, "textures/gui/title_selection.png");
+    private final ResourceLocation bgTexture = TitlesMod.prefix("textures/gui/title_selection.png");
+    private final Button.ITooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
+        String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
+        if (button.active && !StringUtils.isNullOrEmpty(titleButtonFlavorText)) {
+            this.renderTooltip(matrixStack,this.minecraft.fontRenderer.trimStringToWidth(new TranslationTextComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
+        }
+    };
 
     private final int NUM_COLS = 2;
     private final int NUM_ROWS = 6;
@@ -63,7 +71,7 @@ public class TitleSelectionScreen extends Screen {
 
     private TextFieldWidget search;
 
-    public TitleSelectionScreen(PlayerEntity player, ITitles cap) {
+    public TitleSelectionScreen(PlayerEntity player, TitlesCapability cap) {
         super(new StringTextComponent("Title Selection"));
         this.player = player;
         gender = cap.getGenderSetting();
@@ -71,7 +79,9 @@ public class TitleSelectionScreen extends Screen {
 
         titlesListCache = new ArrayList<>(cap.getObtainedTitles());
         String playerName = player.getName().getString();
-        Title possibleContributor = TitlesAPI.getTitle(new ResourceLocation("titles:" + playerName.toLowerCase()));
+        ResourceLocation contributorTitle = TitlesMod.prefix(playerName.toLowerCase(Locale.ROOT));
+        Title possibleContributor = TitleManager.getTitlesOfType(Title.AwardType.CONTRIBUTOR)
+                .getOrDefault(contributorTitle, Title.NULL_TITLE);
         if (!possibleContributor.isNull()) {
             titlesListCache.add(possibleContributor);
         }
@@ -142,7 +152,7 @@ public class TitleSelectionScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         // Draw the player's name with their selected title
-        ITextComponent titledPlayerName = TitlesAPI.getFormattedTitle(temporaryTitle, player.getName(), gender);
+        ITextComponent titledPlayerName = TitleManager.getFormattedTitle(temporaryTitle, player.getName(), gender);
         drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
 
         // Draw the page counter
@@ -159,9 +169,9 @@ public class TitleSelectionScreen extends Screen {
 
     protected void exitScreen(boolean update) {
         if (update) {
-            PacketHandler.toServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
+            TitlesNetwork.toServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
         }
-        PacketHandler.toServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
+        TitlesNetwork.toServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
         closeScreen();
     }
 
@@ -229,7 +239,7 @@ public class TitleSelectionScreen extends Screen {
 
         String finalModFilter = modFilter;
         String finalRarityFilter = rarityFilter;
-        // TODO implement a binary search tree to make this better/faster(/stronger)
+        // TODO implement a binary search tree to make this better/faster(/stronger)?
         titlesListFiltered = titlesListCache.stream()
                 .filter(t -> t.getModid().startsWith(finalModFilter))
                 .filter(t -> {
@@ -245,7 +255,7 @@ public class TitleSelectionScreen extends Screen {
                     if (parts.size() < 1) {
                         return true;
                     }
-                    String titleString = TitlesAPI.getFormattedTitle(t, gender).getString().toLowerCase();
+                    String titleString = TitleManager.getFormattedTitle(t, gender).getString().toLowerCase();
                     for (String part : parts) {
                         if (titleString.contains(part)) {
                             return true;
@@ -289,7 +299,8 @@ public class TitleSelectionScreen extends Screen {
             int row = i / NUM_COLS;
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
-            Button button = addButton(new TitleButton(x, y, titleButtonWidth, buttonHeight, b -> temporaryTitle = ((TitleButton) b).getTitle(), titlesToDisplay.get(i), gender));
+            Button button = addButton(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
+                    gender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
             titleButtons.add(button);
         }
         buttons.addAll(titleButtons);

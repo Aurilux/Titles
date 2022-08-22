@@ -1,3 +1,10 @@
+## 1.16.5 - 3.4.0
+- Refactored nearly every class. Probably includes some performance improvement, but was done primarily for flow and readability.
+- Removed most of the API. I kept the Title and TitleProvider classes so modders can add their own titles, but I wasn't sure if the rest of it was even being used.
+- Flavor text has now been implemented. Hovering over an underlined title will show a tooltip with its flavor text.
+- I've added template title packs for Botania, Immersive Engineering, and Twilight Forest as they were very popular and ones I am familiar with. Template just means they are there to show what this mod is capable of. Once the actual mods add their own, mine will be removed.
+- Commands were broken for a while - they now work properly.
+
 ## 1.16.5 - 3.3.2
 - Fixes a bug where unlocking titles on a server won't update until they are also unlocked in single player (#26)
 
@@ -7,9 +14,9 @@
 - Added a new contributor "mythic" rarity for a new, higher tier Patreon reward
 
 ## 1.16.5 - 3.3.0
-- Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have it's own json. Similar to how vanilla does advancements and recipes.
-- Added a Title data provider and a builder class in the Title class for modders to easily generate titles for their mods.
-- There is a new command called "/titles refresh". This will go clear the player's completed advancements, and then re-award titles for their completed advancements.
+- Reworked how title data is stored and loaded. It is still a json oriented system, but now each title must have its own json. Similar to how vanilla does advancements and recipes.
+- Added a Title data provider and a builder class in the API for modders to easily generate titles for their mods.
+- There is a new command called "/titles refresh". This will go clear the player's earned titles, and then re-award titles for their completed advancements.
 - Villager title scroll trades are no longer added if the fragment loot config options is set to false.
 
 ## 1.16.5 - 3.2.6

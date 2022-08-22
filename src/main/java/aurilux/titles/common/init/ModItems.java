@@ -1,18 +1,21 @@
 package aurilux.titles.common.init;
 
-import aurilux.titles.api.TitlesAPI;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.item.ItemTitleFragment;
 import aurilux.titles.common.item.ItemTitleScroll;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
+
 public class ModItems {
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesAPI.MOD_ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesMod.MOD_ID);
 
     public static final RegistryObject<ItemTitleFragment> TITLE_FRAGMENT = ITEMS.register("title_fragment", () ->
             new ItemTitleFragment(quarterStack()));
@@ -28,7 +31,7 @@ public class ModItems {
     }
 
     private static Item.Properties baseProp() {
-        return new Item.Properties().group(TitlesMod.itemGroup);
+        return new Item.Properties().group(TitlesMod.TAB);
     }
 
     private static Item.Properties unstackable() {
