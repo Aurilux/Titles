@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:arrow"
+    },
+    "frame": "goal",
+    "title": {
+      "translate": "advancement.titles.pincushion"
+    },
+    "description": {
+      "translate": "advancement.titles.pincushion.desc"
+    }
+  },
+  "parent": "titles:root",
+  "__comment": "This is triggered by code",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}
