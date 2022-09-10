@@ -3,18 +3,12 @@ package aurilux.titles.common.network.messages;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class PacketSyncDisplayTitle {
@@ -26,20 +20,20 @@ public class PacketSyncDisplayTitle {
         displayTitle = titleKey;
     }
 
-    public static void encode(PacketSyncDisplayTitle msg, PacketBuffer buf) {
-        buf.writeString(msg.playerUUID.toString());
-        buf.writeString(msg.displayTitle.toString());
+    public static void encode(PacketSyncDisplayTitle msg, FriendlyByteBuf buf) {
+        buf.writeUtf(msg.playerUUID.toString());
+        buf.writeUtf(msg.displayTitle.toString());
     }
 
-    public static PacketSyncDisplayTitle decode(PacketBuffer buf) {
-        UUID uuid = UUID.fromString(buf.readString());
-        String titleKey = buf.readString();
+    public static PacketSyncDisplayTitle decode(FriendlyByteBuf buf) {
+        UUID uuid = UUID.fromString(buf.readUtf());
+        String titleKey = buf.readUtf();
         return new PacketSyncDisplayTitle(uuid, new ResourceLocation(titleKey));
     }
 
     public static void handle(PacketSyncDisplayTitle msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
+            Player player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
             TitleManager.setDisplayTitle(player, msg.displayTitle);
 
             if (ctx.get().getDirection().getReceptionSide().isServer()) {

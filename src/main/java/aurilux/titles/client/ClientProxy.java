@@ -2,8 +2,8 @@ package aurilux.titles.client;
 
 import aurilux.titles.common.CommonProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -14,15 +14,15 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         return mc().player;
     }
 
     @Override
-    public PlayerEntity getPlayerByUUID(UUID uuid) {
-        World world = mc().world;
+    public Player getPlayerByUUID(UUID uuid) {
+        Level world = mc().level;
         if (world != null) {
-            return world.getPlayerByUuid(uuid);
+            return world.getPlayerByUUID(uuid);
         }
         return null;
     }

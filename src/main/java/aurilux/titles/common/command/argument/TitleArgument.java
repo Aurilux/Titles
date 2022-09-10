@@ -9,8 +9,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +31,7 @@ public class TitleArgument implements ArgumentType<Title> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return ISuggestionProvider.suggest(TitleRegistry.get().getTitles().values().stream()
+        return SharedSuggestionProvider.suggest(TitleRegistry.get().getTitles().values().stream()
                 .filter(t -> !t.getType().equals(Title.AwardType.CONTRIBUTOR))
                 .map(t -> t.getID().toString()), builder);
     }

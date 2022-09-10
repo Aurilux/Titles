@@ -10,38 +10,38 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class CommandRefresh {
-    public static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("refresh").executes(CommandRefresh::run);
     }
 
-    private static int run(CommandContext<CommandSource> context) {
+    private static int run(CommandContext<CommandSourceStack> context) {
         try {
-            ServerPlayerEntity player = context.getSource().asPlayer();
+            ServerPlayer player = context.getSource().getPlayerOrException();
             TitleManager.doIfPresent(player, cap -> {
                 TitleManager.setDisplayTitle(player, Title.NULL_TITLE.getID());
                 cap.getObtainedTitles().removeIf(t -> t.getType().equals(Title.AwardType.ADVANCEMENT));
                 PlayerAdvancements playerAdvancements = player.getAdvancements();
-                Collection<Advancement> allAdvancements = context.getSource().getServer().getAdvancementManager().getAllAdvancements();
+                Collection<Advancement> allAdvancements = context.getSource().getServer().getAdvancements().getAllAdvancements();
                 allAdvancements = allAdvancements.stream()
-                        .filter(advancement -> playerAdvancements.getProgress(advancement).isDone()
+                        .filter(advancement -> playerAdvancements.getOrStartProgress(advancement).isDone()
                                 && !TitleManager.getTitle(advancement.getId()).isNull())
                         .collect(Collectors.toCollection(ArrayList::new));
                 allAdvancements.forEach(advancement -> {
                             TitlesMod.LOG.debug("Re-awarding title for advancement {}", advancement.getId());
                             cap.add(TitleManager.getTitle(advancement.getId()));
                         });
-                context.getSource().sendFeedback(new StringTextComponent("Finished refreshing advancement titles!"), true);
+                context.getSource().sendSuccess(new TextComponent("Finished refreshing advancement titles!"), true);
                 TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
             });
         }

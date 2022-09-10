@@ -11,18 +11,18 @@ import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -33,10 +33,10 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class TitleSelectionScreen extends Screen {
     private final ResourceLocation bgTexture = TitlesMod.prefix("textures/gui/title_selection.png");
-    private final Button.ITooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
+    private final Button.OnTooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
         String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
-        if (button.active && !StringUtils.isNullOrEmpty(titleButtonFlavorText)) {
-            this.renderTooltip(matrixStack,this.minecraft.fontRenderer.trimStringToWidth(new TranslationTextComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
+        if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
+            this.renderTooltip(matrixStack,this.minecraft.font.split(new TranslatableComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
         }
     };
 
@@ -63,16 +63,16 @@ public class TitleSelectionScreen extends Screen {
     private final List<Button> forwardButtons = new ArrayList<>();
     private final List<Button> titleButtons = new ArrayList<>();
 
-    protected PlayerEntity player;
+    protected Player player;
     protected Title temporaryTitle;
     protected List<Title> titlesListCache;
     protected List<Title> titlesListFiltered;
     private boolean gender;
 
-    private TextFieldWidget search;
+    private EditBox search;
 
-    public TitleSelectionScreen(PlayerEntity player, TitlesCapability cap) {
-        super(new StringTextComponent("Title Selection"));
+    public TitleSelectionScreen(Player player, TitlesCapability cap) {
+        super(new TextComponent("Title Selection"));
         this.player = player;
         gender = cap.getGenderSetting();
         temporaryTitle = cap.getDisplayTitle();
@@ -102,28 +102,28 @@ public class TitleSelectionScreen extends Screen {
         buttonTitleRowStart = buttonFirstRowStart + 23;
         buttonSecondRowStart = buttonTitleRowStart + 123;
 
-        search = new TextFieldWidget(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, new StringTextComponent("search"));
+        search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, new TextComponent("search"));
         addButton(search);
 
         // Action buttons
         addButton(new SimpleButtonOverride(leftOffset, buttonFirstRowStart, 60, buttonHeight,
-                new TranslationTextComponent("gui.titles.random"), button -> chooseRandomTitle()));
+                new TranslatableComponent("gui.titles.random"), button -> chooseRandomTitle()));
         addButton(new SimpleButtonOverride(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
-                new TranslationTextComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
+                new TranslatableComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
         addButton(new SimpleButtonOverride(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
-                new TranslationTextComponent("gui.titles.cancel"), button -> exitScreen(false)));
+                new TranslatableComponent("gui.titles.cancel"), button -> exitScreen(false)));
         addButton(new SimpleButtonOverride(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
-                new TranslationTextComponent("gui.titles.confirm"), button -> exitScreen(true)));
+                new TranslatableComponent("gui.titles.confirm"), button -> exitScreen(true)));
 
         // Page buttons
         backButtons.add(addButton(new SimpleButtonOverride(leftOffset, buttonSecondRowStart, 20, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty("<<"), button -> setPage(1))));
+                Component.nullToEmpty("<<"), button -> setPage(1))));
         backButtons.add(addButton(new SimpleButtonOverride(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty("<"), button -> setPage(page - 1))));
+                Component.nullToEmpty("<"), button -> setPage(page - 1))));
         forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(">"), button -> setPage(page + 1))));
+                Component.nullToEmpty(">"), button -> setPage(page + 1))));
         forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight,
-                ITextComponent.getTextComponentOrEmpty(">>"), button -> setPage(maxPages))));
+                Component.nullToEmpty(">>"), button -> setPage(maxPages))));
 
         // Gender button
         addButton(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), gender));
@@ -142,17 +142,17 @@ public class TitleSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         // Renders the background tint
         renderBackground(matrixStack);
-        RenderSystem.color4f(1, 1, 1, 1);
-        getMinecraft().getTextureManager().bindTexture(bgTexture);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShaderTexture(0, bgTexture);
         blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize, 512, 512);
         // Renders all the buttons (and the search bar since I added it with 'addButton')
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         // Draw the player's name with their selected title
-        ITextComponent titledPlayerName = TitleManager.getFormattedTitle(temporaryTitle, player.getName(), gender);
+        Component titledPlayerName = TitleManager.getFormattedTitle(temporaryTitle, player.getName(), gender);
         drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
 
         // Draw the page counter
@@ -163,16 +163,16 @@ public class TitleSelectionScreen extends Screen {
             if (titlesListCache.size() > 0) {
                 emptyText += ".filter";
             }
-            drawCenteredString(matrixStack, this.font, I18n.format(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
+            drawCenteredString(matrixStack, this.font, I18n.get(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
         }
     }
 
     protected void exitScreen(boolean update) {
         if (update) {
-            TitlesNetwork.toServer(new PacketSyncDisplayTitle(player.getUniqueID(), temporaryTitle.getID()));
+            TitlesNetwork.toServer(new PacketSyncDisplayTitle(player.getUUID(), temporaryTitle.getID()));
         }
-        TitlesNetwork.toServer(new PacketSyncGenderSetting(player.getUniqueID(), gender));
-        closeScreen();
+        TitlesNetwork.toServer(new PacketSyncGenderSetting(player.getUUID(), gender));
+        onClose();
     }
 
     @Override
@@ -189,16 +189,16 @@ public class TitleSelectionScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (search.isFocused()) {
-            String s = search.getText();
+            String s = search.getValue();
             if (super.keyPressed(keyCode, scanCode, modifiers)) {
-                if (!Objects.equals(s, search.getText())) {
-                    parseSearch(search.getText());
+                if (!Objects.equals(s, search.getValue())) {
+                    parseSearch(search.getValue());
                 }
             }
             return true;
         }
-        else if (Keybinds.openTitleSelection.getKeyBinding().matchesKey(keyCode, scanCode)
-                || getMinecraft().gameSettings.keyBindInventory.matchesKey(keyCode, scanCode)) {
+        else if (Keybinds.openTitleSelection.matches(keyCode, scanCode)
+                || getMinecraft().options.keyInventory.matches(keyCode, scanCode)) {
             exitScreen(false);
             return true;
         }
@@ -208,10 +208,10 @@ public class TitleSelectionScreen extends Screen {
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
         if (search.isFocused()) {
-            String s = search.getText();
+            String s = search.getValue();
             if (search.charTyped(codePoint, modifiers)) {
-                if (!Objects.equals(s, search.getText())) {
-                    parseSearch(search.getText());
+                if (!Objects.equals(s, search.getValue())) {
+                    parseSearch(search.getValue());
                 }
             }
             return true;
@@ -321,7 +321,7 @@ public class TitleSelectionScreen extends Screen {
             temporaryTitle = Title.NULL_TITLE;
         }
         else {
-            temporaryTitle = titlesListFiltered.get(player.world.rand.nextInt(titlesListFiltered.size()));
+            temporaryTitle = titlesListFiltered.get(player.level.random.nextInt(titlesListFiltered.size()));
         }
     }
 }

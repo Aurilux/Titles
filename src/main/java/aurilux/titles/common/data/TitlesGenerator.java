@@ -4,7 +4,7 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitleProvider;
 import aurilux.titles.common.TitlesMod;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Rarity;
+import net.minecraft.world.item.Rarity;
 
 import java.util.function.Consumer;
 

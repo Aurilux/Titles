@@ -10,29 +10,29 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CommandDisplay {
-    public static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("display")
                 .then(Commands.argument("title", TitleArgument.title())
                         .executes(ctx -> run(ctx, TitleArgument.getTitle(ctx, "title"))));
 
     }
 
-    private static int run(CommandContext<CommandSource> ctx, Title title) {
+    private static int run(CommandContext<CommandSourceStack> ctx, Title title) {
         try {
-            ServerPlayerEntity player = ctx.getSource().asPlayer();
+            ServerPlayer player = ctx.getSource().getPlayerOrException();
             TitleManager.doIfPresent(player, cap -> {
                 TitleManager.setDisplayTitle(player, title.getID());
-                TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUniqueID(), title.getID()));
+                TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUUID(), title.getID()));
 
-                TranslationTextComponent feedback = new TranslationTextComponent("commands.display.success",
+                TranslatableComponent feedback = new TranslatableComponent("commands.display.success",
                         TitleManager.getFormattedTitle(title, player));
-                ctx.getSource().sendFeedback(feedback, true);
+                ctx.getSource().sendSuccess(feedback, true);
             });
         }
         catch (CommandSyntaxException ex) {

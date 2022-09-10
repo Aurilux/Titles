@@ -2,11 +2,11 @@ package aurilux.titles.client.gui.button;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.core.TitleManager;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.Mth;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TitleButton extends SimpleButtonOverride {
     private final Title title;
 
-    public TitleButton(int x, int y, int width, int height, Title t, boolean isMasculine, IPressable action, ITooltip tooltip) {
+    public TitleButton(int x, int y, int width, int height, Title t, boolean isMasculine, OnPress action, OnTooltip tooltip) {
         super(x, y, width, height, TitleManager.getFormattedTitle(t, isMasculine), action, tooltip);
         title = t;
     }
@@ -24,13 +24,13 @@ public class TitleButton extends SimpleButtonOverride {
     }
 
     @Override
-    public void renderContents(MatrixStack matrixStack) {
-        if (StringUtils.isNullOrEmpty(title.getFlavorText())) {
+    public void renderContents(PoseStack matrixStack) {
+        if (StringUtil.isNullOrEmpty(title.getFlavorText())) {
             super.renderContents(matrixStack);
         }
         else {
-            drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, this.getMessage().deepCopy().mergeStyle(Style.EMPTY.setUnderlined(true)),
-                    this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | MathHelper.ceil(this.alpha * 255.0F) << 24);
+            drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.setUnderlined(true)),
+                    this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
         }
     }
 }

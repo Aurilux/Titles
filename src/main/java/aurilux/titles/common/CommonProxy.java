@@ -1,7 +1,7 @@
 package aurilux.titles.common;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
@@ -10,11 +10,11 @@ public class CommonProxy {
         return false;
     }
 
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         return null;
     }
 
-    public PlayerEntity getPlayerByUUID(UUID uuid) {
-        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
+    public Player getPlayerByUUID(UUID uuid) {
+        return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
     }
 }

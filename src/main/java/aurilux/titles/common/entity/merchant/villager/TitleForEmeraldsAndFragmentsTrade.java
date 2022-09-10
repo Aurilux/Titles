@@ -1,17 +1,17 @@
 package aurilux.titles.common.entity.merchant.villager;
 
 import aurilux.titles.common.init.ModItems;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.MerchantOffer;
-import net.minecraft.item.Rarity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.trading.MerchantOffer;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TitleForEmeraldsAndFragmentsTrade implements VillagerTrades.ITrade {
+public class TitleForEmeraldsAndFragmentsTrade implements VillagerTrades.ItemListing {
     private final Rarity titleRarity;
     private final int maxUses;
     private final int xpValue;

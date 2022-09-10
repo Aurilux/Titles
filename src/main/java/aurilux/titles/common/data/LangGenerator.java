@@ -4,7 +4,7 @@ import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.init.ModItems;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class LangGenerator extends LanguageProvider {
@@ -28,8 +28,8 @@ public class LangGenerator extends LanguageProvider {
         add("commands.display.success", "Changed your display title to [%s]");
 
         // Keybindings
-        add(Keybinds.openTitleSelection.getKeyCategory(), TitlesMod.MOD_ID);
-        add(Keybinds.openTitleSelection.getKeyDescription(), "Open Title Selection Screen");
+        add(Keybinds.openTitleSelection.getCategory(), TitlesMod.MOD_ID);
+        add(Keybinds.openTitleSelection.getName(), "Open Title Selection Screen");
 
         // Gui
         keyPath = String.format("gui.%s.", TitlesMod.MOD_ID);
@@ -187,10 +187,10 @@ public class LangGenerator extends LanguageProvider {
 
     private void addTitle(String path, String name, String variant, String flavor) {
         add(path, name);
-        if (!StringUtils.isNullOrEmpty(variant)) {
+        if (!StringUtil.isNullOrEmpty(variant)) {
             add(path + ".variant", variant);
         }
-        if (!StringUtils.isNullOrEmpty(flavor)) {
+        if (!StringUtil.isNullOrEmpty(flavor)) {
             add(path + ".flavor", flavor);
         }
     }

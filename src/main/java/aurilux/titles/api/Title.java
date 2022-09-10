@@ -2,12 +2,12 @@ package aurilux.titles.api;
 
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
-import net.minecraft.item.Rarity;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.item.Rarity;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
@@ -65,12 +65,12 @@ public class Title {
         return this.equals(NULL_TITLE);
     }
 
-    public IFormattableTextComponent getTextComponent(boolean isMasculine) {
+    public MutableComponent getTextComponent(boolean isMasculine) {
         String translatable = getDefaultDisplay();
-        if (!isMasculine && !StringUtils.isNullOrEmpty(getVariantDisplay())) {
+        if (!isMasculine && !StringUtil.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();
         }
-        return new TranslationTextComponent(translatable).mergeStyle(getRarity().color);
+        return new TranslatableComponent(translatable).withStyle(getRarity().color);
     }
 
     @Override
@@ -84,28 +84,28 @@ public class Title {
         json.addProperty("id", getID().toString());
         json.addProperty("rarity", getRarity().toString().toLowerCase());
         json.addProperty("defaultDisplay", getDefaultDisplay());
-        if (!StringUtils.isNullOrEmpty(getVariantDisplay())) {
+        if (!StringUtil.isNullOrEmpty(getVariantDisplay())) {
             json.addProperty("variantDisplay", getVariantDisplay());
         }
-        if (!StringUtils.isNullOrEmpty(getFlavorText())) {
+        if (!StringUtil.isNullOrEmpty(getFlavorText())) {
             json.addProperty("flavorText", getFlavorText());
         }
         return json;
     }
 
     public static Title deserialize(JsonObject json) {
-        ResourceLocation id = new ResourceLocation(JSONUtils.getString(json, "id"));
+        ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
         Title.Builder builder = Builder.create(id.getNamespace())
-                .type(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
                 .id(id)
-                .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
+                .rarity(Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase()));
 
-        builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
+        builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
         if (json.has("variantDisplay")) {
-            builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
+            builder.variantDisplay(GsonHelper.getAsString(json, "variantDisplay"));
         }
         if (json.has("flavorText")) {
-            builder.flavorText(JSONUtils.getString(json, "flavorText"));
+            builder.flavorText(GsonHelper.getAsString(json, "flavorText"));
         }
 
         return new Title(builder);

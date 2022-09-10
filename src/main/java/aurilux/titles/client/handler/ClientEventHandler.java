@@ -6,23 +6,23 @@ import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)
@@ -33,11 +33,11 @@ public class ClientEventHandler {
             return;
         }
 
-        if (Keybinds.openTitleSelection.isPressed()) {
-            PlayerEntity player = Minecraft.getInstance().player;
+        if (Keybinds.openTitleSelection.consumeClick()) {
+            Player player = Minecraft.getInstance().player;
             if (player != null) {
                 TitleManager.getCapability(player).ifPresent(cap -> {
-                    Minecraft.getInstance().displayGuiScreen(new TitleSelectionScreen(player, cap));
+                    Minecraft.getInstance().setScreen(new TitleSelectionScreen(player, cap));
                 });
             }
         }
@@ -45,23 +45,23 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
-        IFormattableTextComponent component = event.getMessage().copyRaw();
-        if (component instanceof TranslationTextComponent) {
-            TranslationTextComponent textComponent = (TranslationTextComponent) component;
+        MutableComponent component = event.getMessage().plainCopy();
+        if (component instanceof TranslatableComponent) {
+            TranslatableComponent textComponent = (TranslatableComponent) component;
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components
-                ITextComponent targetPlayerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0);
+                Component targetPlayerName = ((Component) textComponent.getArgs()[0]).getSiblings().get(0);
                 TitlesMod.LOG.info(component.toString());
-                Title unlockedTitle = processKey(((TranslationTextComponent)((TranslationTextComponent) textComponent.getFormatArgs()[1])
-                        .getFormatArgs()[0]).getKey());
-                PlayerEntity clientPlayer = Minecraft.getInstance().player;
+                Title unlockedTitle = processKey(((TranslatableComponent)((TranslatableComponent) textComponent.getArgs()[1])
+                        .getArgs()[0]).getKey());
+                Player clientPlayer = Minecraft.getInstance().player;
                 if (!unlockedTitle.isNull() && clientPlayer != null) {
                     TitleManager.doIfPresent(clientPlayer, cap -> {
-                        IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                        if (clientPlayer.getName().getString().equals(targetPlayerName.getUnformattedComponentText())) {
-                            formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
+                        MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                        if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
+                            formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
                         }
-                        component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
+                        component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
                         event.setMessage(component);
                     });
                 }
@@ -92,7 +92,7 @@ public class ClientEventHandler {
 
         // Get a list of all mod id's, removing those that shouldn't have title data.
         List<String> modList = ModList.get().getMods().stream()
-                .map(ModInfo::getModId)
+                .map(IModInfo::getModId)
                 .filter(id -> !(id.equals("forge") || id.equals("FML") || id.equals("mcp")))
                 .collect(Collectors.toList());
 

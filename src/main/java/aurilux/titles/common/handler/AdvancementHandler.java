@@ -4,20 +4,20 @@ import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.init.ModTags;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementManager;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.BoatEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.ServerAdvancementManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -33,29 +33,29 @@ public class AdvancementHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         Advancement advancement = event.getAdvancement();
-        TitleManager.unlockTitle((ServerPlayerEntity) event.getPlayer(), advancement.getId());
+        TitleManager.unlockTitle((ServerPlayer) event.getPlayer(), advancement.getId());
     }
 
     @SubscribeEvent
     public static void onArrowHit(LivingDamageEvent event) {
         LivingEntity player = event.getEntityLiving();
-        if (!event.getSource().damageType.equals("arrow") || !(player instanceof ServerPlayerEntity)) {
+        if (!event.getSource().msgId.equals("arrow") || !(player instanceof ServerPlayer)) {
             return;
         }
 
-        if (player.getArrowCountInEntity() >= 7) {
-            grantCriterion((ServerPlayerEntity) player, "pincushion");
+        if (player.getArrowCount() >= 7) {
+            grantCriterion((ServerPlayer) player, "pincushion");
         }
     }
 
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         Entity player = event.getEntity();
-        if (player instanceof ServerPlayerEntity) {
-            Block block = Block.getBlockFromItem(event.getTo().getItem());
-            EquipmentSlotType slot = event.getSlot();
-            if (block == Blocks.CARVED_PUMPKIN && slot == EquipmentSlotType.HEAD) {
-                grantCriterion((ServerPlayerEntity) player, "melon_lord");
+        if (player instanceof ServerPlayer) {
+            Block block = Block.byItem(event.getTo().getItem());
+            EquipmentSlot slot = event.getSlot();
+            if (block == Blocks.CARVED_PUMPKIN && slot == EquipmentSlot.HEAD) {
+                grantCriterion((ServerPlayer) player, "melon_lord");
             }
         }
     }
@@ -63,29 +63,27 @@ public class AdvancementHandler {
     @SubscribeEvent
     public static void onPlayerMount(EntityMountEvent event) {
         Entity mounting = event.getEntityMounting();
-        if (mounting instanceof ServerPlayerEntity && event.getEntityBeingMounted() instanceof BoatEntity) {
-            grantCriterion((ServerPlayerEntity) mounting, "captain");
+        if (mounting instanceof ServerPlayer && event.getEntityBeingMounted() instanceof Boat) {
+            grantCriterion((ServerPlayer) mounting, "captain");
         }
     }
 
     @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         Block placedBlock = event.getPlacedBlock().getBlock();
-        Set<ResourceLocation> blockTags = placedBlock.getTags();
         Entity player = event.getEntity();
-
-        boolean beaconBaseAndOpulent = blockTags.contains(ModTags.Blocks.OPULENT.getName())
-                && blockTags.contains(BlockTags.BEACON_BASE_BLOCKS.getName());
-        if (!(player instanceof ServerPlayerEntity) || (placedBlock != Blocks.BEACON && !beaconBaseAndOpulent)) {
+        boolean beaconBaseAndOpulent = placedBlock.defaultBlockState().is(ModTags.Blocks.OPULENT)
+                && placedBlock.defaultBlockState().is(BlockTags.BEACON_BASE_BLOCKS);
+        if (!(player instanceof ServerPlayer) || (placedBlock != Blocks.BEACON && !beaconBaseAndOpulent)) {
             return;
         }
 
-        if (verifyBeaconLevelAndComposition(event.getPos(), player.world, placedBlock)) {
-            grantCriterion((ServerPlayerEntity) player, "opulent");
+        if (verifyBeaconLevelAndComposition(event.getPos(), player.level, placedBlock)) {
+            grantCriterion((ServerPlayer) player, "opulent");
         }
     }
 
-    private static boolean verifyBeaconLevelAndComposition(BlockPos placedPos, World world, Block placedBlock) {
+    private static boolean verifyBeaconLevelAndComposition(BlockPos placedPos, Level world, Block placedBlock) {
         BlockPos beaconBlockPos = findBeacon(placedPos, world, placedBlock);
         if (beaconBlockPos == null) {
             return false;
@@ -113,7 +111,7 @@ public class AdvancementHandler {
         return onlyOpulentBlock && levels == 4;
     }
 
-    private static BlockPos findBeacon(BlockPos placedPos, World world, Block placedBlock) {
+    private static BlockPos findBeacon(BlockPos placedPos, Level world, Block placedBlock) {
         if (placedBlock == Blocks.BEACON) {
             return placedPos;
         }
@@ -121,7 +119,7 @@ public class AdvancementHandler {
             for (int x = -4; x <= 4; x++) {
                 for (int z = -4; z <= 4; z++) {
                     for (int y = 0; y <= 4; y++) {
-                        BlockPos tempPos = placedPos.add(x, y, z);
+                        BlockPos tempPos = placedPos.offset(x, y, z);
                         if (world.getBlockState(tempPos).getBlock() == Blocks.BEACON) {
                             return tempPos;
                         }
@@ -132,12 +130,12 @@ public class AdvancementHandler {
         return null;
     }
 
-    private static void grantCriterion(ServerPlayerEntity player, String advancementId) {
+    private static void grantCriterion(ServerPlayer player, String advancementId) {
         PlayerAdvancements advancements = player.getAdvancements();
-        AdvancementManager manager = player.getServerWorld().getServer().getAdvancementManager();
+        ServerAdvancementManager manager = player.getLevel().getServer().getAdvancements();
         Advancement advancement = manager.getAdvancement(TitlesMod.prefix(advancementId));
         if(advancement != null) {
-            advancements.grantCriterion(advancement, "code_triggered");
+            advancements.award(advancement, "code_triggered");
         }
     }
 }

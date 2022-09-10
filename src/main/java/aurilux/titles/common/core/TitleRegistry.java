@@ -6,18 +6,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.item.Rarity;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.DefaultUncaughtExceptionHandler;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.DefaultUncaughtExceptionHandler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +29,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class TitleRegistry extends JsonReloadListener {
+public class TitleRegistry extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private Map<ResourceLocation, Title> titles = Collections.emptyMap();
@@ -49,8 +50,8 @@ public class TitleRegistry extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> dataFromMods, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-        profilerIn.startSection("titleLoader");
+    protected void apply(Map<ResourceLocation, JsonElement> dataFromMods, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
+        profilerIn.push("titleLoader");
 
         Set<String> modsWithNativeTitles = determineModsWithNativeTitles();
         TitlesMod.LOG.debug("Mods with native titles: {}", Arrays.asList(modsWithNativeTitles.toArray()));
@@ -66,12 +67,12 @@ public class TitleRegistry extends JsonReloadListener {
         TitlesMod.LOG.debug("Loaded {} titles", titles.size());
         titles.putAll(contributorTitles);
 
-        profilerIn.endSection();
+        profilerIn.pop();
     }
 
     private Set<String> determineModsWithNativeTitles() {
         Set<String> set = new HashSet<>();
-        for (ModInfo modInfo : ModList.get().getMods()) {
+        for (IModInfo modInfo : ModList.get().getMods()) {
             String modId = modInfo.getModId();
             if (modId.equals("minecraft") || modId.equals("forge") || modId.equals(TitlesMod.MOD_ID)) {
                 continue;
@@ -105,20 +106,20 @@ public class TitleRegistry extends JsonReloadListener {
 
     public Title deserializeTitleJSON(ResourceLocation res, JsonObject json, boolean initialLoad) {
         Title.Builder builder = Title.Builder.create(res.getNamespace())
-                .type(Title.AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                .type(Title.AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
                 .id(res);
 
-        Rarity testRarity = Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase());
+        Rarity testRarity = Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase());
         // EPIC rarity titles are reserved for contributors only
         boolean isTryingToCheat = initialLoad && testRarity.equals(Rarity.EPIC);
         builder.rarity(isTryingToCheat ? Rarity.COMMON : testRarity);
 
-        builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
+        builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
         if (json.has("variantDisplay")) {
-            builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
+            builder.variantDisplay(GsonHelper.getAsString(json, "variantDisplay"));
         }
         if (json.has("flavorText")) {
-            builder.flavorText(JSONUtils.getString(json, "flavorText"));
+            builder.flavorText(GsonHelper.getAsString(json, "flavorText"));
         }
 
         return new Title(builder);

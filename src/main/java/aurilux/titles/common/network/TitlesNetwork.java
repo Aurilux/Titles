@@ -2,16 +2,13 @@ package aurilux.titles.common.network;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.messages.*;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class TitlesNetwork {
     private final static String protocol = "1";
@@ -65,16 +62,16 @@ public class TitlesNetwork {
         CHANNEL.sendToServer(msg);
     }
 
-    public static void toPlayer(Object msg, ServerPlayerEntity player) {
-        CHANNEL.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+    public static void toPlayer(Object msg, ServerPlayer player) {
+        CHANNEL.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void toAll(Object msg) {
         toAllExcept(msg, null);
     }
 
-    public static void toAllExcept(Object msg, ServerPlayerEntity ignoredPlayer) {
-        for (ServerPlayerEntity player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+    public static void toAllExcept(Object msg, ServerPlayer ignoredPlayer) {
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (ignoredPlayer == null || player != ignoredPlayer) {
                 toPlayer(msg, player);
             }

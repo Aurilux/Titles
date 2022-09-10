@@ -2,14 +2,14 @@ package aurilux.titles.common.core;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.TitlesMod;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -19,8 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TitlesCapability {
-    @CapabilityInject(TitlesCapability.class)
-    public static final Capability<TitlesCapability> TITLES_CAPABILITY = null;
+    public static final Capability<TitlesCapability> TITLES_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final ResourceLocation NAME = TitlesMod.prefix("titles");
 
     private final String GENDER_SETTING = "gender_setting";
@@ -59,30 +58,30 @@ public class TitlesCapability {
         genderSetting = newSetting;
     }
 
-    public CompoundNBT serializeNBT() {
-        CompoundNBT data = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag data = new CompoundTag();
         data.putBoolean(GENDER_SETTING, genderSetting);
         data.putString(DISPLAY_TITLE, getDisplayTitle().getID().toString());
-        ListNBT obtained = new ListNBT();
+        ListTag obtained = new ListTag();
         for (Title title : obtainedTitles) {
-            obtained.add(StringNBT.valueOf(title.getID().toString()));
+            obtained.add(StringTag.valueOf(title.getID().toString()));
         }
         data.put(OBTAINED_TITLES, obtained);
         return data;
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         obtainedTitles.clear();
         genderSetting = nbt.getBoolean(GENDER_SETTING);
         displayTitle = TitleManager.getTitle(nbt.getString(DISPLAY_TITLE));
-        ListNBT obtained = (ListNBT) nbt.get(OBTAINED_TITLES);
+        ListTag obtained = (ListTag) nbt.get(OBTAINED_TITLES);
         for (int i = 0; i < obtained.size(); i++) {
             Title title = TitleManager.getTitle(obtained.getString(i));
             add(title);
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<CompoundNBT> {
+    public static class Provider implements ICapabilitySerializable<CompoundTag> {
         protected final TitlesCapability capInstance;
         protected final LazyOptional<TitlesCapability> capOptional;
 
@@ -101,23 +100,13 @@ public class TitlesCapability {
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
+        public CompoundTag serializeNBT() {
             return capInstance.serializeNBT();
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
+        public void deserializeNBT(CompoundTag nbt) {
             capInstance.deserializeNBT(nbt);
         }
-    }
-
-    // Just a dummy storage since data is saved and loaded from the provider
-    public static class Storage implements Capability.IStorage<TitlesCapability> {
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<TitlesCapability> capability, TitlesCapability instance, Direction side) { return null; }
-
-        @Override
-        public void readNBT(Capability<TitlesCapability> capability, TitlesCapability instance, Direction side, INBT nbt) {}
     }
 }
