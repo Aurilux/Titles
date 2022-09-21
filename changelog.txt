@@ -1,3 +1,8 @@
+## 1.16.5 - 3.4.2
+- Fixed an error caused by advancements whose title was plain text rather than a translatable lang entry
+
+## 1.16.5 - 3.4.1
+
 ## 1.16.5 - 3.4.0
 - Refactored nearly every class. Probably includes some performance improvement, but was done primarily for flow and readability.
 - Removed most of the API. I kept the Title and TitleProvider classes so modders can add their own titles, but I wasn't sure if the rest of it was even being used.
