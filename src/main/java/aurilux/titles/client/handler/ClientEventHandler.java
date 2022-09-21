@@ -51,19 +51,23 @@ public class ClientEventHandler {
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components
                 ITextComponent targetPlayerName = ((ITextComponent) textComponent.getFormatArgs()[0]).getSiblings().get(0);
-                TitlesMod.LOG.info(component.toString());
-                Title unlockedTitle = processKey(((TranslationTextComponent)((TranslationTextComponent) textComponent.getFormatArgs()[1])
-                        .getFormatArgs()[0]).getKey());
-                PlayerEntity clientPlayer = Minecraft.getInstance().player;
-                if (!unlockedTitle.isNull() && clientPlayer != null) {
-                    TitleManager.doIfPresent(clientPlayer, cap -> {
-                        IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                        if (clientPlayer.getName().getString().equals(targetPlayerName.getUnformattedComponentText())) {
-                            formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
-                        }
-                        component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
-                        event.setMessage(component);
-                    });
+                ITextComponent componentArg = (ITextComponent) ((TranslationTextComponent) textComponent.getFormatArgs()[1])
+                        .getFormatArgs()[0];
+                // We have to check if it's the correct type of text component because some advancements use plain text
+                // instead of a translatable entry.
+                if (componentArg instanceof TranslationTextComponent) {
+                    Title unlockedTitle = processKey(((TranslationTextComponent) componentArg).getKey());
+                    PlayerEntity clientPlayer = Minecraft.getInstance().player;
+                    if (!unlockedTitle.isNull() && clientPlayer != null) {
+                        TitleManager.doIfPresent(clientPlayer, cap -> {
+                            IFormattableTextComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                            if (clientPlayer.getName().getString().equals(targetPlayerName.getUnformattedComponentText())) {
+                                formattedTitle.modifyStyle(s -> s.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
+                            }
+                            component.appendSibling(new TranslationTextComponent("chat.advancement.append", formattedTitle));
+                            event.setMessage(component);
+                        });
+                    }
                 }
             }
         }
