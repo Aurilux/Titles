@@ -33,17 +33,19 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 @Mod(TitlesMod.MOD_ID)
 public class TitlesMod {
     public static final String MOD_ID = "titles";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_ID.toUpperCase());
-    public static final Rarity MYTHIC = Rarity.create("MYTHIC", ChatFormatting.GOLD);
+    // public static final Rarity MYTHIC = Rarity.create("MYTHIC", ChatFormatting.GOLD);
     public static final CommonProxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
     public static final CreativeModeTab TAB = new CreativeModeTab(TitlesMod.MOD_ID) {
         @Nonnull
@@ -52,7 +54,6 @@ public class TitlesMod {
             return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());
         }
     };
-
 
     public TitlesMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);

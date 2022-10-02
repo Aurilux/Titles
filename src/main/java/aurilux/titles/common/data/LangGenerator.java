@@ -146,6 +146,7 @@ public class LangGenerator extends LanguageProvider {
         addTitle(minecraftKeyPath + "kill_a_mob", "the Huntsman", "the Huntress", "");
         add(minecraftKeyPath + "trade", "the Haggler");
         add(minecraftKeyPath + "shoot_arrow", "the Bowman");
+        add(minecraftKeyPath + "fall_from_world_height", "the Base Jumper");
         add(minecraftKeyPath + "kill_all_mobs", "the Predator");
         add(minecraftKeyPath + "totem_of_undying", "the Deathless");
         add(minecraftKeyPath + "summon_iron_golem", "the Samaritan");

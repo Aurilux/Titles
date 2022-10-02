@@ -103,30 +103,30 @@ public class TitleSelectionScreen extends Screen {
         buttonSecondRowStart = buttonTitleRowStart + 123;
 
         search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, new TextComponent("search"));
-        addButton(search);
+        addRenderableWidget(search);
 
         // Action buttons
-        addButton(new SimpleButtonOverride(leftOffset, buttonFirstRowStart, 60, buttonHeight,
+        addRenderableWidget(new SimpleButtonOverride(leftOffset, buttonFirstRowStart, 60, buttonHeight,
                 new TranslatableComponent("gui.titles.random"), button -> chooseRandomTitle()));
-        addButton(new SimpleButtonOverride(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
+        addRenderableWidget(new SimpleButtonOverride(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
                 new TranslatableComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
-        addButton(new SimpleButtonOverride(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
+        addRenderableWidget(new SimpleButtonOverride(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
                 new TranslatableComponent("gui.titles.cancel"), button -> exitScreen(false)));
-        addButton(new SimpleButtonOverride(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
+        addRenderableWidget(new SimpleButtonOverride(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
                 new TranslatableComponent("gui.titles.confirm"), button -> exitScreen(true)));
 
         // Page buttons
-        backButtons.add(addButton(new SimpleButtonOverride(leftOffset, buttonSecondRowStart, 20, buttonHeight,
+        backButtons.add(addRenderableWidget(new SimpleButtonOverride(leftOffset, buttonSecondRowStart, 20, buttonHeight,
                 Component.nullToEmpty("<<"), button -> setPage(1))));
-        backButtons.add(addButton(new SimpleButtonOverride(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight,
+        backButtons.add(addRenderableWidget(new SimpleButtonOverride(leftOffset + 22, buttonSecondRowStart, 20, buttonHeight,
                 Component.nullToEmpty("<"), button -> setPage(page - 1))));
-        forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight,
+        forwardButtons.add(addRenderableWidget(new SimpleButtonOverride(leftOffset + 198, buttonSecondRowStart, 20, buttonHeight,
                 Component.nullToEmpty(">"), button -> setPage(page + 1))));
-        forwardButtons.add(addButton(new SimpleButtonOverride(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight,
+        forwardButtons.add(addRenderableWidget(new SimpleButtonOverride(leftOffset + 220, buttonSecondRowStart, 20, buttonHeight,
                 Component.nullToEmpty(">>"), button -> setPage(maxPages))));
 
         // Gender button
-        addButton(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), gender));
+        addRenderableWidget(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), gender));
 
         updateButtons();
     }
@@ -299,16 +299,16 @@ public class TitleSelectionScreen extends Screen {
             int row = i / NUM_COLS;
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
-            Button button = addButton(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
+            Button button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
                     gender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
             titleButtons.add(button);
         }
-        buttons.addAll(titleButtons);
     }
 
     private void removeButtons(List<Button> list) {
-        buttons.removeAll(list);
-        children.removeAll(list);
+        for (Button button : list) {
+            removeWidget(button);
+        }
     }
 
     private void setPage(int pageNum) {

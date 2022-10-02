@@ -46,24 +46,27 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
         MutableComponent component = event.getMessage().plainCopy();
-        if (component instanceof TranslatableComponent) {
-            TranslatableComponent textComponent = (TranslatableComponent) component;
+        if (component instanceof TranslatableComponent textComponent) {
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components
                 Component targetPlayerName = ((Component) textComponent.getArgs()[0]).getSiblings().get(0);
-                TitlesMod.LOG.info(component.toString());
-                Title unlockedTitle = processKey(((TranslatableComponent)((TranslatableComponent) textComponent.getArgs()[1])
-                        .getArgs()[0]).getKey());
-                Player clientPlayer = Minecraft.getInstance().player;
-                if (!unlockedTitle.isNull() && clientPlayer != null) {
-                    TitleManager.doIfPresent(clientPlayer, cap -> {
-                        MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                        if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
-                            formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
-                        }
-                        component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
-                        event.setMessage(component);
-                    });
+                Component componentArg = (Component) ((TranslatableComponent) textComponent.getArgs()[1])
+                        .getArgs()[0];
+                // We have to check if it's the correct type of text component because some advancements use plain text
+                // instead of a translatable entry.
+                if (componentArg instanceof TranslatableComponent) {
+                    Title unlockedTitle = processKey(((TranslatableComponent) componentArg).getKey());
+                    Player clientPlayer = Minecraft.getInstance().player;
+                    if (!unlockedTitle.isNull() && clientPlayer != null) {
+                        TitleManager.doIfPresent(clientPlayer, cap -> {
+                            MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                            if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
+                                formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
+                            }
+                            component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
+                            event.setMessage(component);
+                        });
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package aurilux.titles.common.core;
 
 import aurilux.titles.api.Title;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.network.chat.Component;

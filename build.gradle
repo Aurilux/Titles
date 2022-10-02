@@ -22,7 +22,6 @@ plugins {
 apply plugin: "net.minecraftforge.gradle"
 apply plugin: "com.matthewprenger.cursegradle"
 apply plugin: "idea"
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 // Exclude folders whenever the idea module updates, such as during a gradle re-import.
 idea {
@@ -153,8 +152,7 @@ processResources {
     // Exclude datagenerator .cache directory
     exclude '.cache'
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
+    filesMatching("META-INF/mods.toml") {
         expand 'mod_version': getVersion(), 'mod_id': mod_id, 'mod_name': mod_name, 'mod_author': mod_author,
                 'mod_desc': mod_desc, 'mod_url': mod_url, 'issue_url': issue_url, 'update_url': update_url
     }

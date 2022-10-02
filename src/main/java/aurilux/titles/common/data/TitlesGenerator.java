@@ -85,6 +85,7 @@ public class TitlesGenerator extends TitleProvider {
         builder.genWithName(subfolder + "kill_a_mob", true, false);
         builder.genWithName(subfolder + "trade");
         builder.genWithName(subfolder + "shoot_arrow");
+        builder.genWithName(subfolder + "fall_from_world_height");
 
         builder.rarity(Rarity.UNCOMMON);
         builder.genWithName(subfolder + "totem_of_undying");
