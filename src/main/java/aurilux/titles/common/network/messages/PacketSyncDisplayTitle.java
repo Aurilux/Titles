@@ -1,5 +1,7 @@
 package aurilux.titles.common.network.messages;
 
+import aurilux.titles.client.ClientOnlyMethods;
+import aurilux.titles.common.ServerOnlyMethods;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
@@ -10,6 +12,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -39,13 +43,28 @@ public class PacketSyncDisplayTitle {
 
     public static void handle(PacketSyncDisplayTitle msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
-            TitleManager.setDisplayTitle(player, msg.displayTitle);
-
             if (ctx.get().getDirection().getReceptionSide().isServer()) {
+                PlayerEntity player = ServerOnlyMethods.getPlayerByUUID(msg.playerUUID);
+                TitleManager.setDisplayTitle(player, msg.displayTitle);
                 TitlesNetwork.toAll(new PacketSyncDisplayTitle(msg.playerUUID, msg.displayTitle));
+            }
+            else {
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> Handler.handleClient(msg));
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    public static class Handler {
+        public static DistExecutor.SafeRunnable handleClient(PacketSyncDisplayTitle msg) {
+            // We get an "unsafe referent" error if we turn this into a lambda
+            return new DistExecutor.SafeRunnable() {
+                @Override
+                public void run() {
+                    PlayerEntity player = ClientOnlyMethods.getPlayerByUUID(msg.playerUUID);
+                    TitleManager.setDisplayTitle(player, msg.displayTitle);
+                }
+            };
+        }
     }
 }

@@ -1,6 +1,5 @@
 package aurilux.titles.common;
 
-import aurilux.titles.client.ClientProxy;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
@@ -44,7 +43,6 @@ public class TitlesMod {
     public static final String MOD_ID = "titles";
     public static final Logger LOG = LogManager.getLogger(MOD_ID.toUpperCase());
     public static final Rarity MYTHIC = Rarity.create("MYTHIC", TextFormatting.GOLD);
-    public static final CommonProxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
     public static final ItemGroup TAB = new ItemGroup(TitlesMod.MOD_ID) {
         @Nonnull
         @Override
@@ -52,7 +50,6 @@ public class TitlesMod {
             return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());
         }
     };
-
 
     public TitlesMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);

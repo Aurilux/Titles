@@ -1,5 +1,7 @@
 package aurilux.titles.common.network.messages;
 
+import aurilux.titles.client.ClientOnlyMethods;
+import aurilux.titles.common.ServerOnlyMethods;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
@@ -9,6 +11,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -38,14 +42,30 @@ public class PacketSyncGenderSetting {
 
     public static void handle(PacketSyncGenderSetting msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            PlayerEntity player = TitlesMod.PROXY.getPlayerByUUID(msg.playerUUID);
-            TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
-            player.refreshDisplayName();
-
             if (ctx.get().getDirection().getReceptionSide().isServer()) {
+                PlayerEntity player = ServerOnlyMethods.getPlayerByUUID(msg.playerUUID);
+                TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
+                player.refreshDisplayName();
                 TitlesNetwork.toAll(new PacketSyncGenderSetting(msg.playerUUID, msg.gender));
+            }
+            else {
+                DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> PacketSyncGenderSetting.Handler.handleClient(msg));
             }
         });
         ctx.get().setPacketHandled(true);
+    }
+
+    public static class Handler {
+        public static DistExecutor.SafeRunnable handleClient(PacketSyncGenderSetting msg) {
+            // We get an "unsafe referent" error if we turn this into a lambda
+            return new DistExecutor.SafeRunnable() {
+                @Override
+                public void run() {
+                    PlayerEntity player = ClientOnlyMethods.getPlayerByUUID(msg.playerUUID);
+                    TitleManager.doIfPresent(player, cap -> cap.setGenderSetting(msg.gender));
+                    player.refreshDisplayName();
+                }
+            };
+        }
     }
 }
