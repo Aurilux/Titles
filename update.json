@@ -19,7 +19,9 @@
         "3.3.1": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",
         "3.3.2": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",
         "3.4.0": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",
-        "3.4.1": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information."
+        "3.4.1": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",
+        "3.4.2": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",
+        "3.4.3": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information."
     },
     "1.16.4": {
         "3.2.4": "Fixed a crash caused by calling the wrong method on the server",
