@@ -5,16 +5,8 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
-public class CommonProxy {
-    public boolean isClient() {
-        return false;
-    }
-
-    public Player getClientPlayer() {
-        return null;
-    }
-
-    public Player getPlayerByUUID(UUID uuid) {
+public class ServerOnlyMethods {
+    public static Player getPlayerByUUID(UUID uuid) {
         return ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
     }
 }

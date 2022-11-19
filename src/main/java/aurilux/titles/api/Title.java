@@ -250,9 +250,9 @@ public class Title {
         }
 
         private void reset() {
-            defaultDisplay = "";
-            variantDisplay = "";
-            flavorText = "";
+            defaultDisplay = null;
+            variantDisplay = null;
+            flavorText = null;
         }
 
         public Title build() {

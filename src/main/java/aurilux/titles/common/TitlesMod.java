@@ -1,6 +1,5 @@
 package aurilux.titles.common;
 
-import aurilux.titles.client.ClientProxy;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
@@ -13,40 +12,34 @@ import aurilux.titles.common.data.TitlesGenerator;
 import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
 
 @Mod(TitlesMod.MOD_ID)
 public class TitlesMod {
     public static final String MOD_ID = "titles";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_ID.toUpperCase());
     // public static final Rarity MYTHIC = Rarity.create("MYTHIC", ChatFormatting.GOLD);
-    public static final CommonProxy PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
     public static final CreativeModeTab TAB = new CreativeModeTab(TitlesMod.MOD_ID) {
         @Nonnull
         @Override
