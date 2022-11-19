@@ -1,3 +1,6 @@
+## 1.16.5 - 3.4.3
+- Finally solved that title syncing issue. Fixes #32, fixes #34
+
 ## 1.16.5 - 3.4.2
 - Fixed an error caused by advancements whose title was plain text rather than a translatable lang entry
 
