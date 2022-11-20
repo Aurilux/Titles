@@ -48,6 +48,7 @@ public class TitlesGenerator extends TitleProvider {
         builder.genWithName("chicken_chaser", false, true);
         builder.genWithName("melon_lord", false, true);
         builder.genWithName("spelunker");
+        builder.genWithName("frigid", false, true);
 
         builder.rarity(Rarity.UNCOMMON);
         builder.genWithName("pincushion");

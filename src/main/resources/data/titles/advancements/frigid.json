@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:powder_snow_bucket"
+    },
+    "title": {
+      "translate": "advancement.titles.frigid"
+    },
+    "description": {
+      "translate": "advancement.titles.frigid.desc"
+    }
+  },
+  "parent": "titles:root",
+  "__comment": "This is triggered by code",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 public class CommandDisplay {
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("display")
-                .then(Commands.argument("title", TitleArgument.title())
+                .then(Commands.argument("title", TitleArgument.display())
                         .executes(ctx -> run(ctx, TitleArgument.getTitle(ctx, "title"))));
 
     }

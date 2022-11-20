@@ -27,7 +27,7 @@ public class CommandAddRemove {
         return Commands.argument("command", EnumArgument.enumArgument(CommandType.class))
             .requires(s -> s.hasPermission(2))
                     .then(Commands.argument("player", EntityArgument.player())
-                            .then(Commands.argument("title", TitleArgument.title())
+                            .then(Commands.argument("title", TitleArgument.any())
                                     .executes(ctx -> run(ctx,
                                             EntityArgument.getPlayer(ctx, "player"),
                                             TitleArgument.getTitle(ctx, "title")))));

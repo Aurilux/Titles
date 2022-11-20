@@ -11,6 +11,7 @@ import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -37,14 +39,18 @@ public class AdvancementHandler {
     }
 
     @SubscribeEvent
-    public static void onArrowHit(LivingDamageEvent event) {
-        LivingEntity player = event.getEntityLiving();
-        if (!event.getSource().msgId.equals("arrow") || !(player instanceof ServerPlayer)) {
+    public static void onEntityDamage(LivingDamageEvent event) {
+        LivingEntity target = event.getEntityLiving();
+        if (!(target instanceof ServerPlayer)) {
             return;
         }
 
-        if (player.getArrowCount() >= 7) {
-            grantCriterion((ServerPlayer) player, "pincushion");
+        if (event.getSource().msgId.equals("arrow") && target.getArrowCount() >= 7) {
+            grantCriterion((ServerPlayer) target, "pincushion");
+        }
+        else if (event.getSource() == DamageSource.FREEZE) {
+            TitlesMod.LOG.info("(AdvancementHandler) Do we at least get here?");
+            grantCriterion((ServerPlayer) target, "frigid");
         }
     }
 

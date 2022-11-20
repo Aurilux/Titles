@@ -3,6 +3,7 @@ package aurilux.titles.common;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
+import aurilux.titles.common.command.argument.TitleArgumentSerializer;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.core.TitlesConfig;
@@ -70,7 +71,7 @@ public class TitlesMod {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        ArgumentTypes.register("titles:title", TitleArgument.class, new EmptyArgumentSerializer<>(TitleArgument::title));
+        ArgumentTypes.register("titles:title", TitleArgument.class, new TitleArgumentSerializer());
         TitlesNetwork.init();
         TitleRegistry.get().loadContributors();
     }

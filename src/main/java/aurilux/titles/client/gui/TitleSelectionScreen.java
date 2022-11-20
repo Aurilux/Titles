@@ -79,7 +79,7 @@ public class TitleSelectionScreen extends Screen {
 
         titlesListCache = new ArrayList<>(cap.getObtainedTitles());
         String playerName = player.getName().getString();
-        ResourceLocation contributorTitle = TitlesMod.prefix(playerName.toLowerCase(Locale.ROOT));
+        ResourceLocation contributorTitle = TitlesMod.prefix(playerName.toLowerCase());
         Title possibleContributor = TitleManager.getTitlesOfType(Title.AwardType.CONTRIBUTOR)
                 .getOrDefault(contributorTitle, Title.NULL_TITLE);
         if (!possibleContributor.isNull()) {

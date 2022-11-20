@@ -1,6 +1,9 @@
 ## 1.18.2 - 3.5.0
 - Update to 1.18. No new features as of yet
 - Did change the y-level for the Spelunker advancement/title to -20 to 0, from 0 to 20 to account for the underground changes
+- The "/titles display" command now only lists the titles you have unlocked, instead of all titles
+- Added new title for the "Cave & Cliffs" advancement, "the Base Jumper"
+- Added a new advancement and associated title, "the Frigid"
 
 ## 1.16.5 - 3.4.3
 - Finally solved that title syncing issue. Fixes #32, fixes #34

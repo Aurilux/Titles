@@ -58,6 +58,7 @@ public class LangGenerator extends LanguageProvider {
         addAdvancement(keyPath + "melon_lord", "MWAHAHAHA", "Wear a carved pumpkin as a helmet");
         addAdvancement(keyPath + "pincushion", "Ouch... ouch...", "Have 7 arrows sticking out of you");
         addAdvancement(keyPath + "opulent", "The One Percent", "Build a beacon base entirely out of one type of expensive block");
+        addAdvancement(keyPath + "frigid", "Ice Age", "Take freeze damage from being in Powder Snow");
 
         // Titles
         keyPath = String.format("title.%s.", TitlesMod.MOD_ID);
@@ -67,6 +68,7 @@ public class LangGenerator extends LanguageProvider {
         addTitle(keyPath + "opulent", "the Opulent", "", "How much can it cost? Like five dollars?");
         addTitle(keyPath + "melon_lord", "the Melon Lord", "", "I am not Toph! I am MELON LORD!");
         add(keyPath + "pincushion", "the Pincushion");
+        addTitle(keyPath + "frigid", "the Frigid", "", "Brrrrr!");
 
         minecraftTemplateTitles(keyPath);
         botaniaTemplateTitles(keyPath);
