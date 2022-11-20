@@ -1,4 +1,4 @@
-2da9d4fb3a339075a6c84d05587e67bdbad9e5be assets/titles/lang/en_us.json
+0326b9a3bb35c3ba9194e4143115578414597eee assets/titles/lang/en_us.json
 4b1155c8e7c875380fffdd30c2f9c0fd3cac8030 assets/titles/models/item/title_fragment.json
 6b8b72b18445e7ca088fc0619bd366fd9d2e92d3 assets/titles/models/item/title_scroll_common.json
 a53731be549004133cd9ad45529b03894b30f538 assets/titles/models/item/title_scroll_rare.json
@@ -30,6 +30,7 @@ cbd8350e1a2bb014c6d4167c65037520d07be998 data/titles/titles/_immersiveengineerin
 788a966fb6680c9f3766cca38908642260461893 data/titles/titles/_minecraft/adventure/adventuring_time.json
 bdf50bc5fa882a85b7c8d21226e952c0306c28e4 data/titles/titles/_minecraft/adventure/arbalistic.json
 c58decc1d1bc90f17b0518472ae5e45e50f3592a data/titles/titles/_minecraft/adventure/bullseye.json
+2429bd15acecf353748955d0c3d2629cbbe58831 data/titles/titles/_minecraft/adventure/fall_from_world_height.json
 4dd8467e1cb7812489e831fc806a6d73fd42b6b2 data/titles/titles/_minecraft/adventure/hero_of_the_village.json
 d42296e6d36eff05740c0ba3d1f0e3ffb75d7a42 data/titles/titles/_minecraft/adventure/kill_a_mob.json
 718b04eddfc4fc99c8102fb81d81df688dc9e228 data/titles/titles/_minecraft/adventure/kill_all_mobs.json
@@ -84,6 +85,7 @@ d57a7c9fc261cb88792f0269f7fb5b7d2470ef34 data/titles/titles/_twilightforest/ques
 0b343a6d845bbe3c692d6fb9e2df4f874dc07dca data/titles/titles/brute.json
 829b7836011a816449334a2669a50b3a7253f43f data/titles/titles/captain.json
 eba7305c5a04856b1fe379244da74196020ed033 data/titles/titles/chicken_chaser.json
+13a832d2cb8e27ffd5bf0f07620a2cf8a65ec9f6 data/titles/titles/frigid.json
 eeb8b1a9cbd361945d176e60a710816436bd0ed1 data/titles/titles/journeyman.json
 8ffad3be5962fcfcb2c6f6924ea25d16158303b2 data/titles/titles/knight.json
 0e9a3b09170681e8dfd9d93ee447987eb4cebcef data/titles/titles/master.json

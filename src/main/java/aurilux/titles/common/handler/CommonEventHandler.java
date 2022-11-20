@@ -8,16 +8,16 @@ import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
 import aurilux.titles.common.network.messages.PacketSyncDatapack;
 import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.UUID;
 public class CommonEventHandler {
     @SubscribeEvent
     public static void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof PlayerEntity) {
+        if (event.getObject() instanceof Player) {
             event.addCapability(TitlesCapability.NAME, new TitlesCapability.Provider());
         }
     }
@@ -40,16 +40,16 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap ->
-                TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayerEntity) player));
+                TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap ->
-            TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayerEntity) player));
+            TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
 
     @SubscribeEvent
@@ -58,7 +58,7 @@ public class CommonEventHandler {
             TitlesNetwork.toPlayer(new PacketSyncDatapack(), event.getPlayer());
         }
         else {
-            for (ServerPlayerEntity player : event.getPlayerList().getPlayers()) {
+            for (ServerPlayer player : event.getPlayerList().getPlayers()) {
                 TitlesNetwork.toPlayer(new PacketSyncDatapack(), player);
             }
         }
@@ -66,23 +66,23 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerPlayerEntity playerLoggingIn = (ServerPlayerEntity) event.getPlayer();
+        ServerPlayer playerLoggingIn = (ServerPlayer) event.getPlayer();
         TitleManager.doIfPresent(playerLoggingIn, cap -> {
             // Send the just-logged-in player's title data that is loaded on the server to them.
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), playerLoggingIn);
             // Also send them the display titles of everyone else currently logged in.
             TitlesNetwork.toPlayer(new PacketSyncAllDisplayTitles(getAllDisplayTitles(playerLoggingIn)), playerLoggingIn);
             // Then send their display title to everyone else.
-            TitlesNetwork.toAll(new PacketSyncDisplayTitle(playerLoggingIn.getUniqueID(), cap.getDisplayTitle().getID()));
+            TitlesNetwork.toAll(new PacketSyncDisplayTitle(playerLoggingIn.getUUID(), cap.getDisplayTitle().getID()));
         });
     }
 
-    private static Map<UUID, ResourceLocation> getAllDisplayTitles(PlayerEntity player) {
+    private static Map<UUID, ResourceLocation> getAllDisplayTitles(Player player) {
         Map<UUID, ResourceLocation> allSelectedTitles = new HashMap<>();
-        for (ServerPlayerEntity serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-            if (serverPlayer.getUniqueID() != player.getUniqueID()) {
+        for (ServerPlayer serverPlayer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (serverPlayer.getUUID() != player.getUUID()) {
                 TitleManager.doIfPresent(serverPlayer, cap -> {
-                    allSelectedTitles.put(serverPlayer.getUniqueID(), cap.getDisplayTitle().getID());
+                    allSelectedTitles.put(serverPlayer.getUUID(), cap.getDisplayTitle().getID());
                 });
             }
         }
@@ -91,7 +91,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap -> {
             event.setDisplayname(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
         });

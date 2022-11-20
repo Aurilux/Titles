@@ -4,7 +4,7 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitleProvider;
 import aurilux.titles.common.TitlesMod;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Rarity;
+import net.minecraft.world.item.Rarity;
 
 import java.util.function.Consumer;
 
@@ -48,6 +48,7 @@ public class TitlesGenerator extends TitleProvider {
         builder.genWithName("chicken_chaser", false, true);
         builder.genWithName("melon_lord", false, true);
         builder.genWithName("spelunker");
+        builder.genWithName("frigid", false, true);
 
         builder.rarity(Rarity.UNCOMMON);
         builder.genWithName("pincushion");
@@ -85,6 +86,7 @@ public class TitlesGenerator extends TitleProvider {
         builder.genWithName(subfolder + "kill_a_mob", true, false);
         builder.genWithName(subfolder + "trade");
         builder.genWithName(subfolder + "shoot_arrow");
+        builder.genWithName(subfolder + "fall_from_world_height");
 
         builder.rarity(Rarity.UNCOMMON);
         builder.genWithName(subfolder + "totem_of_undying");

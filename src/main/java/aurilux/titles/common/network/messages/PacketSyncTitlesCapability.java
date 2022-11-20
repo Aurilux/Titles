@@ -2,26 +2,26 @@ package aurilux.titles.common.network.messages;
 
 import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class PacketSyncTitlesCapability {
-    private final CompoundNBT comp;
+    private final CompoundTag comp;
 
-    public PacketSyncTitlesCapability(CompoundNBT comp) {
+    public PacketSyncTitlesCapability(CompoundTag comp) {
         this.comp = comp;
     }
 
-    public static void encode(PacketSyncTitlesCapability msg, PacketBuffer buf) {
-        buf.writeCompoundTag(msg.comp);
+    public static void encode(PacketSyncTitlesCapability msg, FriendlyByteBuf buf) {
+        buf.writeNbt(msg.comp);
     }
 
-    public static PacketSyncTitlesCapability decode(PacketBuffer buf) {
-        return new PacketSyncTitlesCapability(buf.readCompoundTag());
+    public static PacketSyncTitlesCapability decode(FriendlyByteBuf buf) {
+        return new PacketSyncTitlesCapability(buf.readNbt());
     }
 
     public static void handle(PacketSyncTitlesCapability msg, Supplier<NetworkEvent.Context> ctx) {
@@ -29,7 +29,7 @@ public class PacketSyncTitlesCapability {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
             public void run() {
-                PlayerEntity player = Minecraft.getInstance().player;
+                Player player = Minecraft.getInstance().player;
                 if (player != null) {
                     TitleManager.doIfPresent(player, cap -> cap.deserializeNBT(msg.comp));
                 }

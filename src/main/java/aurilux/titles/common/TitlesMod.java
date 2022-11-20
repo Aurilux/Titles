@@ -3,6 +3,7 @@ package aurilux.titles.common;
 import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
 import aurilux.titles.common.command.argument.TitleArgument;
+import aurilux.titles.common.command.argument.TitleArgumentSerializer;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.core.TitlesConfig;
@@ -12,41 +13,38 @@ import aurilux.titles.common.data.TitlesGenerator;
 import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.command.arguments.ArgumentSerializer;
-import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Rarity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 @Mod(TitlesMod.MOD_ID)
 public class TitlesMod {
     public static final String MOD_ID = "titles";
-    public static final Logger LOG = LogManager.getLogger(MOD_ID.toUpperCase());
-    public static final Rarity MYTHIC = Rarity.create("MYTHIC", TextFormatting.GOLD);
-    public static final ItemGroup TAB = new ItemGroup(TitlesMod.MOD_ID) {
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_ID.toUpperCase());
+    // public static final Rarity MYTHIC = Rarity.create("MYTHIC", ChatFormatting.GOLD);
+    public static final CreativeModeTab TAB = new CreativeModeTab(TitlesMod.MOD_ID) {
         @Nonnull
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ModItems.TITLE_SCROLL_COMMON.get());
         }
     };
@@ -58,6 +56,7 @@ public class TitlesMod {
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::clientSetup);
         modBus.addListener(this::gatherData);
+        modBus.addListener(this::registerCapabilities);
         ModItems.register(modBus);
 
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
@@ -71,18 +70,17 @@ public class TitlesMod {
         }
     }
 
-    public void commonSetup(FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(TitlesCapability.class, new TitlesCapability.Storage(), TitlesCapability::new);
-        ArgumentTypes.register("titles:title", TitleArgument.class, new ArgumentSerializer<>(TitleArgument::title));
+    private void commonSetup(FMLCommonSetupEvent event) {
+        ArgumentTypes.register("titles:title", TitleArgument.class, new TitleArgumentSerializer());
         TitlesNetwork.init();
         TitleRegistry.get().loadContributors();
     }
 
-    public void clientSetup(FMLClientSetupEvent event) {
+    private void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
     }
 
-    public void gatherData(GatherDataEvent event) {
+    private void gatherData(GatherDataEvent event) {
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
@@ -97,6 +95,10 @@ public class TitlesMod {
 
     private void registerCommands(RegisterCommandsEvent event) {
         CommandTitles.register(event.getDispatcher());
+    }
+
+    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.register(TitlesCapability.class);
     }
 
     public static ResourceLocation prefix(String path) {

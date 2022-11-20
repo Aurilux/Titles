@@ -8,14 +8,13 @@ import aurilux.titles.common.network.messages.PacketSyncTitlesCapability;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.command.EnumArgument;
 
 public class CommandAddRemove {
@@ -24,37 +23,37 @@ public class CommandAddRemove {
         add
     }
 
-    public static ArgumentBuilder<CommandSource, ?> register() {
+    public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.argument("command", EnumArgument.enumArgument(CommandType.class))
-            .requires(s -> s.hasPermissionLevel(2))
+            .requires(s -> s.hasPermission(2))
                     .then(Commands.argument("player", EntityArgument.player())
-                            .then(Commands.argument("title", TitleArgument.title())
+                            .then(Commands.argument("title", TitleArgument.any())
                                     .executes(ctx -> run(ctx,
                                             EntityArgument.getPlayer(ctx, "player"),
                                             TitleArgument.getTitle(ctx, "title")))));
     }
 
-    private static int run(CommandContext<CommandSource> context, ServerPlayerEntity player, Title title) {
+    private static int run(CommandContext<CommandSourceStack> context, ServerPlayer player, Title title) {
         final CommandType commandType = context.getArgument("command", CommandType.class);
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
-        final TextComponent[] response = {new TranslationTextComponent("commands.titles.addremove.fail")};
+        final BaseComponent[] response = {new TranslatableComponent("commands.titles.addremove.fail")};
         TitleManager.doIfPresent(player, cap -> {
-            ITextComponent formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
+            Component formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
             if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
                 return;
             }
 
             if (commandType.equals(CommandType.add)) {
                 cap.add(title);
-                response[0] = new TranslationTextComponent("commands.titles.add", formattedTitle, player.getName());
+                response[0] = new TranslatableComponent("commands.titles.add", formattedTitle, player.getName());
             }
             else if (commandType.equals(CommandType.remove)) {
                 cap.remove(title);
-                response[0] = new TranslationTextComponent("commands.titles.remove", formattedTitle, player.getName());
+                response[0] = new TranslatableComponent("commands.titles.remove", formattedTitle, player.getName());
             }
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
         });
-        context.getSource().sendFeedback(response[0], false);
+        context.getSource().sendSuccess(response[0], false);
         return Command.SINGLE_SUCCESS;
     }
 }

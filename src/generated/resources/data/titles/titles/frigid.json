@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "id": "titles:frigid",
+  "rarity": "common",
+  "defaultDisplay": "title.titles.frigid",
+  "flavorText": "title.titles.frigid.flavor"
+}

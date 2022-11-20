@@ -2,11 +2,11 @@ package aurilux.titles.common.network.messages;
 
 import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,20 +20,20 @@ public class PacketSyncAllDisplayTitles {
         this.playerDisplayTitles = playerDisplayTitles;
     }
 
-    public static void encode(PacketSyncAllDisplayTitles msg, PacketBuffer buf) {
+    public static void encode(PacketSyncAllDisplayTitles msg, FriendlyByteBuf buf) {
         buf.writeInt(msg.playerDisplayTitles.entrySet().size());
         for (Map.Entry<UUID, ResourceLocation> entry : msg.playerDisplayTitles.entrySet()) {
-            buf.writeString(entry.getKey().toString());
-            buf.writeString(entry.getValue().toString());
+            buf.writeUtf(entry.getKey().toString());
+            buf.writeUtf(entry.getValue().toString());
         }
     }
 
-    public static PacketSyncAllDisplayTitles decode(PacketBuffer buf) {
+    public static PacketSyncAllDisplayTitles decode(FriendlyByteBuf buf) {
         Map<UUID, ResourceLocation> map = new HashMap<>();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            map.put(UUID.fromString(buf.readString()),
-                    new ResourceLocation(buf.readString()));
+            map.put(UUID.fromString(buf.readUtf()),
+                    new ResourceLocation(buf.readUtf()));
         }
         return new PacketSyncAllDisplayTitles(map);
     }
@@ -43,10 +43,10 @@ public class PacketSyncAllDisplayTitles {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
             public void run() {
-                World world = Minecraft.getInstance().world;
+                Level world = Minecraft.getInstance().level;
                 if (world != null) {
                     for (Map.Entry<UUID, ResourceLocation> entry : msg.playerDisplayTitles.entrySet()) {
-                        PlayerEntity otherPlayer = world.getPlayerByUuid(entry.getKey());
+                        Player otherPlayer = world.getPlayerByUUID(entry.getKey());
                         TitleManager.setDisplayTitle(otherPlayer, entry.getValue());
                     }
                 }

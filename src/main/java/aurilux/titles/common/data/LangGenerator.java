@@ -4,7 +4,7 @@ import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.init.ModItems;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class LangGenerator extends LanguageProvider {
@@ -28,8 +28,8 @@ public class LangGenerator extends LanguageProvider {
         add("commands.display.success", "Changed your display title to [%s]");
 
         // Keybindings
-        add(Keybinds.openTitleSelection.getKeyCategory(), TitlesMod.MOD_ID);
-        add(Keybinds.openTitleSelection.getKeyDescription(), "Open Title Selection Screen");
+        add(Keybinds.openTitleSelection.getCategory(), TitlesMod.MOD_ID);
+        add(Keybinds.openTitleSelection.getName(), "Open Title Selection Screen");
 
         // Gui
         keyPath = String.format("gui.%s.", TitlesMod.MOD_ID);
@@ -58,6 +58,7 @@ public class LangGenerator extends LanguageProvider {
         addAdvancement(keyPath + "melon_lord", "MWAHAHAHA", "Wear a carved pumpkin as a helmet");
         addAdvancement(keyPath + "pincushion", "Ouch... ouch...", "Have 7 arrows sticking out of you");
         addAdvancement(keyPath + "opulent", "The One Percent", "Build a beacon base entirely out of one type of expensive block");
+        addAdvancement(keyPath + "frigid", "Ice Age", "Take freeze damage from being in Powder Snow");
 
         // Titles
         keyPath = String.format("title.%s.", TitlesMod.MOD_ID);
@@ -67,6 +68,7 @@ public class LangGenerator extends LanguageProvider {
         addTitle(keyPath + "opulent", "the Opulent", "", "How much can it cost? Like five dollars?");
         addTitle(keyPath + "melon_lord", "the Melon Lord", "", "I am not Toph! I am MELON LORD!");
         add(keyPath + "pincushion", "the Pincushion");
+        addTitle(keyPath + "frigid", "the Frigid", "", "Brrrrr!");
 
         minecraftTemplateTitles(keyPath);
         botaniaTemplateTitles(keyPath);
@@ -146,6 +148,7 @@ public class LangGenerator extends LanguageProvider {
         addTitle(minecraftKeyPath + "kill_a_mob", "the Huntsman", "the Huntress", "");
         add(minecraftKeyPath + "trade", "the Haggler");
         add(minecraftKeyPath + "shoot_arrow", "the Bowman");
+        add(minecraftKeyPath + "fall_from_world_height", "the Base Jumper");
         add(minecraftKeyPath + "kill_all_mobs", "the Predator");
         add(minecraftKeyPath + "totem_of_undying", "the Deathless");
         add(minecraftKeyPath + "summon_iron_golem", "the Samaritan");
@@ -187,10 +190,10 @@ public class LangGenerator extends LanguageProvider {
 
     private void addTitle(String path, String name, String variant, String flavor) {
         add(path, name);
-        if (!StringUtils.isNullOrEmpty(variant)) {
+        if (!StringUtil.isNullOrEmpty(variant)) {
             add(path + ".variant", variant);
         }
-        if (!StringUtils.isNullOrEmpty(flavor)) {
+        if (!StringUtil.isNullOrEmpty(flavor)) {
             add(path + ".flavor", flavor);
         }
     }

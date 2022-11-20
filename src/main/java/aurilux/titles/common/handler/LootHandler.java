@@ -2,12 +2,13 @@ package aurilux.titles.common.handler;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
-import net.minecraft.item.Rarity;
-import net.minecraft.loot.LootEntry;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.TableLootEntry;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 
@@ -29,10 +30,10 @@ public class LootHandler {
 
     private static LootPool getInjectPool(String entryName) {
         ResourceLocation table = TitlesMod.prefix("inject/" + entryName);
-        LootEntry.Builder<?> entry = TableLootEntry.builder(table).weight(1);
-        return LootPool.builder()
-                .addEntry(entry)
-                .bonusRolls(0, 1)
+        LootPoolEntryContainer.Builder<?> entry = LootTableReference.lootTableReference(table).setWeight(1);
+        return LootPool.lootPool()
+                .add(entry)
+                .setBonusRolls(UniformGenerator.between(0, 1))
                 .name("titles_inject")
                 .build();
     }
