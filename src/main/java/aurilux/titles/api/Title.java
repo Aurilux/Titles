@@ -2,8 +2,8 @@ package aurilux.titles.api;
 
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringUtil;
@@ -70,7 +70,7 @@ public class Title {
         if (!isMasculine && !StringUtil.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();
         }
-        return new TranslatableComponent(translatable).withStyle(getRarity().color);
+        return Component.translatable(translatable).withStyle(getRarity().getStyleModifier());
     }
 
     @Override

@@ -1,9 +1,6 @@
 package aurilux.titles.common;
 
-import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.command.CommandTitles;
-import aurilux.titles.common.command.argument.TitleArgument;
-import aurilux.titles.common.command.argument.TitleArgumentSerializer;
 import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.core.TitlesConfig;
@@ -11,17 +8,20 @@ import aurilux.titles.common.data.ItemModelGenerator;
 import aurilux.titles.common.data.LangGenerator;
 import aurilux.titles.common.data.TitlesGenerator;
 import aurilux.titles.common.handler.LootHandler;
+import aurilux.titles.common.init.ModArgumentTypes;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.commands.synchronization.ArgumentTypes;
-import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -30,7 +30,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,39 +57,71 @@ public class TitlesMod {
         modBus.addListener(this::gatherData);
         modBus.addListener(this::registerCapabilities);
         ModItems.register(modBus);
+        ModArgumentTypes.register(modBus);
 
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(TitleRegistry::register);
         forgeBus.addListener(this::registerCommands);
+
+        forgeBus.addListener(this::onClientReceivedChat);
+    }
+
+    public void onClientReceivedChat(ClientChatReceivedEvent event) {
+        MutableComponent component = event.getMessage().plainCopy();
+        TitlesMod.LOG.info("[ClientEventHandler] How different does this look? {}", component.toString());
+        /*
+        if (component instanceof TranslatableComponent textComponent) {
+            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
+                // I wish there was a more flexible, elegant way to identify the correct sub-components
+                Component targetPlayerName = ((Component) textComponent.getArgs()[0]).getSiblings().get(0);
+                Component componentArg = (Component) ((TranslatableComponent) textComponent.getArgs()[1])
+                        .getArgs()[0];
+                // We have to check if it's the correct type of text component because some advancements use plain text
+                // instead of a translatable entry.
+                if (componentArg instanceof TranslatableComponent) {
+                    Title unlockedTitle = processKey(((TranslatableComponent) componentArg).getKey());
+                    Player clientPlayer = Minecraft.getInstance().player;
+                    if (!unlockedTitle.isNull() && clientPlayer != null) {
+                        TitleManager.doIfPresent(clientPlayer, cap -> {
+                            MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                            if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
+                                formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
+                            }
+                            component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
+                            event.setMessage(component);
+                        });
+                    }
+                }
+            }
+        }
+         */
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) {
+        TitlesNetwork.init();
+        TitleRegistry.get().loadContributors();
+
         // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
         //  stronghold_corridor, etc), so this is still necessary until they change it.
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         if (TitlesConfig.COMMON.fragmentLoot.get()) {
             forgeBus.addListener(LootHandler::addLoot);
             forgeBus.addListener(LootHandler::onVillagerTrades);
         }
     }
 
-    private void commonSetup(FMLCommonSetupEvent event) {
-        ArgumentTypes.register("titles:title", TitleArgument.class, new TitleArgumentSerializer());
-        TitlesNetwork.init();
-        TitleRegistry.get().loadContributors();
-    }
-
     private void clientSetup(FMLClientSetupEvent event) {
-        Keybinds.init();
+        // Nothing yet
     }
 
     private void gatherData(GatherDataEvent event) {
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
-        if (event.includeServer()) {
-            gen.addProvider(new TitlesGenerator(gen));
-        }
-        if (event.includeClient()) {
-            gen.addProvider(new LangGenerator(gen));
-            gen.addProvider(new ItemModelGenerator(gen, fileHelper));
-        }
+        gen.addProvider(event.includeClient(), new LangGenerator(gen));
+        gen.addProvider(event.includeClient(), new ItemModelGenerator(gen, fileHelper));
+
+        gen.addProvider(event.includeServer(), new TitlesGenerator(gen));
     }
 
     private void registerCommands(RegisterCommandsEvent event) {

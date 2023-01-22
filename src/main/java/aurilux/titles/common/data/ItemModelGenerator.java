@@ -22,7 +22,7 @@ public class ItemModelGenerator extends ItemModelProvider {
     }
 
     private String name(Item item) {
-        return item.getRegistryName().getPath();
+        return item.getDescriptionId();
     }
 
     private ResourceLocation itemPath(String name) {

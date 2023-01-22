@@ -1,6 +1,5 @@
 package aurilux.titles.client;
 
-import aurilux.titles.common.TitlesMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;

@@ -5,12 +5,10 @@ import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.init.ModTags;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,26 +19,23 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID)
 public class AdvancementHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         Advancement advancement = event.getAdvancement();
-        TitleManager.unlockTitle((ServerPlayer) event.getPlayer(), advancement.getId());
+        TitleManager.unlockTitle((ServerPlayer) event.getEntity(), advancement.getId());
     }
 
     @SubscribeEvent
     public static void onEntityDamage(LivingDamageEvent event) {
-        LivingEntity target = event.getEntityLiving();
+        LivingEntity target = event.getEntity();
         if (!(target instanceof ServerPlayer)) {
             return;
         }

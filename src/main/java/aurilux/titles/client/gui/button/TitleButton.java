@@ -29,7 +29,7 @@ public class TitleButton extends SimpleButtonOverride {
             super.renderContents(matrixStack);
         }
         else {
-            drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.setUnderlined(true)),
+            drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.withUnderlined(true)),
                     this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
         }
     }

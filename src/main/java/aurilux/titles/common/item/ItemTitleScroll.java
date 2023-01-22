@@ -2,7 +2,7 @@ package aurilux.titles.common.item;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.core.TitleManager;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,22 +26,23 @@ public class ItemTitleScroll extends Item {
             return super.use(world, player, hand);
         }
 
-        ItemStack itemStack = player.getItemInHand(hand);
+        ServerPlayer serverPlayer = (ServerPlayer) player;
+        ItemStack itemStack = serverPlayer.getItemInHand(hand);
         AtomicBoolean unlockedTitle = new AtomicBoolean(false);
-        TitleManager.doIfPresent(player, cap -> {
+        TitleManager.doIfPresent(serverPlayer, cap -> {
             List<Title> possibleLoot = TitleManager.getTitlesOfType(Title.AwardType.LOOT).values().stream()
                     .filter(t -> t.getRarity().equals(this.getRarity(itemStack)) && !cap.getObtainedTitles().contains(t))
                     .collect(Collectors.toList());
             if (possibleLoot.size() > 0) {
                 Title newTitle = possibleLoot.get(world.random.nextInt(possibleLoot.size()));
-                TitleManager.unlockTitle((ServerPlayer) player, newTitle.getID());
-                player.sendMessage(new TranslatableComponent("chat.scroll.success",
-                        TitleManager.getFormattedTitle(newTitle, cap.getGenderSetting())), player.getUUID());
+                TitleManager.unlockTitle(serverPlayer, newTitle.getID());
+                serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.success",
+                        TitleManager.getFormattedTitle(newTitle, cap.getGenderSetting())));
                 itemStack.setCount(0);
                 unlockedTitle.set(true);
             }
             else {
-                player.sendMessage(new TranslatableComponent("chat.scroll.fail"), player.getUUID());
+                serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.fail"));
             }
         });
 

@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,19 +36,19 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
         TitleManager.doIfPresent(event.getOriginal(), oldCap ->
-                TitleManager.doIfPresent(event.getPlayer(), newCap -> newCap.deserializeNBT(oldCap.serializeNBT())));
+                TitleManager.doIfPresent(event.getEntity(), newCap -> newCap.deserializeNBT(oldCap.serializeNBT())));
     }
 
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap ->
                 TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap ->
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
@@ -66,7 +67,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerPlayer playerLoggingIn = (ServerPlayer) event.getPlayer();
+        ServerPlayer playerLoggingIn = (ServerPlayer) event.getEntity();
         TitleManager.doIfPresent(playerLoggingIn, cap -> {
             // Send the just-logged-in player's title data that is loaded on the server to them.
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), playerLoggingIn);
@@ -91,7 +92,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap -> {
             event.setDisplayname(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
         });

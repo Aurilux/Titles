@@ -11,9 +11,8 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.command.EnumArgument;
 
@@ -36,7 +35,7 @@ public class CommandAddRemove {
     private static int run(CommandContext<CommandSourceStack> context, ServerPlayer player, Title title) {
         final CommandType commandType = context.getArgument("command", CommandType.class);
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
-        final BaseComponent[] response = {new TranslatableComponent("commands.titles.addremove.fail")};
+        final MutableComponent[] response = {Component.translatable("commands.titles.addremove.fail")};
         TitleManager.doIfPresent(player, cap -> {
             Component formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
             if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
@@ -45,11 +44,11 @@ public class CommandAddRemove {
 
             if (commandType.equals(CommandType.add)) {
                 cap.add(title);
-                response[0] = new TranslatableComponent("commands.titles.add", formattedTitle, player.getName());
+                response[0] = Component.translatable("commands.titles.add", formattedTitle, player.getName());
             }
             else if (commandType.equals(CommandType.remove)) {
                 cap.remove(title);
-                response[0] = new TranslatableComponent("commands.titles.remove", formattedTitle, player.getName());
+                response[0] = Component.translatable("commands.titles.remove", formattedTitle, player.getName());
             }
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
         });

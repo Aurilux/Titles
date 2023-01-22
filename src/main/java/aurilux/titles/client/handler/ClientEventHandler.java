@@ -6,14 +6,12 @@ import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -27,6 +25,11 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEventHandler {
+    @SubscribeEvent
+    public static void onRegisterKeybindings(RegisterKeyMappingsEvent event) {
+        event.register(Keybinds.openTitleSelection);
+    }
+
     @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
@@ -46,6 +49,8 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
         MutableComponent component = event.getMessage().plainCopy();
+        TitlesMod.LOG.info("[ClientEventHandler] How different does this look? {}", component.toString());
+        /*
         if (component instanceof TranslatableComponent textComponent) {
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components
@@ -70,6 +75,7 @@ public class ClientEventHandler {
                 }
             }
         }
+         */
     }
 
     private static Title processKey(String key) {

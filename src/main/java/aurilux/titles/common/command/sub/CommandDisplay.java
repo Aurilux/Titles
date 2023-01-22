@@ -12,7 +12,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 public class CommandDisplay {
@@ -30,7 +31,7 @@ public class CommandDisplay {
                 TitleManager.setDisplayTitle(player, title.getID());
                 TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUUID(), title.getID()));
 
-                TranslatableComponent feedback = new TranslatableComponent("commands.display.success",
+                MutableComponent feedback = Component.translatable("commands.display.success",
                         TitleManager.getFormattedTitle(title, player));
                 ctx.getSource().sendSuccess(feedback, true);
             });

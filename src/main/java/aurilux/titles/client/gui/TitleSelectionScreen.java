@@ -18,8 +18,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +34,8 @@ public class TitleSelectionScreen extends Screen {
     private final Button.OnTooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
         String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
         if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
-            this.renderTooltip(matrixStack,this.minecraft.font.split(new TranslatableComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
+            this.renderTooltip(matrixStack,this.minecraft.font.split(Component.translatable(titleButtonFlavorText),
+                    Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
         }
     };
 
@@ -72,7 +71,7 @@ public class TitleSelectionScreen extends Screen {
     private EditBox search;
 
     public TitleSelectionScreen(Player player, TitlesCapability cap) {
-        super(new TextComponent("Title Selection"));
+        super(Component.literal("Title Selection"));
         this.player = player;
         gender = cap.getGenderSetting();
         temporaryTitle = cap.getDisplayTitle();
@@ -102,18 +101,18 @@ public class TitleSelectionScreen extends Screen {
         buttonTitleRowStart = buttonFirstRowStart + 23;
         buttonSecondRowStart = buttonTitleRowStart + 123;
 
-        search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, new TextComponent("search"));
+        search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, Component.literal("search"));
         addRenderableWidget(search);
 
         // Action buttons
         addRenderableWidget(new SimpleButtonOverride(leftOffset, buttonFirstRowStart, 60, buttonHeight,
-                new TranslatableComponent("gui.titles.random"), button -> chooseRandomTitle()));
+                Component.translatable("gui.titles.random"), button -> chooseRandomTitle()));
         addRenderableWidget(new SimpleButtonOverride(leftOffset + 180, buttonFirstRowStart, 60, buttonHeight,
-                new TranslatableComponent("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
+                Component.translatable("gui.titles.none"), button -> temporaryTitle = Title.NULL_TITLE));
         addRenderableWidget(new SimpleButtonOverride(leftOffset + 45, buttonSecondRowStart, 60, buttonHeight,
-                new TranslatableComponent("gui.titles.cancel"), button -> exitScreen(false)));
+                Component.translatable("gui.titles.cancel"), button -> exitScreen(false)));
         addRenderableWidget(new SimpleButtonOverride(leftOffset + 135, buttonSecondRowStart, 60, buttonHeight,
-                new TranslatableComponent("gui.titles.confirm"), button -> exitScreen(true)));
+                Component.translatable("gui.titles.confirm"), button -> exitScreen(true)));
 
         // Page buttons
         backButtons.add(addRenderableWidget(new SimpleButtonOverride(leftOffset, buttonSecondRowStart, 20, buttonHeight,

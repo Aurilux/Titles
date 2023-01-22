@@ -12,7 +12,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -41,7 +41,7 @@ public class CommandRefresh {
                             TitlesMod.LOG.debug("Re-awarding title for advancement {}", advancement.getId());
                             cap.add(TitleManager.getTitle(advancement.getId()));
                         });
-                context.getSource().sendSuccess(new TextComponent("Finished refreshing advancement titles!"), true);
+                context.getSource().sendSuccess(Component.literal("Finished refreshing advancement titles!"), true);
                 TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
             });
         }
