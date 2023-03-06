@@ -42,7 +42,6 @@ import javax.annotation.Nonnull;
 public class TitlesMod {
     public static final String MOD_ID = "titles";
     public static final Logger LOG = LogManager.getLogger(MOD_ID.toUpperCase());
-    public static final Rarity MYTHIC = Rarity.create("MYTHIC", TextFormatting.GOLD);
     public static final ItemGroup TAB = new ItemGroup(TitlesMod.MOD_ID) {
         @Nonnull
         @Override

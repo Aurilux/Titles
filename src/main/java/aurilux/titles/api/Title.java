@@ -30,7 +30,8 @@ public class Title {
     private final String flavorText;
     private final Rarity rarity;
 
-    public Title(Builder builder) {
+    // This is private to follow the Builder Pattern. Since the Builder makes the object, it doesn't need to be public
+    private Title(Builder builder) {
         type = builder.getType();
         id = builder.getID();
         modid = builder.getModId();
@@ -93,24 +94,6 @@ public class Title {
         return json;
     }
 
-    public static Title deserialize(JsonObject json) {
-        ResourceLocation id = new ResourceLocation(JSONUtils.getString(json, "id"));
-        Title.Builder builder = Builder.create(id.getNamespace())
-                .type(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
-                .id(id)
-                .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
-
-        builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
-        if (json.has("variantDisplay")) {
-            builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
-        }
-        if (json.has("flavorText")) {
-            builder.flavorText(JSONUtils.getString(json, "flavorText"));
-        }
-
-        return new Title(builder);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Title)) {
@@ -140,15 +123,32 @@ public class Title {
         private Rarity rarity = Rarity.COMMON;
         private ResourceLocation id;
         private String modId;
-        private String defaultDisplay;
+        private String defaultDisplay = "Not Set";
         private String variantDisplay;
         private String flavorText;
-        private Consumer<Title> buildValidator;
 
         private Builder() {}
 
         public static Builder create(String modId) {
             return new Builder().modId(modId);
+        }
+
+        public static Builder deserialize(JsonObject json) {
+            ResourceLocation id = new ResourceLocation(JSONUtils.getString(json, "id"));
+            Title.Builder builder = Builder.create(id.getNamespace())
+                    .type(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                    .id(id)
+                    .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
+
+            builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
+            if (json.has("variantDisplay")) {
+                builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
+            }
+            if (json.has("flavorText")) {
+                builder.flavorText(JSONUtils.getString(json, "flavorText"));
+            }
+
+            return builder;
         }
 
         public Builder modId(String m) {
@@ -176,32 +176,6 @@ public class Title {
 
         public Rarity getRarity() {
             return rarity;
-        }
-
-        public Title genWithName(String n) {
-            return genWithName(n, false, false);
-        }
-
-        public Title genWithName(String name, boolean variant, boolean flavor) {
-            id(new ResourceLocation(modId, name))
-                    .defaultDisplay(String.format("title.%s.%s", modId, convertToLang(name)));
-
-            if (variant) {
-                variantDisplay(getDefaultDisplay() + ".variant");
-            }
-
-            if (flavor) {
-                flavorText(getDefaultDisplay() + ".flavor");
-            }
-            return this.build();
-        }
-
-        private String convertToLang(String name) {
-            String conversion = name;
-            if (conversion.startsWith("_")) {
-                conversion = conversion.substring(1);
-            }
-            return conversion.replaceAll("[/:]", ".");
         }
 
         public Builder id(String s) {
@@ -244,25 +218,21 @@ public class Title {
             return flavorText;
         }
 
-        public Builder withBuildValidator(Consumer<Title> consumer) {
-            buildValidator = consumer;
-            return this;
+        private void reset() {
+            defaultDisplay = "Not Set";
+            variantDisplay = null;
+            flavorText = null;
         }
 
-        private void reset() {
-            defaultDisplay = "";
-            variantDisplay = "";
-            flavorText = "";
+        // Used in data generation
+        public Title save(Consumer<Title> consumer) {
+            Title title = build();
+            consumer.accept(title);
+            return title;
         }
 
         public Title build() {
-            if (getID() == null || getType() == null || getRarity() == null || getDefaultDisplay() == null) {
-                throw new IllegalArgumentException("Missing one or more mandatory values while building a title (Either id, type, rarity, or default display)!");
-            }
             Title title = new Title(this);
-            if (buildValidator != null) {
-                buildValidator.accept(title);
-            }
             reset();
             return title;
         }

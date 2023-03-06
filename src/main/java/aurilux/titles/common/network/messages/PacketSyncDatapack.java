@@ -41,9 +41,13 @@ public class PacketSyncDatapack {
             String test = buf.readString();
             ResourceLocation res = new ResourceLocation(test);
             String test2 = buf.readString();
-            temp.put(res, Title.deserialize(JSONUtils.fromJson(test2)));
+            temp.put(res, Title.Builder.deserialize(JSONUtils.fromJson(test2)).build());
         }
         return new PacketSyncDatapack(temp);
+    }
+
+    public Map<ResourceLocation, Title> getAllLoadedTitles() {
+        return allLoadedTitles;
     }
 
     public static void handle(PacketSyncDatapack msg, Supplier<NetworkEvent.Context> ctx) {
@@ -51,7 +55,7 @@ public class PacketSyncDatapack {
             // Have to use anon class instead of lambda or else we'll get classloading issues
             @Override
             public void run() {
-                TitleRegistry.get().processServerData(msg.allLoadedTitles);
+                TitleRegistry.get().processServerData(msg);
             }
         });
         ctx.get().setPacketHandled(true);

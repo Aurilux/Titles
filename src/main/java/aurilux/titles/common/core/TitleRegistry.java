@@ -2,10 +2,8 @@ package aurilux.titles.common.core;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.TitlesMod;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import aurilux.titles.common.network.messages.PacketSyncDatapack;
+import com.google.gson.*;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.item.Rarity;
 import net.minecraft.profiler.IProfiler;
@@ -25,16 +23,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class TitleRegistry extends JsonReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    private Map<ResourceLocation, Title> titles = Collections.emptyMap();
+    private final Map<ResourceLocation, Title> titles = new HashMap<>();
     private final Map<ResourceLocation, Title> contributorTitles = new HashMap<>();
 
-    private static final TitleRegistry INSTANCE = new TitleRegistry();;
+    private static final TitleRegistry INSTANCE = new TitleRegistry();
 
     private TitleRegistry() {
         super(GSON, TitlesMod.MOD_ID);
@@ -54,15 +50,17 @@ public class TitleRegistry extends JsonReloadListener {
 
         Set<String> modsWithNativeTitles = determineModsWithNativeTitles();
         TitlesMod.LOG.debug("Mods with native titles: {}", Arrays.asList(modsWithNativeTitles.toArray()));
-        titles = dataFromMods.entrySet().stream()
-                .filter(entry -> entry.getValue().isJsonObject())
-                .map(entry -> processTemplateResources(entry, modsWithNativeTitles))
-                .filter(Objects::nonNull)
-                .map(entry -> deserializeTitleJSON(entry.getKey(), entry.getValue().getAsJsonObject(), true))
-                .collect(Collectors.toMap(
-                        Title::getID,
-                        Function.identity()
-                ));
+        dataFromMods.forEach((location, element) -> {
+            try {
+                JsonObject titlejson = JSONUtils.getJsonObject(element, "title");
+                ResourceLocation processedLocation = processTemplateResource(location, modsWithNativeTitles);
+                Title title = loadTitle(processedLocation, titlejson);
+                titles.put(processedLocation, title);
+            }
+            catch (IllegalArgumentException | JsonParseException ex) {
+                TitlesMod.LOG.error("Parsing error loading title {}: {}", location, ex.getMessage());
+            }
+        });
         TitlesMod.LOG.debug("Loaded {} titles", titles.size());
         titles.putAll(contributorTitles);
 
@@ -85,43 +83,33 @@ public class TitleRegistry extends JsonReloadListener {
         return set;
     }
 
-    private Map.Entry<ResourceLocation, JsonElement> processTemplateResources(
-            Map.Entry<ResourceLocation, JsonElement> entry, Set<String> modsWithTitles) {
-        ResourceLocation oldResource = entry.getKey();
-        String path = oldResource.getPath();
-
-        boolean isTemplate = oldResource.getNamespace().equals(TitlesMod.MOD_ID) && path.startsWith("_");
-        if (!isTemplate) return entry;
+    private ResourceLocation processTemplateResource(ResourceLocation location, Set<String> modsWithTitles) {
+        String path = location.getPath();
+        boolean isTemplate = location.getNamespace().equals(TitlesMod.MOD_ID) && path.startsWith("_");
+        if (!isTemplate) {
+            return location;
+        }
 
         int slashIndex = path.indexOf("/");
         String possibleModId = path.substring(1, slashIndex);
         if (!modsWithTitles.contains(possibleModId)) {
             String trimmedPath = path.substring(slashIndex + 1);
-            ResourceLocation newResource = new ResourceLocation(possibleModId, trimmedPath);
-            return new AbstractMap.SimpleEntry<>(newResource, entry.getValue());
+            return new ResourceLocation(possibleModId, trimmedPath);
         }
-        return null;
+        return location;
     }
 
-    public Title deserializeTitleJSON(ResourceLocation res, JsonObject json, boolean initialLoad) {
-        Title.Builder builder = Title.Builder.create(res.getNamespace())
-                .type(Title.AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
-                .id(res);
+    public Title loadTitle(ResourceLocation res, JsonObject json) {
+        json.addProperty("id", res.toString());
+        Title.Builder builder = Title.Builder.deserialize(json);
 
-        Rarity testRarity = Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase());
-        // EPIC rarity titles are reserved for contributors only
-        boolean isTryingToCheat = initialLoad && testRarity.equals(Rarity.EPIC);
-        builder.rarity(isTryingToCheat ? Rarity.COMMON : testRarity);
-
-        builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
-        if (json.has("variantDisplay")) {
-            builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
-        }
-        if (json.has("flavorText")) {
-            builder.flavorText(JSONUtils.getString(json, "flavorText"));
+        // EPIC rarity titles are reserved for contributors only. No cheating!
+        Rarity rarityRef = builder.getRarity();
+        if (rarityRef.equals(Rarity.EPIC)) {
+            builder.rarity(Rarity.COMMON);
         }
 
-        return new Title(builder);
+        return builder.build();
     }
 
     public Map<ResourceLocation, Title> getTitles() {
@@ -129,8 +117,10 @@ public class TitleRegistry extends JsonReloadListener {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void processServerData(Map<ResourceLocation, Title> serverData) {
-        titles = serverData;
+    public void processServerData(PacketSyncDatapack msg) {
+        titles.clear();
+        titles.putAll(msg.getAllLoadedTitles());
+        TitlesMod.LOG.debug("Synced {} titles from server", titles.size());
     }
 
     public void loadContributors() {
