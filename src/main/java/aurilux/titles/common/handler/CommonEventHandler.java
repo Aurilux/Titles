@@ -54,9 +54,11 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onDataPackSync(OnDatapackSyncEvent event) {
+        // When event is triggered for a player joining the server
         if (event.getPlayer() != null) {
             TitlesNetwork.toPlayer(new PacketSyncDatapack(), event.getPlayer());
         }
+        // When event is triggered for all players, such as doing the reload command
         else {
             for (ServerPlayer player : event.getPlayerList().getPlayers()) {
                 TitlesNetwork.toPlayer(new PacketSyncDatapack(), player);

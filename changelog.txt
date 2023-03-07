@@ -5,6 +5,10 @@
 - Added new title for the "Cave & Cliffs" advancement, "the Base Jumper"
 - Added a new advancement and associated title, "the Frigid"
 
+## 1.16.5 - 3.4.4
+- Can now properly "remove" titles by using datapacks, just like advancements. Fixes #37
+- Some minor refactoring
+
 ## 1.16.5 - 3.4.3
 - Finally solved that title syncing issue. Fixes #32, fixes #34
 

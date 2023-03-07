@@ -46,6 +46,10 @@ public class PacketSyncDatapack {
         return new PacketSyncDatapack(temp);
     }
 
+    public Map<ResourceLocation, Title> getAllLoadedTitles() {
+        return allLoadedTitles;
+    }
+
     public static void handle(PacketSyncDatapack msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(new Runnable() {
             // Have to use anon class instead of lambda or else we'll get classloading issues
