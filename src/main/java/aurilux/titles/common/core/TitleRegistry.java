@@ -2,10 +2,8 @@ package aurilux.titles.common.core;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.TitlesMod;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import aurilux.titles.common.network.messages.PacketSyncDatapack;
+import com.google.gson.*;
 import net.minecraft.DefaultUncaughtExceptionHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -55,9 +53,8 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         TitlesMod.LOG.debug("Mods with native titles: {}", Arrays.asList(modsWithNativeTitles.toArray()));
         dataFromMods.forEach((location, element) -> {
             try {
-                JsonObject titlejson = JSONUtils.getJsonObject(element, "title");
                 ResourceLocation processedLocation = processTemplateResource(location, modsWithNativeTitles);
-                Title title = loadTitle(processedLocation, titlejson);
+                Title title = loadTitle(processedLocation, element.getAsJsonObject());
                 titles.put(processedLocation, title);
             }
             catch (IllegalArgumentException | JsonParseException ex) {

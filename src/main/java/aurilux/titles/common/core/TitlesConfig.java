@@ -45,7 +45,13 @@ public final class TitlesConfig {
 
     // For server only options. These options will not be available on single-player worlds.
     public static class Server {
+        public final ForgeConfigSpec.BooleanValue showInTablist;
+
         public Server(ForgeConfigSpec.Builder builder) {
+
+            showInTablist = builder
+                    .comment("Set to false to disable titles from rendering next to player names in the tablist")
+                    .define("showInTablist", true);
         }
     }
 }

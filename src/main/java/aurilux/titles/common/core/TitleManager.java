@@ -37,6 +37,10 @@ public class TitleManager {
         doIfPresent(player, cap -> {
             cap.setDisplayTitle(getTitle(id));
             player.refreshDisplayName();
+
+            if (player instanceof ServerPlayer) {
+                ((ServerPlayer) player).refreshTabListName();
+            }
         });
     }
 

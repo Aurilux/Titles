@@ -2,6 +2,7 @@ package aurilux.titles.common.handler;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
@@ -34,10 +35,20 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        TitleManager.doIfPresent(event.getOriginal(), oldCap ->
-                TitleManager.doIfPresent(event.getPlayer(), newCap -> newCap.deserializeNBT(oldCap.serializeNBT())));
+        Player original = event.getOriginal();
+        original.reviveCaps();
+
+        TitleManager.doIfPresent(original, oldCap ->
+                TitleManager.doIfPresent(event.getPlayer(), newCap ->
+                    newCap.deserializeNBT(oldCap.serializeNBT())));
+
+        original.invalidateCaps();
     }
 
+    /*
+    Despite initially seeming redundant with PlayerEvent.Clone, packets cannot be sent during that event so must be
+    accompanied by PlayerEvent.PlayerRespawnEvent to properly sync the info
+     */
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         Player player = event.getPlayer();

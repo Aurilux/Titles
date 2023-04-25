@@ -1,18 +1,28 @@
 package aurilux.titles.common.handler;
 
 import aurilux.titles.common.TitlesMod;
+import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 
-public class LootHandler {
+public class ConfigEventHandler {
+    public static void onTabListNameFormat(PlayerEvent.TabListNameFormat event) {
+        Player player = event.getPlayer();
+        TitleManager.doIfPresent(player, cap -> {
+            event.setDisplayName(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
+        });
+    }
+
     public static void addLoot(LootTableLoadEvent event) {
         String prefix = "minecraft:chests/";
         String name = event.getName().toString();

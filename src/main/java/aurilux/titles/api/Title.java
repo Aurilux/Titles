@@ -134,18 +134,18 @@ public class Title {
         }
 
         public static Builder deserialize(JsonObject json) {
-            ResourceLocation id = new ResourceLocation(JSONUtils.getString(json, "id"));
+            ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
             Title.Builder builder = Builder.create(id.getNamespace())
-                    .type(AwardType.valueOf(JSONUtils.getString(json, "type").toUpperCase()))
+                    .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
                     .id(id)
-                    .rarity(Rarity.valueOf(JSONUtils.getString(json, "rarity").toUpperCase()));
+                    .rarity(Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase()));
 
-            builder.defaultDisplay(JSONUtils.getString(json, "defaultDisplay"));
+            builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
             if (json.has("variantDisplay")) {
-                builder.variantDisplay(JSONUtils.getString(json, "variantDisplay"));
+                builder.variantDisplay(GsonHelper.getAsString(json, "variantDisplay"));
             }
             if (json.has("flavorText")) {
-                builder.flavorText(JSONUtils.getString(json, "flavorText"));
+                builder.flavorText(GsonHelper.getAsString(json, "flavorText"));
             }
 
             return builder;

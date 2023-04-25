@@ -10,11 +10,10 @@ import aurilux.titles.common.core.TitlesConfig;
 import aurilux.titles.common.data.ItemModelGenerator;
 import aurilux.titles.common.data.LangGenerator;
 import aurilux.titles.common.data.TitlesGenerator;
-import aurilux.titles.common.handler.LootHandler;
+import aurilux.titles.common.handler.ConfigEventHandler;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.commands.synchronization.ArgumentTypes;
-import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -62,11 +61,20 @@ public class TitlesMod {
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(TitleRegistry::register);
         forgeBus.addListener(this::registerCommands);
+
+        addConfigHandlers(modBus, forgeBus);
+    }
+
+    private void addConfigHandlers(IEventBus modBus, IEventBus forgeBus) {
         // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
         //  stronghold_corridor, etc), so this is still necessary until they change it.
         if (TitlesConfig.COMMON.fragmentLoot.get()) {
-            forgeBus.addListener(LootHandler::addLoot);
-            forgeBus.addListener(LootHandler::onVillagerTrades);
+            forgeBus.addListener(ConfigEventHandler::addLoot);
+            forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
+        }
+
+        if (TitlesConfig.SERVER.showInTablist.get()) {
+            forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
         }
     }
 
