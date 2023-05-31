@@ -25,8 +25,10 @@ public class TitlesCapability {
     private final String GENDER_SETTING = "gender_setting";
     private final String DISPLAY_TITLE = "display_title";
     private final String OBTAINED_TITLES = "obtained_titles";
+    private final String NICKNAME = "nickname";
     private final Set<Title> obtainedTitles = new HashSet<>();
 
+    private String nickname = "";
     private Title displayTitle = Title.NULL_TITLE;
     private boolean genderSetting = true;
 
@@ -36,6 +38,14 @@ public class TitlesCapability {
 
     public void remove(Title title) {
         obtainedTitles.remove(title);
+    }
+
+    public void setNickname(String newNickname) {
+        nickname = newNickname;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public Set<Title> getObtainedTitles() {
@@ -60,6 +70,7 @@ public class TitlesCapability {
 
     public CompoundTag serializeNBT() {
         CompoundTag data = new CompoundTag();
+        data.putString(NICKNAME, nickname);
         data.putBoolean(GENDER_SETTING, genderSetting);
         data.putString(DISPLAY_TITLE, getDisplayTitle().getID().toString());
         ListTag obtained = new ListTag();
@@ -72,6 +83,7 @@ public class TitlesCapability {
 
     public void deserializeNBT(CompoundTag nbt) {
         obtainedTitles.clear();
+        nickname = nbt.getString(NICKNAME);
         genderSetting = nbt.getBoolean(GENDER_SETTING);
         displayTitle = TitleManager.getTitle(nbt.getString(DISPLAY_TITLE));
         ListTag obtained = (ListTag) nbt.get(OBTAINED_TITLES);

@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_minecraft/nether/ride_strider",
   "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.nether.ride_strider"

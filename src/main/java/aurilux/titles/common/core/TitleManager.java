@@ -1,11 +1,11 @@
 package aurilux.titles.common.core;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -44,6 +44,13 @@ public class TitleManager {
         });
     }
 
+    public static void setNickname(Player player, String nickname) {
+        doIfPresent(player, cap -> {
+            cap.setNickname(nickname);
+            player.refreshDisplayName();
+        });
+    }
+
     public static Title getTitle(String id) {
         return getTitle(new ResourceLocation(id));
     }
@@ -60,21 +67,14 @@ public class TitleManager {
         return player.getCapability(TitlesCapability.TITLES_CAPABILITY);
     }
 
-    public static MutableComponent getFormattedTitle(Title title, boolean isMasculine) {
-        return getFormattedTitle(title, null, isMasculine);
-    }
-
-    public static MutableComponent getFormattedTitle(Title title, Player player) {
-        return getFormattedTitle(title, player.getName(), getCapability(player).orElse(new TitlesCapability()).getGenderSetting());
-    }
-
-    public static MutableComponent getFormattedTitle(Title title, Component playerName, boolean isMasculine) {
-        MutableComponent titleComponent = title.getTextComponent(isMasculine);
-        if (playerName == null) {
-            return titleComponent;
-        }
-        else if (title.isNull()) {
+    public static MutableComponent getFormattedDisplayName(Title title, Player player, TitlesCapability cap) {
+        MutableComponent titleComponent = title.getTextComponent(cap.getGenderSetting());
+        Component playerName = cap.getNickname().isEmpty() ? player.getName() : new TextComponent(cap.getNickname());
+        if (title.isNull()) {
             return playerName.copy();
+        }
+        else if (title.isPrefix()) {
+            return new TextComponent("").append(titleComponent).append(" ").append(playerName.copy());
         }
         else {
             return playerName.copy().append(", ").append(titleComponent);

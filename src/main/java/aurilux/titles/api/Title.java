@@ -2,7 +2,9 @@ package aurilux.titles.api;
 
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -23,6 +25,7 @@ public class Title {
     }
 
     private final AwardType type;
+    private final boolean isPrefix;
     private final ResourceLocation id;
     private final String modid;
     private final String defaultDisplay;
@@ -33,6 +36,7 @@ public class Title {
     // This is private to follow the Builder Pattern. Since the Builder makes the object, it doesn't need to be public
     private Title(Builder builder) {
         type = builder.getType();
+        isPrefix = builder.isPrefix();
         id = builder.getID();
         modid = builder.getModId();
         defaultDisplay = builder.getDefaultDisplay();
@@ -43,6 +47,9 @@ public class Title {
 
     public AwardType getType() {
         return type;
+    }
+    public boolean isPrefix() {
+        return isPrefix;
     }
     public ResourceLocation getID() {
         return id;
@@ -71,7 +78,8 @@ public class Title {
         if (!isMasculine && !StringUtil.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();
         }
-        return new TranslatableComponent(translatable).withStyle(getRarity().color);
+        return new TranslatableComponent(translatable)
+                .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
     }
 
     @Override
@@ -82,6 +90,7 @@ public class Title {
     public JsonObject serialize() {
         JsonObject json = new JsonObject();
         json.addProperty("type", getType().toString().toLowerCase());
+        json.addProperty("isPrefix", isPrefix());
         json.addProperty("id", getID().toString());
         json.addProperty("rarity", getRarity().toString().toLowerCase());
         json.addProperty("defaultDisplay", getDefaultDisplay());
@@ -120,6 +129,7 @@ public class Title {
 
     public static class Builder {
         private AwardType type = AwardType.ADVANCEMENT;
+        private boolean isPrefix = false;
         private Rarity rarity = Rarity.COMMON;
         private ResourceLocation id;
         private String modId;
@@ -139,6 +149,10 @@ public class Title {
                     .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
                     .id(id)
                     .rarity(Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase()));
+
+            if (json.has("isPrefix") && GsonHelper.getAsBoolean(json, "isPrefix")) {
+                builder.setPrefix();
+            }
 
             builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
             if (json.has("variantDisplay")) {
@@ -167,6 +181,15 @@ public class Title {
 
         public AwardType getType() {
             return type;
+        }
+
+        public boolean isPrefix() {
+            return isPrefix;
+        }
+
+        public Builder setPrefix() {
+            isPrefix = true;
+            return this;
         }
 
         public Builder rarity(Rarity r) {
@@ -219,6 +242,7 @@ public class Title {
         }
 
         private void reset() {
+            isPrefix = false;
             defaultDisplay = "Not Set";
             variantDisplay = null;
             flavorText = null;

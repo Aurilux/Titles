@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_minecraft/story/iron_tools",
   "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.story.iron_tools"

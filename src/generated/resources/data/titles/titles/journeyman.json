@@ -1,6 +1,7 @@
 {
   "type": "loot",
+  "isPrefix": true,
   "id": "titles:journeyman",
   "rarity": "uncommon",
-  "defaultDisplay": "the Journeyman"
+  "defaultDisplay": "Journeyman"
 }

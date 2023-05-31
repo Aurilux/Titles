@@ -44,6 +44,11 @@ public class TitlesNetwork {
                 PacketSyncDatapack::decode,
                 PacketSyncDatapack::handle,
                 Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(index++, PacketSyncNickname.class,
+                PacketSyncNickname::encode,
+                PacketSyncNickname::decode,
+                PacketSyncNickname::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
         // To server
 

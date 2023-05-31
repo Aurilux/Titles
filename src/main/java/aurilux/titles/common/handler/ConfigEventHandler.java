@@ -19,7 +19,7 @@ public class ConfigEventHandler {
     public static void onTabListNameFormat(PlayerEvent.TabListNameFormat event) {
         Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap -> {
-            event.setDisplayName(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
+            event.setDisplayName(TitleManager.getFormattedDisplayName(cap.getDisplayTitle(), player, cap));
         });
     }
 

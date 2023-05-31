@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_minecraft/end/elytra",
   "rarity": "uncommon",
   "defaultDisplay": "title.titles.minecraft.end.elytra",

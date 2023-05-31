@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id "java-library"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 // Normally this would be added to the plugins block above, but since ForgeGradle is constantly changing, and the
@@ -45,6 +46,12 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 def repos = new JsonSlurper().parse(file("repos.json"))
 repositories {
     mavenCentral()
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
     flatDir {
         dirs 'libs'
     }
@@ -219,4 +226,11 @@ curseforge {
         addArtifact(apiJar)
         addGameVersion "${minecraft_version}"
     }
+}
+
+modrinth {
+    token = findProperty('modrinth_token') ?: 0
+    projectId = "${modrinth_id}"
+    versionNumber = "${mod_version}"
+    gameVersions = ["${minecraft_version}"]
 }

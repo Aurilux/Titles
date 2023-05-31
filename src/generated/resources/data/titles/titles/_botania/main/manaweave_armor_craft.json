@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_botania/main/manaweave_armor_craft",
   "rarity": "common",
   "defaultDisplay": "title.titles.botania.main.manaweave_armor_craft"

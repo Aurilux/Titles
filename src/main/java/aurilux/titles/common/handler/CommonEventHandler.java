@@ -2,7 +2,6 @@ package aurilux.titles.common.handler;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
-import aurilux.titles.common.core.TitleRegistry;
 import aurilux.titles.common.core.TitlesCapability;
 import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncAllDisplayTitles;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -102,11 +102,11 @@ public class CommonEventHandler {
         return allSelectedTitles;
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
         Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap -> {
-            event.setDisplayname(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
+            event.setDisplayname(TitleManager.getFormattedDisplayName(cap.getDisplayTitle(), player, cap));
         });
     }
 }

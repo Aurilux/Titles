@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_minecraft/story/deflect_arrow",
   "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.story.deflect_arrow",
