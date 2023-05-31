@@ -36,7 +36,7 @@ public class TitleSelectionScreen extends Screen {
     private final Button.OnTooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
         String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
         if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
-            this.renderTooltip(matrixStack,this.minecraft.font.split(new TranslatableComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
+            this.renderTooltip(matrixStack, this.minecraft.font.split(new TranslatableComponent(titleButtonFlavorText), Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
         }
     };
 
@@ -59,22 +59,24 @@ public class TitleSelectionScreen extends Screen {
     protected int buttonTitleRowStart;
     protected int buttonSecondRowStart;
 
+    private final TitlesCapability cap;
     private final List<Button> backButtons = new ArrayList<>();
     private final List<Button> forwardButtons = new ArrayList<>();
     private final List<Button> titleButtons = new ArrayList<>();
 
     protected Player player;
     protected Title temporaryTitle;
+    private boolean temporaryGender;
     protected List<Title> titlesListCache;
     protected List<Title> titlesListFiltered;
-    private boolean gender;
 
     private EditBox search;
 
-    public TitleSelectionScreen(Player player, TitlesCapability cap) {
+    public TitleSelectionScreen(Player player, TitlesCapability capability) {
         super(new TextComponent("Title Selection"));
         this.player = player;
-        gender = cap.getGenderSetting();
+        this.cap = capability;
+        temporaryGender = cap.getGenderSetting();
         temporaryTitle = cap.getDisplayTitle();
 
         titlesListCache = new ArrayList<>(cap.getObtainedTitles());
@@ -126,7 +128,7 @@ public class TitleSelectionScreen extends Screen {
                 Component.nullToEmpty(">>"), button -> setPage(maxPages))));
 
         // Gender button
-        addRenderableWidget(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), gender));
+        addRenderableWidget(new ToggleImageButton(guiLeft + 3, buttonFirstRowStart, 20, buttonHeight, 200, 220, 20, bgTexture, 512, 512, button -> genderToggle((ToggleImageButton) button), temporaryGender));
 
         updateButtons();
     }
@@ -137,7 +139,7 @@ public class TitleSelectionScreen extends Screen {
 
     private void genderToggle(ToggleImageButton button) {
         button.toggle();
-        gender = button.getValue();
+        temporaryGender = button.getValue();
         updateButtons();
     }
 
@@ -152,7 +154,7 @@ public class TitleSelectionScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         // Draw the player's name with their selected title
-        Component titledPlayerName = TitleManager.getFormattedTitle(temporaryTitle, player.getName(), gender);
+        Component titledPlayerName = TitleManager.getFormattedDisplayName(temporaryTitle, player, cap);
         drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
 
         // Draw the page counter
@@ -171,7 +173,7 @@ public class TitleSelectionScreen extends Screen {
         if (update) {
             TitlesNetwork.toServer(new PacketSyncDisplayTitle(player.getUUID(), temporaryTitle.getID()));
         }
-        TitlesNetwork.toServer(new PacketSyncGenderSetting(player.getUUID(), gender));
+        TitlesNetwork.toServer(new PacketSyncGenderSetting(player.getUUID(), temporaryGender));
         onClose();
     }
 
@@ -255,7 +257,7 @@ public class TitleSelectionScreen extends Screen {
                     if (parts.size() < 1) {
                         return true;
                     }
-                    String titleString = TitleManager.getFormattedTitle(t, gender).getString().toLowerCase();
+                    String titleString = t.getTextComponent(temporaryGender).getString().toLowerCase();
                     for (String part : parts) {
                         if (titleString.contains(part)) {
                             return true;
@@ -300,7 +302,7 @@ public class TitleSelectionScreen extends Screen {
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
             Button button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
-                    gender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
+                    temporaryGender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
             titleButtons.add(button);
         }
     }

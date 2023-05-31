@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_botania/challenge/gaia_guardian_no_armor",
   "rarity": "rare",
   "defaultDisplay": "title.titles.botania.challenge.gaia_guardian_no_armor"

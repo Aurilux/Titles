@@ -10,6 +10,10 @@
   // "command": The title can only be unlocked using the "/titles add" command. Good for quest mods or other rewards.
   "type": "loot",
 
+  // Whether the title is rendered before or after the player's name. This boolean value is an optional entry, and if it
+  // doesn't appear in the json, will be assumed to be false.
+  "isPrefix": "false",
+
   // The rarity of the title, matching vanilla's rarity values (common, uncommon, rare). Epic rarity is reserved for
   // contributors and will be defaulted to common if put as a value here.
   // For advancement-unlocked titles, normal advancements should be common, goal should be uncommon, and challenge should be rare.

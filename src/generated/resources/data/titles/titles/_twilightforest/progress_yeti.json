@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_twilightforest/progress_yeti",
   "rarity": "uncommon",
   "defaultDisplay": "title.titles.twilightforest.progress_yeti"

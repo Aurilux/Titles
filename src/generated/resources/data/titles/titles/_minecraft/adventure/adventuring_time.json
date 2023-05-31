@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_minecraft/adventure/adventuring_time",
   "rarity": "rare",
   "defaultDisplay": "title.titles.minecraft.adventure.adventuring_time"

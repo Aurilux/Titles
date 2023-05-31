@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_minecraft/husbandry/fishy_business",
   "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.husbandry.fishy_business"

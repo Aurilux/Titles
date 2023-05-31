@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -34,10 +35,20 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        TitleManager.doIfPresent(event.getOriginal(), oldCap ->
-                TitleManager.doIfPresent(event.getPlayer(), newCap -> newCap.deserializeNBT(oldCap.serializeNBT())));
+        Player original = event.getOriginal();
+        original.reviveCaps();
+
+        TitleManager.doIfPresent(original, oldCap ->
+                TitleManager.doIfPresent(event.getPlayer(), newCap ->
+                    newCap.deserializeNBT(oldCap.serializeNBT())));
+
+        original.invalidateCaps();
     }
 
+    /*
+    Despite initially seeming redundant with PlayerEvent.Clone, packets cannot be sent during that event so must be
+    accompanied by PlayerEvent.PlayerRespawnEvent to properly sync the info
+     */
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         Player player = event.getPlayer();
@@ -54,9 +65,11 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onDataPackSync(OnDatapackSyncEvent event) {
+        // When event is triggered for a player joining the server
         if (event.getPlayer() != null) {
             TitlesNetwork.toPlayer(new PacketSyncDatapack(), event.getPlayer());
         }
+        // When event is triggered for all players, such as doing the reload command
         else {
             for (ServerPlayer player : event.getPlayerList().getPlayers()) {
                 TitlesNetwork.toPlayer(new PacketSyncDatapack(), player);
@@ -89,11 +102,11 @@ public class CommonEventHandler {
         return allSelectedTitles;
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
         Player player = event.getPlayer();
         TitleManager.doIfPresent(player, cap -> {
-            event.setDisplayname(TitleManager.getFormattedTitle(cap.getDisplayTitle(), player));
+            event.setDisplayname(TitleManager.getFormattedDisplayName(cap.getDisplayTitle(), player, cap));
         });
     }
 }

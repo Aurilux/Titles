@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:chicken_chaser",
   "rarity": "common",
   "defaultDisplay": "title.titles.chicken_chaser",

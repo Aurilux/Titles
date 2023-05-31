@@ -1,5 +1,6 @@
 {
   "type": "loot",
+  "isPrefix": false,
   "id": "titles:brute",
   "rarity": "common",
   "defaultDisplay": "the Brute"

@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:frigid",
   "rarity": "common",
   "defaultDisplay": "title.titles.frigid",

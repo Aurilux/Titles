@@ -35,17 +35,27 @@ public final class TitlesConfig {
     // options should be here.
     public static class Common {
         public final ForgeConfigSpec.BooleanValue fragmentLoot;
+        public final ForgeConfigSpec.BooleanValue nickname;
 
         public Common(ForgeConfigSpec.Builder builder) {
             fragmentLoot = builder
                     .comment("Set to false to disable title fragments from generating as loot.")
                     .define("fragmentLoot", true);
+
+            nickname = builder
+                    .comment("Set to false to disable players from setting nicknames.")
+                    .define("nickname", true);
         }
     }
 
     // For server only options. These options will not be available on single-player worlds.
     public static class Server {
+        public final ForgeConfigSpec.BooleanValue showInTablist;
+
         public Server(ForgeConfigSpec.Builder builder) {
+            showInTablist = builder
+                    .comment("Set to false to disable titles from rendering next to player names in the tablist")
+                    .define("showInTablist", true);
         }
     }
 }
