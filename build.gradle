@@ -230,7 +230,8 @@ curseforge {
 
 modrinth {
     token = findProperty('modrinth_token') ?: 0
+    uploadFile = jar
     projectId = "${modrinth_id}"
-    versionNumber = "${mod_version}"
+    versionNumber = archivesBaseName + " " + version;
     gameVersions = ["${minecraft_version}"]
 }
