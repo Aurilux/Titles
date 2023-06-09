@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_minecraft/end/dragon_breath",
   "rarity": "uncommon",
   "defaultDisplay": "title.titles.minecraft.end.dragon_breath",

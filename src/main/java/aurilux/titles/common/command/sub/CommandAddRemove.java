@@ -37,7 +37,7 @@ public class CommandAddRemove {
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
         final MutableComponent[] response = {Component.translatable("commands.titles.addremove.fail")};
         TitleManager.doIfPresent(player, cap -> {
-            Component formattedTitle = TitleManager.getFormattedTitle(title, cap.getGenderSetting());
+            Component formattedTitle = title.getTextComponent(cap.getGenderSetting());
             if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
                 return;
             }

@@ -1,5 +1,6 @@
 {
   "type": "loot",
+  "isPrefix": false,
   "id": "titles:reaper",
   "rarity": "rare",
   "defaultDisplay": "the Reaper",

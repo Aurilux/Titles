@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_immersiveengineering/main/place_floodlight",
   "rarity": "common",
   "defaultDisplay": "title.titles.immersiveengineering.main.place_floodlight"

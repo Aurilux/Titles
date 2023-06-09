@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:_minecraft/nether/explore_nether",
   "rarity": "rare",
   "defaultDisplay": "title.titles.minecraft.nether.explore_nether"

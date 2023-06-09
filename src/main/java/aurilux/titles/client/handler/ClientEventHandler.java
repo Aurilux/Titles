@@ -64,7 +64,7 @@ public class ClientEventHandler {
                     Player clientPlayer = Minecraft.getInstance().player;
                     if (!unlockedTitle.isNull() && clientPlayer != null) {
                         TitleManager.doIfPresent(clientPlayer, cap -> {
-                            MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
+                            MutableComponent formattedTitle = unlockedTitle.getTextComponent(cap.getGenderSetting());
                             if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
                                 formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
                             }
@@ -102,8 +102,7 @@ public class ClientEventHandler {
         // Get a list of all mod id's, removing those that shouldn't have title data.
         List<String> modList = ModList.get().getMods().stream()
                 .map(IModInfo::getModId)
-                .filter(id -> !(id.equals("forge") || id.equals("FML") || id.equals("mcp")))
-                .collect(Collectors.toList());
+                .filter(id -> !(id.equals("forge") || id.equals("FML") || id.equals("mcp"))).toList();
 
         // See if one of the parts is a mod id.
         String possibleModId = "";

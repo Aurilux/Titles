@@ -3,6 +3,7 @@ package aurilux.titles.api;
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -23,6 +24,7 @@ public class Title {
     }
 
     private final AwardType type;
+    private final boolean isPrefix;
     private final ResourceLocation id;
     private final String modid;
     private final String defaultDisplay;
@@ -30,8 +32,10 @@ public class Title {
     private final String flavorText;
     private final Rarity rarity;
 
-    public Title(Builder builder) {
+    // This is private to follow the Builder Pattern. Since the Builder makes the object, it doesn't need to be public
+    private Title(Builder builder) {
         type = builder.getType();
+        isPrefix = builder.isPrefix();
         id = builder.getID();
         modid = builder.getModId();
         defaultDisplay = builder.getDefaultDisplay();
@@ -42,6 +46,9 @@ public class Title {
 
     public AwardType getType() {
         return type;
+    }
+    public boolean isPrefix() {
+        return isPrefix;
     }
     public ResourceLocation getID() {
         return id;
@@ -70,7 +77,8 @@ public class Title {
         if (!isMasculine && !StringUtil.isNullOrEmpty(getVariantDisplay())) {
             translatable = getVariantDisplay();
         }
-        return Component.translatable(translatable).withStyle(getRarity().getStyleModifier());
+        return Component.translatable(translatable)
+                .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
     }
 
     @Override
@@ -81,6 +89,7 @@ public class Title {
     public JsonObject serialize() {
         JsonObject json = new JsonObject();
         json.addProperty("type", getType().toString().toLowerCase());
+        json.addProperty("isPrefix", isPrefix());
         json.addProperty("id", getID().toString());
         json.addProperty("rarity", getRarity().toString().toLowerCase());
         json.addProperty("defaultDisplay", getDefaultDisplay());
@@ -91,24 +100,6 @@ public class Title {
             json.addProperty("flavorText", getFlavorText());
         }
         return json;
-    }
-
-    public static Title deserialize(JsonObject json) {
-        ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
-        Title.Builder builder = Builder.create(id.getNamespace())
-                .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
-                .id(id)
-                .rarity(Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase()));
-
-        builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
-        if (json.has("variantDisplay")) {
-            builder.variantDisplay(GsonHelper.getAsString(json, "variantDisplay"));
-        }
-        if (json.has("flavorText")) {
-            builder.flavorText(GsonHelper.getAsString(json, "flavorText"));
-        }
-
-        return new Title(builder);
     }
 
     @Override
@@ -137,18 +128,40 @@ public class Title {
 
     public static class Builder {
         private AwardType type = AwardType.ADVANCEMENT;
+        private boolean isPrefix = false;
         private Rarity rarity = Rarity.COMMON;
         private ResourceLocation id;
         private String modId;
-        private String defaultDisplay;
+        private String defaultDisplay = "Not Set";
         private String variantDisplay;
         private String flavorText;
-        private Consumer<Title> buildValidator;
 
         private Builder() {}
 
         public static Builder create(String modId) {
             return new Builder().modId(modId);
+        }
+
+        public static Builder deserialize(JsonObject json) {
+            ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
+            Title.Builder builder = Builder.create(id.getNamespace())
+                    .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
+                    .id(id)
+                    .rarity(Rarity.valueOf(GsonHelper.getAsString(json, "rarity").toUpperCase()));
+
+            if (json.has("isPrefix") && GsonHelper.getAsBoolean(json, "isPrefix")) {
+                builder.setPrefix();
+            }
+
+            builder.defaultDisplay(GsonHelper.getAsString(json, "defaultDisplay"));
+            if (json.has("variantDisplay")) {
+                builder.variantDisplay(GsonHelper.getAsString(json, "variantDisplay"));
+            }
+            if (json.has("flavorText")) {
+                builder.flavorText(GsonHelper.getAsString(json, "flavorText"));
+            }
+
+            return builder;
         }
 
         public Builder modId(String m) {
@@ -169,6 +182,15 @@ public class Title {
             return type;
         }
 
+        public boolean isPrefix() {
+            return isPrefix;
+        }
+
+        public Builder setPrefix() {
+            isPrefix = true;
+            return this;
+        }
+
         public Builder rarity(Rarity r) {
             rarity = r;
             return this;
@@ -176,32 +198,6 @@ public class Title {
 
         public Rarity getRarity() {
             return rarity;
-        }
-
-        public Title genWithName(String n) {
-            return genWithName(n, false, false);
-        }
-
-        public Title genWithName(String name, boolean variant, boolean flavor) {
-            id(new ResourceLocation(modId, name))
-                    .defaultDisplay(String.format("title.%s.%s", modId, convertToLang(name)));
-
-            if (variant) {
-                variantDisplay(getDefaultDisplay() + ".variant");
-            }
-
-            if (flavor) {
-                flavorText(getDefaultDisplay() + ".flavor");
-            }
-            return this.build();
-        }
-
-        private String convertToLang(String name) {
-            String conversion = name;
-            if (conversion.startsWith("_")) {
-                conversion = conversion.substring(1);
-            }
-            return conversion.replaceAll("[/:]", ".");
         }
 
         public Builder id(String s) {
@@ -244,25 +240,22 @@ public class Title {
             return flavorText;
         }
 
-        public Builder withBuildValidator(Consumer<Title> consumer) {
-            buildValidator = consumer;
-            return this;
-        }
-
         private void reset() {
-            defaultDisplay = null;
+            isPrefix = false;
+            defaultDisplay = "Not Set";
             variantDisplay = null;
             flavorText = null;
         }
 
+        // Used in data generation
+        public Title save(Consumer<Title> consumer) {
+            Title title = build();
+            consumer.accept(title);
+            return title;
+        }
+
         public Title build() {
-            if (getID() == null || getType() == null || getRarity() == null || getDefaultDisplay() == null) {
-                throw new IllegalArgumentException("Missing one or more mandatory values while building a title (Either id, type, rarity, or default display)!");
-            }
             Title title = new Title(this);
-            if (buildValidator != null) {
-                buildValidator.accept(title);
-            }
             reset();
             return title;
         }

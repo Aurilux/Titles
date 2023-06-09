@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:melon_lord",
   "rarity": "common",
   "defaultDisplay": "title.titles.melon_lord",

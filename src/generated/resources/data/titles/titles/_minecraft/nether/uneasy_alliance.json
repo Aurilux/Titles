@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": false,
   "id": "titles:_minecraft/nether/uneasy_alliance",
   "rarity": "rare",
   "defaultDisplay": "title.titles.minecraft.nether.uneasy_alliance"

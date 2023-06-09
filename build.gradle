@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id "java-library"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 // Normally this would be added to the plugins block above, but since ForgeGradle is constantly changing, and the
@@ -44,17 +45,39 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 // Load in the repositories for mods useful in the dev process. To add or remove mods, just update the repos.json file.
 def repos = new JsonSlurper().parse(file("repos.json"))
 repositories {
+    mavenCentral()
     maven {
-        name = "JEI"
-        url "https://dvs1.progwml6.com/files/maven/"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    flatDir {
+        dirs 'libs'
+    }
+    repos.each { n, u ->
+        maven {
+            name = n
+            url = u.url
+        }
     }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-1.19.2-common-api:11.2.0.247")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:11.2.0.247")
+    //compile fg.deobf("vazkii.botania:botania:1.16.5-420.2")
+    //compile fg.deobf("blusunrize.immersiveengineering:immersiveengineering:1.16.5-5.1.0-148")
+    //compile fg.deobf("slimeknights.tconstruct:tconstruct:1.16.5-3.3.4.335")
+    //compile fg.deobf("twilightforest:twilightforest:1.16.5-4.0.870:universal")
+    //compile fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.8.2")
+    //compile fg.deobf("slimeknights.mantle:mantle:1.16.5-1.6.157")
+    //compile fg.deobf("vazkii.patchouli:patchouli:1.16.4-53.3")
+
+    repos.each { n, l ->
+        compileOnly fg.deobf(l.lib + ":api")
+        runtimeOnly fg.deobf(l.lib)
+    }
 }
 
 minecraft {
@@ -203,4 +226,15 @@ curseforge {
         addArtifact(apiJar)
         addGameVersion "${minecraft_version}"
     }
+}
+
+modrinth {
+    token = findProperty('modrinth_token') ?: 0
+    projectId = "${modrinth_id}"
+    versionName = "${archivesBaseName} ${version}";
+    versionNumber = version
+    uploadFile = jar
+    changelog = file('changelog.txt').text
+    additionalFiles = [srcJar, apiJar]
+    gameVersions = ["${minecraft_version}"]
 }

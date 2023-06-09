@@ -1,5 +1,6 @@
 {
   "type": "advancement",
+  "isPrefix": true,
   "id": "titles:pincushion",
   "rarity": "uncommon",
   "defaultDisplay": "title.titles.pincushion"

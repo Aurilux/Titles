@@ -9,8 +9,10 @@ import aurilux.titles.common.data.LangGenerator;
 import aurilux.titles.common.data.TitlesGenerator;
 import aurilux.titles.common.handler.LootHandler;
 import aurilux.titles.common.init.ModArgumentTypes;
+import aurilux.titles.common.handler.ConfigEventHandler;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
+import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -63,51 +65,26 @@ public class TitlesMod {
         forgeBus.addListener(TitleRegistry::register);
         forgeBus.addListener(this::registerCommands);
 
-        forgeBus.addListener(this::onClientReceivedChat);
+        addConfigHandlers(modBus, forgeBus);
     }
 
-    public void onClientReceivedChat(ClientChatReceivedEvent event) {
-        MutableComponent component = event.getMessage().plainCopy();
-        TitlesMod.LOG.info("[ClientEventHandler] How different does this look? {}", component.toString());
-        /*
-        if (component instanceof TranslatableComponent textComponent) {
-            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
-                // I wish there was a more flexible, elegant way to identify the correct sub-components
-                Component targetPlayerName = ((Component) textComponent.getArgs()[0]).getSiblings().get(0);
-                Component componentArg = (Component) ((TranslatableComponent) textComponent.getArgs()[1])
-                        .getArgs()[0];
-                // We have to check if it's the correct type of text component because some advancements use plain text
-                // instead of a translatable entry.
-                if (componentArg instanceof TranslatableComponent) {
-                    Title unlockedTitle = processKey(((TranslatableComponent) componentArg).getKey());
-                    Player clientPlayer = Minecraft.getInstance().player;
-                    if (!unlockedTitle.isNull() && clientPlayer != null) {
-                        TitleManager.doIfPresent(clientPlayer, cap -> {
-                            MutableComponent formattedTitle = TitleManager.getFormattedTitle(unlockedTitle, cap.getGenderSetting());
-                            if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
-                                formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
-                            }
-                            component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
-                            event.setMessage(component);
-                        });
-                    }
-                }
-            }
+    private void addConfigHandlers(IEventBus modBus, IEventBus forgeBus) {
+        // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
+        //  stronghold_corridor, etc), so this is still necessary until they change it.
+        if (TitlesConfig.COMMON.fragmentLoot.get()) {
+            forgeBus.addListener(ConfigEventHandler::addLoot);
+            forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
         }
-         */
+
+        if (TitlesConfig.SERVER.showInTablist.get()) {
+            forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
+        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        ArgumentTypes.register("titles:title", TitleArgument.class, new TitleArgumentSerializer());
         TitlesNetwork.init();
         TitleRegistry.get().loadContributors();
-
-        // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
-        //  stronghold_corridor, etc), so this is still necessary until they change it.
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        if (TitlesConfig.COMMON.fragmentLoot.get()) {
-            forgeBus.addListener(LootHandler::addLoot);
-            forgeBus.addListener(LootHandler::onVillagerTrades);
-        }
     }
 
     private void clientSetup(FMLClientSetupEvent event) {

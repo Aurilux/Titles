@@ -26,7 +26,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID)
-public class AdvancementHandler {
+public class AdvancementEventHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         Advancement advancement = event.getAdvancement();

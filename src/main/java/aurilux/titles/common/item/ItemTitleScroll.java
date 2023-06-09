@@ -31,13 +31,12 @@ public class ItemTitleScroll extends Item {
         AtomicBoolean unlockedTitle = new AtomicBoolean(false);
         TitleManager.doIfPresent(serverPlayer, cap -> {
             List<Title> possibleLoot = TitleManager.getTitlesOfType(Title.AwardType.LOOT).values().stream()
-                    .filter(t -> t.getRarity().equals(this.getRarity(itemStack)) && !cap.getObtainedTitles().contains(t))
-                    .collect(Collectors.toList());
+                    .filter(t -> t.getRarity().equals(this.getRarity(itemStack)) && !cap.getObtainedTitles().contains(t)).toList();
             if (possibleLoot.size() > 0) {
                 Title newTitle = possibleLoot.get(world.random.nextInt(possibleLoot.size()));
-                TitleManager.unlockTitle(serverPlayer, newTitle.getID());
+                TitleManager.unlockTitle((ServerPlayer) player, newTitle.getID());
                 serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.success",
-                        TitleManager.getFormattedTitle(newTitle, cap.getGenderSetting())));
+                        newTitle.getTextComponent(cap.getGenderSetting())), player.getUUID());
                 itemStack.setCount(0);
                 unlockedTitle.set(true);
             }

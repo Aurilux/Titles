@@ -15,7 +15,7 @@ public class TitleButton extends SimpleButtonOverride {
     private final Title title;
 
     public TitleButton(int x, int y, int width, int height, Title t, boolean isMasculine, OnPress action, OnTooltip tooltip) {
-        super(x, y, width, height, TitleManager.getFormattedTitle(t, isMasculine), action, tooltip);
+        super(x, y, width, height, t.getTextComponent(isMasculine), action, tooltip);
         title = t;
     }
 

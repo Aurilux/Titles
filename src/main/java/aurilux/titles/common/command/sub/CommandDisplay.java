@@ -32,7 +32,7 @@ public class CommandDisplay {
                 TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUUID(), title.getID()));
 
                 MutableComponent feedback = Component.translatable("commands.display.success",
-                        TitleManager.getFormattedTitle(title, player));
+                        title.getTextComponent(cap.getGenderSetting()));
                 ctx.getSource().sendSuccess(feedback, true);
             });
         }
