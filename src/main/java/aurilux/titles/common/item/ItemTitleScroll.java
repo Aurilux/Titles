@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class ItemTitleScroll extends Item {
     public ItemTitleScroll(Item.Properties props) {
@@ -36,7 +35,7 @@ public class ItemTitleScroll extends Item {
                 Title newTitle = possibleLoot.get(world.random.nextInt(possibleLoot.size()));
                 TitleManager.unlockTitle((ServerPlayer) player, newTitle.getID());
                 serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.success",
-                        newTitle.getTextComponent(cap.getGenderSetting())), player.getUUID());
+                        newTitle.getTextComponent(cap.getGenderSetting())), true);
                 itemStack.setCount(0);
                 unlockedTitle.set(true);
             }

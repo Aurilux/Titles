@@ -7,19 +7,14 @@ import aurilux.titles.common.core.TitlesConfig;
 import aurilux.titles.common.data.ItemModelGenerator;
 import aurilux.titles.common.data.LangGenerator;
 import aurilux.titles.common.data.TitlesGenerator;
-import aurilux.titles.common.handler.LootHandler;
-import aurilux.titles.common.init.ModArgumentTypes;
 import aurilux.titles.common.handler.ConfigEventHandler;
+import aurilux.titles.common.init.ModArgumentTypes;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -65,12 +60,12 @@ public class TitlesMod {
         forgeBus.addListener(TitleRegistry::register);
         forgeBus.addListener(this::registerCommands);
 
-        addConfigHandlers(modBus, forgeBus);
     }
 
-    private void addConfigHandlers(IEventBus modBus, IEventBus forgeBus) {
+    private void addConfigHandlers() {
         // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
         //  stronghold_corridor, etc), so this is still necessary until they change it.
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         if (TitlesConfig.COMMON.fragmentLoot.get()) {
             forgeBus.addListener(ConfigEventHandler::addLoot);
             forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
@@ -82,9 +77,9 @@ public class TitlesMod {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        ArgumentTypes.register("titles:title", TitleArgument.class, new TitleArgumentSerializer());
         TitlesNetwork.init();
         TitleRegistry.get().loadContributors();
+        addConfigHandlers();
     }
 
     private void clientSetup(FMLClientSetupEvent event) {

@@ -74,7 +74,7 @@ public class TitleSelectionScreen extends Screen {
     public TitleSelectionScreen(Player player, TitlesCapability cap) {
         super(Component.literal("Title Selection"));
         this.player = player;
-        this.cap = capability;
+        this.cap = cap;
         temporaryGender = cap.getGenderSetting();
         temporaryTitle = cap.getDisplayTitle();
 

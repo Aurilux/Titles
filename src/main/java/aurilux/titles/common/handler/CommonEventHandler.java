@@ -14,7 +14,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,7 +39,7 @@ public class CommonEventHandler {
         original.reviveCaps();
 
         TitleManager.doIfPresent(original, oldCap ->
-                TitleManager.doIfPresent(event.getPlayer(), newCap ->
+                TitleManager.doIfPresent(event.getEntity(), newCap ->
                     newCap.deserializeNBT(oldCap.serializeNBT())));
 
         original.invalidateCaps();

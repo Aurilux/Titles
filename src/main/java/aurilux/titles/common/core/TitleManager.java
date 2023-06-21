@@ -5,7 +5,6 @@ import aurilux.titles.common.network.TitlesNetwork;
 import aurilux.titles.common.network.messages.PacketSyncUnlockedTitle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -69,12 +68,12 @@ public class TitleManager {
 
     public static MutableComponent getFormattedDisplayName(Title title, Player player, TitlesCapability cap) {
         MutableComponent titleComponent = title.getTextComponent(cap.getGenderSetting());
-        Component playerName = cap.getNickname().isEmpty() ? player.getName() : new TextComponent(cap.getNickname());
+        Component playerName = cap.getNickname().isEmpty() ? player.getName() : Component.literal(cap.getNickname());
         if (title.isNull()) {
             return playerName.copy();
         }
         else if (title.isPrefix()) {
-            return new TextComponent("").append(titleComponent).append(" ").append(playerName.copy());
+            return Component.literal("").append(titleComponent).append(" ").append(playerName.copy());
         }
         else {
             return playerName.copy().append(", ").append(titleComponent);

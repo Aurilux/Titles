@@ -17,7 +17,7 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 
 public class ConfigEventHandler {
     public static void onTabListNameFormat(PlayerEvent.TabListNameFormat event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap -> {
             event.setDisplayName(TitleManager.getFormattedDisplayName(cap.getDisplayTitle(), player, cap));
         });

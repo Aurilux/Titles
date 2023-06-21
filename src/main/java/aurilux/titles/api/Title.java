@@ -2,8 +2,8 @@ package aurilux.titles.api;
 
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
-import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;

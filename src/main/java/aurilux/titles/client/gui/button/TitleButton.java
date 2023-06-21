@@ -1,7 +1,6 @@
 package aurilux.titles.client.gui.button;
 
 import aurilux.titles.api.Title;
-import aurilux.titles.common.core.TitleManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Style;

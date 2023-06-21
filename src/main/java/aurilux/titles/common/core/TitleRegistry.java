@@ -8,7 +8,6 @@ import net.minecraft.DefaultUncaughtExceptionHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.api.distmarker.Dist;
