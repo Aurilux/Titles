@@ -153,7 +153,7 @@ public class TitleSelectionScreen extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
         // Draw the player's name with their selected title
-        Component titledPlayerName = TitleManager.getFormattedDisplayName(temporaryTitle, player, cap);
+        Component titledPlayerName = TitleManager.getFormattedDisplayName(temporaryTitle, player, cap, temporaryGender);
         drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
 
         // Draw the page counter

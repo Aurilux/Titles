@@ -77,6 +77,7 @@ public class TitlesGenerator extends TitleProvider {
         subfolder = "_minecraft/husbandry/";
         genWithName(builder, subfolder + "breed_an_animal").setPrefix().save(consumer);
         genWithName(builder, subfolder + "fishy_business").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "make_a_sign_glow").setPrefix().save(consumer);
 
         builder.rarity(Rarity.RARE);
         genWithName(builder, subfolder + "bred_all_animals").setPrefix().save(consumer);
@@ -87,9 +88,13 @@ public class TitlesGenerator extends TitleProvider {
         builder.rarity(Rarity.COMMON);
         subfolder = "_minecraft/adventure/";
         genWithName(builder, subfolder + "kill_a_mob", true, false).setPrefix().save(consumer);
+        genWithName(builder, subfolder + "spyglass_at_parrot").save(consumer);
         genWithName(builder, subfolder + "trade").setPrefix().save(consumer);
         genWithName(builder, subfolder + "shoot_arrow").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "lightning_rod_with_villager_no_fire").save(consumer);
         genWithName(builder, subfolder + "fall_from_world_height").save(consumer);
+        genWithName(builder, subfolder + "walk_on_powder_snow_with_leather_boots").save(consumer);
+        genWithName(builder, subfolder + "spyglass_at_dragon").save(consumer);
 
         builder.rarity(Rarity.UNCOMMON);
         genWithName(builder, subfolder + "totem_of_undying").save(consumer);
@@ -161,6 +166,7 @@ public class TitlesGenerator extends TitleProvider {
         genWithName(builder, subfolder + "gaia_guardian_no_armor").save(consumer);
         genWithName(builder, subfolder + "alf_portal_bread", false, true).save(consumer);
         genWithName(builder, subfolder + "super_corporea_request").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "rank_ss_pick").setPrefix().save(consumer);
         genWithName(builder, subfolder + "pinkinator").save(consumer);
         genWithName(builder, subfolder + "king_key").save(consumer);
     }
@@ -171,8 +177,9 @@ public class TitlesGenerator extends TitleProvider {
 
         String subfolder = "_immersiveengineering/main/";
         genWithName(builder, subfolder + "connect_wire").save(consumer);
+        genWithName(builder, subfolder + "craft_workbench").setPrefix().save(consumer);
         genWithName(builder, subfolder + "place_windmill").save(consumer);
-        genWithName(builder, subfolder + "place_floodlight").save(consumer);
+        genWithName(builder, subfolder + "mb_fermenter").save(consumer);
 
         builder.rarity(Rarity.RARE);
         genWithName(builder, subfolder + "secret_luckofthedraw").setPrefix().save(consumer);
@@ -187,17 +194,16 @@ public class TitlesGenerator extends TitleProvider {
 
         String subfolder = "_twilightforest/";
         genWithName(builder, subfolder + "quest_ram").save(consumer);
-        genWithName(builder, subfolder + "progress_troll").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "troll").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "giants").setPrefix().save(consumer);
 
         builder.rarity(Rarity.UNCOMMON);
-        genWithName(builder, subfolder + "progress_naga").setPrefix().save(consumer);
-        genWithName(builder, subfolder + "progress_lich").setPrefix().save(consumer);
-        genWithName(builder, subfolder + "progress_yeti").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "kill_naga").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "kill_lich").setPrefix().save(consumer);
         genWithName(builder, subfolder + "progress_glacier").setPrefix().save(consumer);
-        genWithName(builder, subfolder + "progress_knight").setPrefix().save(consumer);
-        genWithName(builder, subfolder + "progress_ur_ghast").setPrefix().save(consumer);
 
         builder.rarity(Rarity.RARE);
+        genWithName(builder, subfolder + "full_mettle_alchemist").save(consumer);
         genWithName(builder, subfolder + "mazebreaker").setPrefix().save(consumer);
         genWithName(builder, subfolder + "fiery_set").save(consumer);
     }

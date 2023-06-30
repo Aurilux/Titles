@@ -3,7 +3,6 @@ package aurilux.titles.api;
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -27,10 +26,12 @@ public class Title {
     private final boolean isPrefix;
     private final ResourceLocation id;
     private final String modid;
-    private final String defaultDisplay;
-    private final String variantDisplay;
-    private final String flavorText;
     private final Rarity rarity;
+    private final String defaultDisplay;
+    private final MutableComponent defaultComponent;
+    private final String variantDisplay;
+    private final MutableComponent variantComponent;
+    private final String flavorText;
 
     // This is private to follow the Builder Pattern. Since the Builder makes the object, it doesn't need to be public
     private Title(Builder builder) {
@@ -38,10 +39,17 @@ public class Title {
         isPrefix = builder.isPrefix();
         id = builder.getID();
         modid = builder.getModId();
-        defaultDisplay = builder.getDefaultDisplay();
-        variantDisplay = builder.getVariantDisplay();
-        flavorText = builder.getFlavorText();
         rarity = builder.getRarity();
+        defaultDisplay = builder.getDefaultDisplay();
+        defaultComponent = createComponent(defaultDisplay);
+        variantDisplay = builder.getVariantDisplay();
+        variantComponent = !StringUtil.isNullOrEmpty(variantDisplay) ? createComponent(variantDisplay) : null;
+        flavorText = builder.getFlavorText();
+    }
+
+    private MutableComponent createComponent(String lang) {
+        return new TranslatableComponent(lang)
+                .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
     }
 
     public AwardType getType() {
@@ -56,29 +64,29 @@ public class Title {
     public String getModid() {
         return modid;
     }
+    public Rarity getRarity() {
+        return rarity;
+    }
+    public String getFlavorText() {
+        return flavorText;
+    }
+    public boolean isNull() {
+        return this.equals(NULL_TITLE);
+    }
     public String getDefaultDisplay() {
         return defaultDisplay;
     }
     public String getVariantDisplay() {
         return variantDisplay;
     }
-    public String getFlavorText() {
-        return flavorText;
-    }
-    public Rarity getRarity() {
-        return rarity;
-    }
-    public boolean isNull() {
-        return this.equals(NULL_TITLE);
-    }
 
     public MutableComponent getTextComponent(boolean isMasculine) {
-        String translatable = getDefaultDisplay();
-        if (!isMasculine && !StringUtil.isNullOrEmpty(getVariantDisplay())) {
-            translatable = getVariantDisplay();
+        if (!isMasculine && variantComponent != null) {
+            return variantComponent;
         }
-        return Component.translatable(translatable)
-                .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
+        else {
+            return defaultComponent;
+        }
     }
 
     @Override
@@ -173,6 +181,15 @@ public class Title {
             return modId;
         }
 
+        public Builder rarity(Rarity r) {
+            rarity = r;
+            return this;
+        }
+
+        public Rarity getRarity() {
+            return rarity;
+        }
+
         public Builder type(AwardType t) {
             type = t;
             return this;
@@ -189,15 +206,6 @@ public class Title {
         public Builder setPrefix() {
             isPrefix = true;
             return this;
-        }
-
-        public Builder rarity(Rarity r) {
-            rarity = r;
-            return this;
-        }
-
-        public Rarity getRarity() {
-            return rarity;
         }
 
         public Builder id(String s) {

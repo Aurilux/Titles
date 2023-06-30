@@ -67,7 +67,12 @@ public class TitleManager {
     }
 
     public static MutableComponent getFormattedDisplayName(Title title, Player player, TitlesCapability cap) {
-        MutableComponent titleComponent = title.getTextComponent(cap.getGenderSetting());
+        return getFormattedDisplayName(title, player, cap, cap.getGenderSetting());
+    }
+
+    // Just used in the TitleSelectionScreen to get the display name for when the gender setting is changed
+    public static MutableComponent getFormattedDisplayName(Title title, Player player, TitlesCapability cap, boolean genderSetting) {
+        MutableComponent titleComponent = title.getTextComponent(genderSetting);
         Component playerName = cap.getNickname().isEmpty() ? player.getName() : Component.literal(cap.getNickname());
         if (title.isNull()) {
             return playerName.copy();

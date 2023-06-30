@@ -82,15 +82,14 @@ public class LangGenerator extends LanguageProvider {
     private void TFTemplateTitles(String keyPath) {
         String twilightKeyPath = keyPath + "twilightforest.";
         add(twilightKeyPath + "quest_ram", "the Multicolored");
-        add(twilightKeyPath + "progress_troll", "Troll Slayer");
+        add(twilightKeyPath + "troll", "Troll Slayer");
+        add(twilightKeyPath + "giants", "Giant Slayer");
 
-        add(twilightKeyPath + "progress_naga", "Naga Slayer");
-        add(twilightKeyPath + "progress_lich", "Lich Slayer");
-        add(twilightKeyPath + "progress_yeti", "Yeti Slayer");
+        add(twilightKeyPath + "kill_naga", "Naga Slayer");
+        add(twilightKeyPath + "kill_lich", "Lich Slayer");
         addTitle(twilightKeyPath + "progress_glacier", "Queen Slayer", "", "Jaime Lannister would be proud.");
-        add(twilightKeyPath + "progress_knight", "Knight Slayer");
-        add(twilightKeyPath + "progress_ur_ghast", "Ur-Ghast Slayer");
 
+        add(twilightKeyPath + "full_mettle_alchemist", "the Resilient");
         add(twilightKeyPath + "mazebreaker", "Vault Breaker");
         add(twilightKeyPath + "fiery_set", "the Flame-forged");
     }
@@ -98,12 +97,13 @@ public class LangGenerator extends LanguageProvider {
     private void IETemplateTitles(String keyPath) {
         String immersiveKeyPath = keyPath + "immersiveengineering.main.";
         add(immersiveKeyPath + "connect_wire", "the Live Wire");
-        add(immersiveKeyPath + "place_windmill", "the Tilted");
-        add(immersiveKeyPath + "place_floodlight", "the Illuminated");
+        add(immersiveKeyPath + "craft_workbench", "Tinkerer");
+        addTitle(immersiveKeyPath + "place_windmill", "the Tilted", "", "Perhaps to be too practical is madness.");
+        add(immersiveKeyPath + "mb_fermenter", "the Bootlegger");
 
         add(immersiveKeyPath + "secret_luckofthedraw", "Gambler");
         add(immersiveKeyPath + "secret_birthdayparty", "Party Popper");
-        addTitle(immersiveKeyPath + "secret_drillbreak", "the Heaven-piercer", "", "Let me see you grit those teeth!");
+        addTitle(immersiveKeyPath + "secret_drillbreak", "the Heaven Piercer", "", "Let me see you grit those teeth!");
         add(immersiveKeyPath + "mb_excavator", "Quarrier");
     }
 
@@ -116,7 +116,7 @@ public class LangGenerator extends LanguageProvider {
         add(botaniaKeyPath + "pollidisiac_pickup", "Matchmaker");
         add(botaniaKeyPath + "manaweave_armor_craft", "Manaweaver");
         add(botaniaKeyPath + "spark_craft", "the Sparkling");
-        add(botaniaKeyPath + "alf_portal_open", "the Midgardian Trader");
+        add(botaniaKeyPath + "elf_portal_open", "the Midgardian Trader");
         add(botaniaKeyPath + "heisei_dream_pickup", "the Maddening");
         addTitle(botaniaKeyPath + "dandelifeon_pickup", "Wheel Spinner", "", "Collect beaucoup bucks!");
         add(botaniaKeyPath + "luminizer_ride", "Light Treader");
@@ -126,6 +126,7 @@ public class LangGenerator extends LanguageProvider {
         add(botaniaKeyPath + "gaia_guardian_no_armor", "the Exhibitionist");
         addTitle(botaniaKeyPath + "alf_portal_bread", "the Midgardian Baker", "", "WHAT IS YOUR PROFESSION?!");
         add(botaniaKeyPath + "super_corporea_request", "Stockpiler");
+        add(botaniaKeyPath + "rank_ss_pick", "World Breaker");
         add(botaniaKeyPath + "pinkinator", "the Rosy");
         add(botaniaKeyPath + "king_key", "the Babylonian");
     }
@@ -142,6 +143,7 @@ public class LangGenerator extends LanguageProvider {
         minecraftKeyPath = keyPath + "minecraft.husbandry.";
         add(minecraftKeyPath + "breed_an_animal", "Rancher");
         add(minecraftKeyPath + "fishy_business", "Fisherman");
+        add(minecraftKeyPath + "make_a_sign_glow", "the Glowing");
         add(minecraftKeyPath + "bred_all_animals", "Shepherd");
         add(minecraftKeyPath + "complete_catalogue", "the Ailurophile");
         add(minecraftKeyPath + "balanced_diet", "the Epicure");
@@ -149,9 +151,11 @@ public class LangGenerator extends LanguageProvider {
 
         minecraftKeyPath = keyPath + "minecraft.adventure.";
         addTitle(minecraftKeyPath + "kill_a_mob", "Huntsman", "Huntress", "");
+        add(minecraftKeyPath + "spyglass_at_parrot", "the Onlooker");
         add(minecraftKeyPath + "trade", "Haggler");
         add(minecraftKeyPath + "shoot_arrow", "Bowman");
         add(minecraftKeyPath + "fall_from_world_height", "the Base Jumper");
+        add(minecraftKeyPath + "lightning_rod_with_villager_no_fire", "the Shocking");
         add(minecraftKeyPath + "kill_all_mobs", "Predator");
         add(minecraftKeyPath + "totem_of_undying", "the Deathless");
         add(minecraftKeyPath + "summon_iron_golem", "the Samaritan");
@@ -159,6 +163,9 @@ public class LangGenerator extends LanguageProvider {
         add(minecraftKeyPath + "arbalistic", "the Patient");
         add(minecraftKeyPath + "adventuring_time", "the Globetrotter");
         add(minecraftKeyPath + "hero_of_the_village", "Defender");
+        add(minecraftKeyPath + "spyglass_at_ghast", "the Watcher");
+        add(minecraftKeyPath + "walk_on_powder_snow_with_leather_boots", "the Light-footed");
+        add(minecraftKeyPath + "spyglass_at_dragon", "the Beholder");
         add(minecraftKeyPath + "sniper_duel", "Marksman");
         add(minecraftKeyPath + "bullseye", "the Unerring");
 
