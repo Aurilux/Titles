@@ -4,17 +4,18 @@ import aurilux.titles.client.Keybinds;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.init.ModItems;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.util.StringUtil;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class LangGenerator extends LanguageProvider {
-    public LangGenerator(DataGenerator gen) {
-        super(gen, TitlesMod.MOD_ID, "en_us");
+    public LangGenerator(PackOutput packOutput) {
+        super(packOutput, TitlesMod.MOD_ID, "en_us");
     }
 
     @Override
     protected void addTranslations() {
-        String keyPath = "";
+        var keyPath = "";
         // Chat
         add("chat.advancement.append", " and earned the title [%s]");
         add("chat.scroll.success", "The scroll reveals a the new title [%s]");
@@ -80,7 +81,7 @@ public class LangGenerator extends LanguageProvider {
     }
 
     private void TFTemplateTitles(String keyPath) {
-        String twilightKeyPath = keyPath + "twilightforest.";
+        var twilightKeyPath = keyPath + "twilightforest.";
         add(twilightKeyPath + "quest_ram", "the Multicolored");
         add(twilightKeyPath + "troll", "Troll Slayer");
         add(twilightKeyPath + "giants", "Giant Slayer");
@@ -95,7 +96,7 @@ public class LangGenerator extends LanguageProvider {
     }
 
     private void IETemplateTitles(String keyPath) {
-        String immersiveKeyPath = keyPath + "immersiveengineering.main.";
+        var immersiveKeyPath = keyPath + "immersiveengineering.main.";
         add(immersiveKeyPath + "connect_wire", "the Live Wire");
         add(immersiveKeyPath + "craft_workbench", "Tinkerer");
         addTitle(immersiveKeyPath + "place_windmill", "the Tilted", "", "Perhaps to be too practical is madness.");
@@ -108,7 +109,7 @@ public class LangGenerator extends LanguageProvider {
     }
 
     private void botaniaTemplateTitles(String keyPath) {
-        String botaniaKeyPath = keyPath + "botania.main.";
+        var botaniaKeyPath = keyPath + "botania.main.";
         add(botaniaKeyPath + "flower_pickup", "Flower Picker");
         addTitle(botaniaKeyPath + "cacophonium_craft", "the Noisy", "", "Let me play you the song of my people.");
         add(botaniaKeyPath + "rune_pickup", "the Runechild");
@@ -132,7 +133,7 @@ public class LangGenerator extends LanguageProvider {
     }
 
     private void minecraftTemplateTitles(String keyPath) {
-        String minecraftKeyPath = keyPath + "minecraft.story.";
+        var minecraftKeyPath = keyPath + "minecraft.story.";
         add(minecraftKeyPath + "iron_tools", "Miner");
         addTitle(minecraftKeyPath + "obtain_armor", "Armorer", "", "This is the Way.");
         addTitle(minecraftKeyPath + "deflect_arrow", "Shield Bearer", "Shield Maiden", "As you wish, my Thane.");

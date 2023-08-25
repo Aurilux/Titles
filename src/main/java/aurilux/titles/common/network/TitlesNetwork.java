@@ -68,7 +68,7 @@ public class TitlesNetwork {
     }
 
     public static void toPlayer(Object msg, ServerPlayer player) {
-        CHANNEL.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static void toAll(Object msg) {
@@ -76,7 +76,7 @@ public class TitlesNetwork {
     }
 
     public static void toAllExcept(Object msg, ServerPlayer ignoredPlayer) {
-        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        for (var player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             if (ignoredPlayer == null || player != ignoredPlayer) {
                 toPlayer(msg, player);
             }

@@ -15,6 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -31,13 +32,6 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class TitleSelectionScreen extends Screen {
     private final ResourceLocation bgTexture = TitlesMod.prefix("textures/gui/title_selection.png");
-    private final Button.OnTooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
-        String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
-        if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
-            this.renderTooltip(matrixStack,this.minecraft.font.split(Component.translatable(titleButtonFlavorText),
-                    Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
-        }
-    };
 
     private final int NUM_COLS = 2;
     private final int NUM_ROWS = 6;
@@ -300,8 +294,12 @@ public class TitleSelectionScreen extends Screen {
             int row = i / NUM_COLS;
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
-            Button button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
-                    temporaryGender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
+            TitleButton button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
+                    temporaryGender, b -> temporaryTitle = ((TitleButton) b).getTitle()));
+            String titleButtonFlavorText = button.getTitle().getFlavorText();
+            if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
+                button.setTooltip(Tooltip.create(Component.translatable(titleButtonFlavorText)));
+            }
             titleButtons.add(button);
         }
     }

@@ -50,7 +50,7 @@ public class ClientEventHandler {
     public static void onClientReceivedChat(ClientChatReceivedEvent event) {
         MutableComponent component = event.getMessage().plainCopy();
         TitlesMod.LOG.info("[ClientEventHandler] How different does this look? {}", component.toString());
-        /*
+        /* TODO Readd this functionality
         if (component instanceof TranslatableComponent textComponent) {
             if (textComponent.getKey().startsWith("chat.type.advancement.")) {
                 // I wish there was a more flexible, elegant way to identify the correct sub-components

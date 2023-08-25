@@ -3,14 +3,15 @@ package aurilux.titles.common.data;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.init.ModItems;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ItemModelGenerator extends ItemModelProvider {
-    public ItemModelGenerator(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, TitlesMod.MOD_ID, existingFileHelper);
+    public ItemModelGenerator(PackOutput packOutput, ExistingFileHelper existingFileHelper) {
+        super(packOutput, TitlesMod.MOD_ID, existingFileHelper);
     }
 
     @Override

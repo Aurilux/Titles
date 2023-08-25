@@ -4,14 +4,15 @@ import aurilux.titles.api.Title;
 import aurilux.titles.api.TitleProvider;
 import aurilux.titles.common.TitlesMod;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Rarity;
 
 import java.util.function.Consumer;
 
 public class TitlesGenerator extends TitleProvider {
-    public TitlesGenerator(DataGenerator generator) {
-        super(generator);
+    public TitlesGenerator(PackOutput packOutput) {
+        super(packOutput);
     }
 
     @Override

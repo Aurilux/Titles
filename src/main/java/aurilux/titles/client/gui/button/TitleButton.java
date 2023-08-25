@@ -13,8 +13,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TitleButton extends SimpleButtonOverride {
     private final Title title;
 
-    public TitleButton(int x, int y, int width, int height, Title t, boolean isMasculine, OnPress action, OnTooltip tooltip) {
-        super(x, y, width, height, t.getTextComponent(isMasculine), action, tooltip);
+    public TitleButton(int x, int y, int width, int height, Title t, boolean isMasculine, OnPress action) {
+        super(x, y, width, height, t.getTextComponent(isMasculine), action);
         title = t;
     }
 
@@ -29,7 +29,7 @@ public class TitleButton extends SimpleButtonOverride {
         }
         else {
             drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.withUnderlined(true)),
-                    this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
+                    getX() + this.width / 2, getY() + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
         }
     }
 }

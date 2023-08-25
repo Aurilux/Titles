@@ -6,50 +6,42 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public abstract class TitleProvider implements DataProvider {
-    private final Logger LOGGER = LogManager.getLogger();
-    private final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final DataGenerator generator;
+    private final PackOutput.PathProvider pathProvider;
 
-    public TitleProvider(DataGenerator generator) {
-        this.generator = generator;
+    public TitleProvider(PackOutput packOutput) {
+        pathProvider = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "titles");
     }
 
     @Override
-    public void run(CachedOutput cache) {
-        Set<ResourceLocation> foundTitles = Sets.newHashSet();
+    public CompletableFuture<?> run(CachedOutput cache) {
+        var duplicateCheck = Sets.newHashSet();
+        var list = new ArrayList<CompletableFuture<?>>();
         registerTitles((title) -> {
-            if (!foundTitles.add(title.getID())) {
-                LOGGER.warn("Skipping duplicate title: {}", title.getID());
+            if (!duplicateCheck.add(title.getID())) {
+                throw new IllegalStateException("Duplicate title: {} " + title.getID());
             }
             else {
-                saveTitle(cache, title);
+                list.add(DataProvider.saveStable(cache, title.serialize(), pathProvider.json(title.getID())));
             }
         });
+        return CompletableFuture.allOf();
     }
 
     protected abstract void registerTitles(Consumer<Title> consumer);
-
-    private void saveTitle(CachedOutput cache, Title title) {
-        Path outputFolder = generator.getOutputFolder();
-        Path saveFile = outputFolder.resolve(String.format("data/%s/titles/%s.json",
-                title.getID().getNamespace(), title.getID().getPath()));
-        try {
-            DataProvider.saveStable(cache, title.serialize(), saveFile);
-        }
-        catch (IOException ex) {
-            LOGGER.warn("Unable to save title {}", saveFile, ex);
-        }
-    }
 
     @Override
     public String getName() {
