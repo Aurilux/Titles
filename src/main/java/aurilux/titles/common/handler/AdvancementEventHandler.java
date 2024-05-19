@@ -44,7 +44,6 @@ public class AdvancementEventHandler {
             grantCriterion((ServerPlayer) target, "pincushion");
         }
         else if (event.getSource() == DamageSource.FREEZE) {
-            TitlesMod.LOG.info("(AdvancementHandler) Do we at least get here?");
             grantCriterion((ServerPlayer) target, "frigid");
         }
     }

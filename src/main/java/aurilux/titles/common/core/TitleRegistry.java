@@ -14,14 +14,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import org.apache.logging.log4j.core.util.Loader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TitleRegistry extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -47,9 +53,26 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> dataFromMods, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         profilerIn.push("titleLoader");
 
+        //Filter the data so that we don't add titles from templates if the mod doesn't exist or has native titles
+        Map<ResourceLocation, JsonElement> filteredData = dataFromMods.entrySet().stream().filter(e -> {
+            String path = e.getKey().getPath();
+            boolean isTemplate = e.getKey().getNamespace().equals(TitlesMod.MOD_ID) && path.startsWith("_");
+            if (isTemplate) {
+                int slashIndex = path.indexOf("/");
+                String possibleModId = path.substring(1, slashIndex);
+                IModFileInfo modFileInfo = ModList.get().getModFileById(possibleModId);
+                if (modFileInfo != null) {
+                    Path modTitlesPath = modFileInfo.getFile()
+                            .findResource(String.format("data/%s/%s", possibleModId, TitlesMod.MOD_ID));
+                    return !Files.exists(modTitlesPath);
+                }
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         Set<String> modsWithNativeTitles = determineModsWithNativeTitles();
-        TitlesMod.LOG.debug("Mods with native titles: {}", Arrays.asList(modsWithNativeTitles.toArray()));
-        dataFromMods.forEach((location, element) -> {
+        filteredData.forEach((location, element) -> {
             try {
                 ResourceLocation processedLocation = processTemplateResource(location, modsWithNativeTitles);
                 Title title = loadTitle(processedLocation, element.getAsJsonObject());
@@ -67,6 +90,7 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
 
     private Set<String> determineModsWithNativeTitles() {
         Set<String> set = new HashSet<>();
+
         for (IModInfo modInfo : ModList.get().getMods()) {
             String modId = modInfo.getModId();
             if (modId.equals("minecraft") || modId.equals("forge") || modId.equals(TitlesMod.MOD_ID)) {
@@ -84,15 +108,13 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
     private ResourceLocation processTemplateResource(ResourceLocation location, Set<String> modsWithTitles) {
         String path = location.getPath();
         boolean isTemplate = location.getNamespace().equals(TitlesMod.MOD_ID) && path.startsWith("_");
-        if (!isTemplate) {
-            return location;
-        }
-
-        int slashIndex = path.indexOf("/");
-        String possibleModId = path.substring(1, slashIndex);
-        if (!modsWithTitles.contains(possibleModId)) {
-            String trimmedPath = path.substring(slashIndex + 1);
-            return new ResourceLocation(possibleModId, trimmedPath);
+        if (isTemplate) {
+            int slashIndex = path.indexOf("/");
+            String possibleModId = path.substring(1, slashIndex);
+            if (!modsWithTitles.contains(possibleModId)) {
+                String trimmedPath = path.substring(slashIndex + 1);
+                return new ResourceLocation(possibleModId, trimmedPath);
+            }
         }
         return location;
     }

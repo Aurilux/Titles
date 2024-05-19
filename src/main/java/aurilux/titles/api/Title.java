@@ -3,6 +3,7 @@ package aurilux.titles.api;
 import aurilux.titles.common.TitlesMod;
 import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -48,7 +49,7 @@ public class Title {
     }
 
     private MutableComponent createComponent(String lang) {
-        return new TranslatableComponent(lang)
+        return Component.translatable(lang)
                 .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
     }
 

@@ -55,31 +55,26 @@ public class TitlesMod {
         modBus.addListener(this::registerCapabilities);
         ModItems.register(modBus);
         ModArgumentTypes.register(modBus);
-
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addListener(TitleRegistry::register);
-        forgeBus.addListener(this::registerCommands);
-
-    }
-
-    private void addConfigHandlers() {
-        // TODO The new JSON loot table system does not work with those generated like chests (simple_dungeon,
-        //  stronghold_corridor, etc), so this is still necessary until they change it.
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        if (TitlesConfig.COMMON.fragmentLoot.get()) {
-            forgeBus.addListener(ConfigEventHandler::addLoot);
-            forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
-        }
-
-        if (TitlesConfig.SERVER.showInTablist.get()) {
-            forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
-        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         TitlesNetwork.init();
         TitleRegistry.get().loadContributors();
-        addConfigHandlers();
+
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.addListener(TitleRegistry::register);
+        forgeBus.addListener(this::registerCommands);
+
+        event.enqueueWork(() -> {
+            if (TitlesConfig.COMMON.fragmentLoot.get()) {
+                forgeBus.addListener(ConfigEventHandler::addLoot);
+                forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
+            }
+
+            if (TitlesConfig.SERVER.showInTablist.get()) {
+                forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
+            }
+        });
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
