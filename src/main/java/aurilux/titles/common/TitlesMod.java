@@ -50,7 +50,6 @@ public class TitlesMod {
         modBus.addListener(this::registerCapabilities);
         ModItems.register(modBus);
         ModArgumentTypes.register(modBus);
-    }
 
     private void commonSetup(FMLCommonSetupEvent event) {
         TitlesNetwork.init();

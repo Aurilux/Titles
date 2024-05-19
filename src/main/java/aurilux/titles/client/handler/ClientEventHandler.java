@@ -6,7 +6,8 @@ import aurilux.titles.client.gui.TitleSelectionScreen;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,9 +19,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)
@@ -47,40 +46,38 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientReceivedChat(ClientChatReceivedEvent event) {
-        MutableComponent component = event.getMessage().plainCopy();
-        TitlesMod.LOG.info("[ClientEventHandler] How different does this look? {}", component.toString());
-        /* TODO Readd this functionality
-        if (component instanceof TranslatableComponent textComponent) {
-            if (textComponent.getKey().startsWith("chat.type.advancement.")) {
-                // I wish there was a more flexible, elegant way to identify the correct sub-components
-                Component targetPlayerName = ((Component) textComponent.getArgs()[0]).getSiblings().get(0);
-                Component componentArg = (Component) ((TranslatableComponent) textComponent.getArgs()[1])
-                        .getArgs()[0];
-                // We have to check if it's the correct type of text component because some advancements use plain text
-                // instead of a translatable entry.
-                if (componentArg instanceof TranslatableComponent) {
-                    Title unlockedTitle = processKey(((TranslatableComponent) componentArg).getKey());
-                    Player clientPlayer = Minecraft.getInstance().player;
-                    if (!unlockedTitle.isNull() && clientPlayer != null) {
-                        TitleManager.doIfPresent(clientPlayer, cap -> {
-                            MutableComponent formattedTitle = unlockedTitle.getTextComponent(cap.getGenderSetting());
-                            if (clientPlayer.getName().getString().equals(targetPlayerName.getContents())) {
-                                formattedTitle.withStyle(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
-                            }
-                            component.append(new TranslatableComponent("chat.advancement.append", formattedTitle));
-                            event.setMessage(component);
-                        });
+    public static void onClientReceivedChat(ClientChatReceivedEvent.System event) {
+        MutableComponent component = event.getMessage().copy();
+        ComponentContents componentContents = component.getContents();
+
+        if (componentContents instanceof TranslatableContents translatableContents
+                && translatableContents.getKey().startsWith("chat.type.advancement.")) {
+            // I wish there was a more flexible, elegant way to identify the correct subcomponents
+            Component targetPlayerName = ((Component) translatableContents.getArgs()[0]).getSiblings().get(0);
+            MutableComponent componentArg = (MutableComponent) ((TranslatableContents) ((MutableComponent) translatableContents.getArgs()[1]).getContents()).getArgs()[0];
+            String advancementKey = ((TranslatableContents) componentArg.getContents()).getKey();
+
+            // We have to check if it's the correct type of text component because some advancements use plain text
+            // instead of a translatable entry.
+            Title unlockedTitle = processKey(advancementKey);
+            Player clientPlayer = Minecraft.getInstance().player;
+            if (!unlockedTitle.isNull() && clientPlayer != null) {
+                TitleManager.doIfPresent(clientPlayer, cap -> {
+                    MutableComponent formattedTitle = unlockedTitle.getTextComponent(cap.getGenderSetting()).copy();
+                    if (clientPlayer.getName().getString().equals(targetPlayerName.getString())) {
+                        formattedTitle.withStyle(s -> s.withUnderlined(true)
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Click to set as \ndisplay title.")))
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/titles display " + unlockedTitle.getID().toString())));
                     }
-                }
+                    component.append(Component.translatable("chat.advancement.append", formattedTitle));
+                    event.setMessage(component);
+                });
             }
         }
-         */
     }
 
     private static Title processKey(String key) {
         List<String> keyParts = new ArrayList<>(Arrays.asList(key.split("[/.:]")));
-        TitlesMod.LOG.info(Arrays.toString(keyParts.toArray()));
         keyParts = keyParts.stream()
                 // Mod authors alternate using "advancement" or "advancements" for their advancement lang keys. Also
                 // remove common suffixes to the lang key such as "title" and "name".

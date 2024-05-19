@@ -1,6 +1,7 @@
 package aurilux.titles.common.command.sub;
 
 import aurilux.titles.api.Title;
+import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.command.argument.TitleArgument;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
