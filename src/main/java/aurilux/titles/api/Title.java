@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.StringUtil;
@@ -35,7 +34,6 @@ public class Title {
     private final MutableComponent variantComponent;
     private final String flavorText;
 
-
     // This is private to follow the Builder Pattern. Since the Builder makes the object, it doesn't need to be public
     private Title(Builder builder) {
         type = builder.getType();
@@ -51,7 +49,7 @@ public class Title {
     }
 
     private MutableComponent createComponent(String lang) {
-        return new TranslatableComponent(lang)
+        return Component.translatable(lang)
                 .withStyle(getRarity().equals(Rarity.COMMON) ? ChatFormatting.GRAY : getRarity().color);
     }
 
@@ -76,11 +74,10 @@ public class Title {
     public boolean isNull() {
         return this.equals(NULL_TITLE);
     }
-
-    private String getDefaultDisplay() {
+    public String getDefaultDisplay() {
         return defaultDisplay;
     }
-    private String getVariantDisplay() {
+    public String getVariantDisplay() {
         return variantDisplay;
     }
 

@@ -39,7 +39,7 @@ public class CommonEventHandler {
         original.reviveCaps();
 
         TitleManager.doIfPresent(original, oldCap ->
-                TitleManager.doIfPresent(event.getPlayer(), newCap ->
+                TitleManager.doIfPresent(event.getEntity(), newCap ->
                     newCap.deserializeNBT(oldCap.serializeNBT())));
 
         original.invalidateCaps();
@@ -51,14 +51,14 @@ public class CommonEventHandler {
      */
     @SubscribeEvent
     public static void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap ->
                 TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
 
     @SubscribeEvent
     public static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap ->
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), (ServerPlayer) player));
     }
@@ -79,7 +79,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerPlayer playerLoggingIn = (ServerPlayer) event.getPlayer();
+        ServerPlayer playerLoggingIn = (ServerPlayer) event.getEntity();
         TitleManager.doIfPresent(playerLoggingIn, cap -> {
             // Send the just-logged-in player's title data that is loaded on the server to them.
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), playerLoggingIn);
@@ -104,7 +104,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerNameFormat(PlayerEvent.NameFormat event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         TitleManager.doIfPresent(player, cap -> {
             event.setDisplayname(TitleManager.getFormattedDisplayName(cap.getDisplayTitle(), player, cap));
         });

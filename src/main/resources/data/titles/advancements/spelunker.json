@@ -15,13 +15,19 @@
     "spelunk": {
       "trigger": "minecraft:location",
       "conditions": {
-        "dimension": "overworld",
-        "position": {
-          "y": {
-            "min": -20,
-            "max": 0
+        "player": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "dimension": "minecraft:overworld",
+              "position": {
+                "y": {
+                  "max": -10
+                }
+              }
+            }
           }
-        }
+        ]
       }
     }
   }

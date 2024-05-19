@@ -2,7 +2,6 @@ package aurilux.titles.common.network.messages;
 
 import aurilux.titles.client.ClientOnlyMethods;
 import aurilux.titles.common.ServerOnlyMethods;
-import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.network.FriendlyByteBuf;

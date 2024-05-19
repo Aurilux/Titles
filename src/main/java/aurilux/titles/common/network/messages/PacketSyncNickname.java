@@ -4,16 +4,12 @@ import aurilux.titles.client.ClientOnlyMethods;
 import aurilux.titles.common.ServerOnlyMethods;
 import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.network.TitlesNetwork;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 

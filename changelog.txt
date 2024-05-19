@@ -1,3 +1,8 @@
+## 1.19.2 - 3.6.0
+- 1.19 update
+- Fixes a number of things that broke with the new class names for the message component system.
+- Template titles are now only added if the respective mod is active and doesn't have their own titles
+
 ## 1.18.2 - 3.5.2
 - Removed a potential memory leak by caching title default/variant text components
 - Fixed a bug where changing your gender setting wouldn't properly update the titles in the title selection GUI

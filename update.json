@@ -8,7 +8,12 @@
         "1.16.5-latest": "3.4.4",
         "1.16.5-recommended": "3.4.4",
         "1.18.2-latest": "3.5.2",
-        "1.18.2-recommended": "3.5.2"
+        "1.18.2-recommended": "3.5.2",
+        "1.19.2-latest": "3.6.0",
+        "1.19.2-recommended": "3.6.0"
+    },
+    "1.19.2": {
+        "3.6.0": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information."
     },
     "1.18.2": {
         "3.5.0": "See https://www.curseforge.com/minecraft/mc-mods/titles/files for detailed information.",

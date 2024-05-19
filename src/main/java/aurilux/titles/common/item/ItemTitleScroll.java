@@ -2,7 +2,7 @@ package aurilux.titles.common.item;
 
 import aurilux.titles.api.Title;
 import aurilux.titles.common.core.TitleManager;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,7 +13,6 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class ItemTitleScroll extends Item {
     public ItemTitleScroll(Item.Properties props) {
@@ -26,21 +25,22 @@ public class ItemTitleScroll extends Item {
             return super.use(world, player, hand);
         }
 
-        ItemStack itemStack = player.getItemInHand(hand);
+        ServerPlayer serverPlayer = (ServerPlayer) player;
+        ItemStack itemStack = serverPlayer.getItemInHand(hand);
         AtomicBoolean unlockedTitle = new AtomicBoolean(false);
-        TitleManager.doIfPresent(player, cap -> {
+        TitleManager.doIfPresent(serverPlayer, cap -> {
             List<Title> possibleLoot = TitleManager.getTitlesOfType(Title.AwardType.LOOT).values().stream()
                     .filter(t -> t.getRarity().equals(this.getRarity(itemStack)) && !cap.getObtainedTitles().contains(t)).toList();
             if (possibleLoot.size() > 0) {
                 Title newTitle = possibleLoot.get(world.random.nextInt(possibleLoot.size()));
                 TitleManager.unlockTitle((ServerPlayer) player, newTitle.getID());
-                player.sendMessage(new TranslatableComponent("chat.scroll.success",
-                        newTitle.getTextComponent(cap.getGenderSetting())), player.getUUID());
+                serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.success",
+                        newTitle.getTextComponent(cap.getGenderSetting())), true);
                 itemStack.setCount(0);
                 unlockedTitle.set(true);
             }
             else {
-                player.sendMessage(new TranslatableComponent("chat.scroll.fail"), player.getUUID());
+                serverPlayer.sendSystemMessage(Component.translatable("chat.scroll.fail"));
             }
         });
 

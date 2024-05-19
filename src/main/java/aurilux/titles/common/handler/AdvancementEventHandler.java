@@ -21,7 +21,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -30,12 +30,12 @@ public class AdvancementEventHandler {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         Advancement advancement = event.getAdvancement();
-        TitleManager.unlockTitle((ServerPlayer) event.getPlayer(), advancement.getId());
+        TitleManager.unlockTitle((ServerPlayer) event.getEntity(), advancement.getId());
     }
 
     @SubscribeEvent
     public static void onEntityDamage(LivingDamageEvent event) {
-        LivingEntity target = event.getEntityLiving();
+        LivingEntity target = event.getEntity();
         if (!(target instanceof ServerPlayer)) {
             return;
         }
@@ -44,7 +44,6 @@ public class AdvancementEventHandler {
             grantCriterion((ServerPlayer) target, "pincushion");
         }
         else if (event.getSource() == DamageSource.FREEZE) {
-            TitlesMod.LOG.info("(AdvancementHandler) Do we at least get here?");
             grantCriterion((ServerPlayer) target, "frigid");
         }
     }
