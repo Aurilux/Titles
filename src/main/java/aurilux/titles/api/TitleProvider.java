@@ -1,21 +1,11 @@
 package aurilux.titles.api;
 
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 

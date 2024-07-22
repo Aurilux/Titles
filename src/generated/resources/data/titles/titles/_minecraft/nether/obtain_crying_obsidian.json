@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "isPrefix": false,
-  "id": "titles:_minecraft/nether/obtain_crying_obsidian",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.nether.obtain_crying_obsidian"
-}

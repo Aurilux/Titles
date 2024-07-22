@@ -1,0 +1,46 @@
+{
+  "parent": "titles:root",
+  "criteria": {
+    "spelunking": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "dimension": "minecraft:overworld",
+                "position": {
+                  "y": {
+                    "max": 0.0
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.titles.spelunker.desc"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:deepslate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.titles.spelunker"
+    }
+  },
+  "requirements": [
+    [
+      "spelunking"
+    ]
+  ]
+}

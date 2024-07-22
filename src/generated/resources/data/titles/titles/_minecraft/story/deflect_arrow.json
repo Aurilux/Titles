@@ -1,9 +1,9 @@
 {
   "type": "advancement",
-  "isPrefix": true,
-  "id": "titles:_minecraft/story/deflect_arrow",
-  "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.story.deflect_arrow",
-  "variantDisplay": "title.titles.minecraft.story.deflect_arrow.variant",
-  "flavorText": "title.titles.minecraft.story.deflect_arrow.flavor"
+  "flavorText": "title.titles.minecraft.story.deflect_arrow.flavor",
+  "id": "titles:_minecraft/story/deflect_arrow",
+  "isPrefix": true,
+  "rarity": "common",
+  "variantDisplay": "title.titles.minecraft.story.deflect_arrow.variant"
 }

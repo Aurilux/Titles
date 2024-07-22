@@ -14,12 +14,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.apache.logging.log4j.core.util.Loader;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -27,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TitleRegistry extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

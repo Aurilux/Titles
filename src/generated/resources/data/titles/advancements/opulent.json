@@ -1,0 +1,28 @@
+{
+  "parent": "titles:root",
+  "criteria": {
+    "code_triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.titles.opulent.desc"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:diamond_block"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.titles.opulent"
+    }
+  },
+  "requirements": [
+    [
+      "code_triggered"
+    ]
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "titles:root",
+  "criteria": {
+    "chicken_kill": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:chicken"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.titles.chicken_chaser.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.titles.chicken_chaser"
+    }
+  },
+  "requirements": [
+    [
+      "chicken_kill"
+    ]
+  ]
+}

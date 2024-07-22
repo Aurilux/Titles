@@ -1,8 +1,8 @@
 {
   "type": "advancement",
-  "isPrefix": false,
-  "id": "titles:melon_lord",
-  "rarity": "common",
   "defaultDisplay": "title.titles.melon_lord",
-  "flavorText": "title.titles.melon_lord.flavor"
+  "flavorText": "title.titles.melon_lord.flavor",
+  "id": "titles:melon_lord",
+  "isPrefix": false,
+  "rarity": "common"
 }

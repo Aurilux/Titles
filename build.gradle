@@ -27,7 +27,7 @@ apply plugin: "idea"
 // Exclude folders whenever the idea module updates, such as during a gradle re-import.
 idea {
     module {
-        for (String excludeDirName in [".gradle", ".idea", "build", "gradle", "media", "run", "out", "logs"]) {
+        for (String excludeDirName in [".gradle", ".idea", "build", "media", "run", "out", "logs"]) {
             excludeDirs += file(excludeDirName)
         }
     }
@@ -65,18 +65,6 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
-    implementation fg.deobf("curse.maven:botania-225643:4557912")
-    implementation fg.deobf("curse.maven:patchouli-306770:4031402")
-    implementation fg.deobf("curse.maven:curios-309927:5302436")
-
-    //compile fg.deobf("vazkii.botania:botania:1.16.5-420.2")
-    //compile fg.deobf("blusunrize.immersiveengineering:immersiveengineering:1.16.5-5.1.0-148")
-    //compile fg.deobf("slimeknights.tconstruct:tconstruct:1.16.5-3.3.4.335")
-    //compile fg.deobf("twilightforest:twilightforest:1.16.5-4.0.870:universal")
-    //compile fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.8.2")
-    //compile fg.deobf("slimeknights.mantle:mantle:1.16.5-1.6.157")
-    //compile fg.deobf("vazkii.patchouli:patchouli:1.16.4-53.3")
 
     repos.each { n, l ->
         compileOnly fg.deobf(l.lib + ":api")

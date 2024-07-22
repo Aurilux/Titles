@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.minecraft.adventure.trade",
   "id": "titles:_minecraft/adventure/trade",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.adventure.trade"
+  "isPrefix": true,
+  "rarity": "common"
 }

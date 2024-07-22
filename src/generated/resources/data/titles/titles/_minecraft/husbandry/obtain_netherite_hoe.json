@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.husbandry.obtain_netherite_hoe",
   "id": "titles:_minecraft/husbandry/obtain_netherite_hoe",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.husbandry.obtain_netherite_hoe"
+  "isPrefix": false,
+  "rarity": "rare"
 }

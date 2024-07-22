@@ -19,7 +19,9 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)

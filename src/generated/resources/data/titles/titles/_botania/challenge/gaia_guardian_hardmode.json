@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "isPrefix": true,
-  "id": "titles:_botania/challenge/gaia_guardian_hardmode",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.botania.challenge.gaia_guardian_hardmode"
-}

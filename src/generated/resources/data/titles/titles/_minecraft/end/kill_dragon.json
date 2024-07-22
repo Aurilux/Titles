@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "isPrefix": true,
-  "id": "titles:_minecraft/end/kill_dragon",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.end.kill_dragon"
-}

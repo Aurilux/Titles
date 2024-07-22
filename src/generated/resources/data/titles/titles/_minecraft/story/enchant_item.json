@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.story.enchant_item",
   "id": "titles:_minecraft/story/enchant_item",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.story.enchant_item"
+  "isPrefix": false,
+  "rarity": "common"
 }

@@ -1,7 +1,0 @@
-{
-  "type": "advancement",
-  "isPrefix": true,
-  "id": "titles:_twilightforest/progress_knight",
-  "rarity": "uncommon",
-  "defaultDisplay": "title.titles.twilightforest.progress_knight"
-}

@@ -153,9 +153,9 @@ public class TitleSelectionScreen extends Screen {
         // Draw the page counter
         drawCenteredString(matrixStack, this.font, String.format("%s/%s", page, maxPages), this.width / 2, guiTop + 189, 0xFFFFFF);
 
-        if (titlesListFiltered.size() == 0) {
+        if (titlesListFiltered.isEmpty()) {
             String emptyText = "gui.titles.titleselection.empty";
-            if (titlesListCache.size() > 0) {
+            if (!titlesListCache.isEmpty()) {
                 emptyText += ".filter";
             }
             drawCenteredString(matrixStack, this.font, I18n.get(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
@@ -286,7 +286,7 @@ public class TitleSelectionScreen extends Screen {
             forwardButtons.forEach(b -> b.active = true);
         }
 
-        // Add all of the displayed title buttons
+        // Add all the displayed title buttons
         List<Title> titlesToDisplay = titlesListFiltered.subList((page - 1) * MAX_PER_PAGE, maxIndex);
         int titleButtonWidth = 120;
         for (int i = 0; i < titlesToDisplay.size(); i++) {

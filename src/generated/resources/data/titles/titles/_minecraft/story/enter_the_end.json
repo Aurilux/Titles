@@ -1,8 +1,8 @@
 {
   "type": "advancement",
-  "isPrefix": false,
-  "id": "titles:_minecraft/story/enter_the_end",
-  "rarity": "common",
   "defaultDisplay": "title.titles.minecraft.story.enter_the_end",
-  "flavorText": "title.titles.minecraft.story.enter_the_end.flavor"
+  "flavorText": "title.titles.minecraft.story.enter_the_end.flavor",
+  "id": "titles:_minecraft/story/enter_the_end",
+  "isPrefix": false,
+  "rarity": "common"
 }

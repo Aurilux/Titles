@@ -1,7 +1,7 @@
 {
   "type": "loot",
-  "isPrefix": true,
+  "defaultDisplay": "Page",
   "id": "titles:page",
-  "rarity": "common",
-  "defaultDisplay": "Page"
+  "isPrefix": true,
+  "rarity": "common"
 }

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.husbandry.make_a_sign_glow",
+  "id": "titles:_minecraft/husbandry/make_a_sign_glow",
+  "isPrefix": true,
+  "rarity": "common"
+}

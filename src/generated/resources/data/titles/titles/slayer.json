@@ -1,7 +1,7 @@
 {
   "type": "loot",
-  "isPrefix": false,
+  "defaultDisplay": "the Slayer",
   "id": "titles:slayer",
-  "rarity": "uncommon",
-  "defaultDisplay": "the Slayer"
+  "isPrefix": false,
+  "rarity": "uncommon"
 }
