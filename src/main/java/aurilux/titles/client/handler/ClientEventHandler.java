@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -27,11 +26,6 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(modid = TitlesMod.MOD_ID, value = Dist.CLIENT)
 public class ClientEventHandler {
     @SubscribeEvent
-    public static void onRegisterKeybindings(RegisterKeyMappingsEvent event) {
-        event.register(Keybinds.openTitleSelection);
-    }
-
-    @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
             return;
@@ -40,9 +34,8 @@ public class ClientEventHandler {
         if (Keybinds.openTitleSelection.consumeClick()) {
             Player player = Minecraft.getInstance().player;
             if (player != null) {
-                TitleManager.getCapability(player).ifPresent(cap -> {
-                    Minecraft.getInstance().setScreen(new TitleSelectionScreen(player, cap));
-                });
+                TitleManager.getCapability(player).ifPresent(cap ->
+                        Minecraft.getInstance().setScreen(new TitleSelectionScreen(player, cap)));
             }
         }
     }
@@ -113,7 +106,7 @@ public class ClientEventHandler {
         }
 
         String titleString = "";
-        if (!possibleModId.equals("")) {
+        if (!possibleModId.isEmpty()) {
             keyParts.remove(possibleModId);
             titleString = possibleModId + ":" + String.join("/", keyParts);
         }

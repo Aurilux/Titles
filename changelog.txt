@@ -2,6 +2,9 @@
 - 1.19.4 Update
 - Added data generators for advancements, loot tables, tags, and recipes
 
+## 1.19.2 - 3.6.1
+- Fixed bug where the keybinding to open the title selection screen wasn't appearing in the keybinding list
+
 ## 1.19.2 - 3.6.0
 - 1.19 update
 - Fixes a number of things that broke with the new class names for the message component system.
