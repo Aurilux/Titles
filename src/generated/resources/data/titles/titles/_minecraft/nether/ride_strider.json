@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.nether.ride_strider",
   "id": "titles:_minecraft/nether/ride_strider",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.nether.ride_strider"
+  "isPrefix": false,
+  "rarity": "common"
 }

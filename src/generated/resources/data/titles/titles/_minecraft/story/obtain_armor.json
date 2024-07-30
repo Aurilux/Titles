@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.minecraft.story.obtain_armor",
   "id": "titles:_minecraft/story/obtain_armor",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.story.obtain_armor"
+  "isPrefix": true,
+  "rarity": "common"
 }

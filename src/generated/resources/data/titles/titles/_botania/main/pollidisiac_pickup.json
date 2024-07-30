@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.botania.main.pollidisiac_pickup",
   "id": "titles:_botania/main/pollidisiac_pickup",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.botania.main.pollidisiac_pickup"
+  "isPrefix": true,
+  "rarity": "common"
 }

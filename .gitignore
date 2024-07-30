@@ -8,6 +8,7 @@ media/
 build/
 run/
 logs/
+out/
 /src/generated/resources/.cache/
 
 # Entirely Ignored Extensions and Directories #

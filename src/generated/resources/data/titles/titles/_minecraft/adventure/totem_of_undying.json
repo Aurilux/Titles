@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.adventure.totem_of_undying",
   "id": "titles:_minecraft/adventure/totem_of_undying",
-  "rarity": "uncommon",
-  "defaultDisplay": "title.titles.minecraft.adventure.totem_of_undying"
+  "isPrefix": false,
+  "rarity": "uncommon"
 }

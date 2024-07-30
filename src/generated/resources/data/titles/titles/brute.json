@@ -1,7 +1,7 @@
 {
   "type": "loot",
-  "isPrefix": false,
+  "defaultDisplay": "the Brute",
   "id": "titles:brute",
-  "rarity": "common",
-  "defaultDisplay": "the Brute"
+  "isPrefix": false,
+  "rarity": "common"
 }

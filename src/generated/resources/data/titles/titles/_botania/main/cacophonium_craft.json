@@ -1,8 +1,8 @@
 {
   "type": "advancement",
-  "isPrefix": false,
-  "id": "titles:_botania/main/cacophonium_craft",
-  "rarity": "common",
   "defaultDisplay": "title.titles.botania.main.cacophonium_craft",
-  "flavorText": "title.titles.botania.main.cacophonium_craft.flavor"
+  "flavorText": "title.titles.botania.main.cacophonium_craft.flavor",
+  "id": "titles:_botania/main/cacophonium_craft",
+  "isPrefix": false,
+  "rarity": "common"
 }

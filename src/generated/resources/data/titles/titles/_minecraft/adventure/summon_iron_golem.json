@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.adventure.summon_iron_golem",
   "id": "titles:_minecraft/adventure/summon_iron_golem",
-  "rarity": "uncommon",
-  "defaultDisplay": "title.titles.minecraft.adventure.summon_iron_golem"
+  "isPrefix": false,
+  "rarity": "uncommon"
 }

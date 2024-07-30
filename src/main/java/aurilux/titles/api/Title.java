@@ -96,7 +96,7 @@ public class Title {
     }
 
     public JsonObject serialize() {
-        JsonObject json = new JsonObject();
+        var json = new JsonObject();
         json.addProperty("type", getType().toString().toLowerCase());
         json.addProperty("isPrefix", isPrefix());
         json.addProperty("id", getID().toString());
@@ -117,7 +117,7 @@ public class Title {
             return false;
         }
         else {
-            Title temp = (Title) o;
+            var temp = (Title) o;
             return getID().equals(temp.id) && getRarity().equals(temp.rarity);
         }
     }
@@ -152,7 +152,7 @@ public class Title {
         }
 
         public static Builder deserialize(JsonObject json) {
-            ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
+            var id = new ResourceLocation(GsonHelper.getAsString(json, "id"));
             Title.Builder builder = Builder.create(id.getNamespace())
                     .type(AwardType.valueOf(GsonHelper.getAsString(json, "type").toUpperCase()))
                     .id(id)
@@ -258,13 +258,13 @@ public class Title {
 
         // Used in data generation
         public Title save(Consumer<Title> consumer) {
-            Title title = build();
+            var title = build();
             consumer.accept(title);
             return title;
         }
 
         public Title build() {
-            Title title = new Title(this);
+            var title = new Title(this);
             reset();
             return title;
         }

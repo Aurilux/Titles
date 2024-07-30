@@ -10,6 +10,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Collection;
+
 public class ModItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, TitlesMod.MOD_ID);
 
@@ -26,15 +28,15 @@ public class ModItems {
         ITEMS.register(eventBus);
     }
 
-    private static Item.Properties baseProp() {
-        return new Item.Properties().tab(TitlesMod.TAB);
-    }
-
     private static Item.Properties unstackable() {
-        return baseProp().stacksTo(1);
+        return new Item.Properties().stacksTo(1);
     }
 
     private static Item.Properties quarterStack() {
-        return baseProp().stacksTo(16);
+        return new Item.Properties().stacksTo(16);
+    }
+
+    public static Collection<RegistryObject<Item>> getAllItems() {
+        return ITEMS.getEntries();
     }
 }

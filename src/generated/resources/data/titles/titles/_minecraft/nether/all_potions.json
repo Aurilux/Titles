@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.nether.all_potions",
   "id": "titles:_minecraft/nether/all_potions",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.nether.all_potions"
+  "isPrefix": false,
+  "rarity": "rare"
 }

@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.minecraft.adventure.kill_all_mobs",
   "id": "titles:_minecraft/adventure/kill_all_mobs",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.adventure.kill_all_mobs"
+  "isPrefix": true,
+  "rarity": "rare"
 }

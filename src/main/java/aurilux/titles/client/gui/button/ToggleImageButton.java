@@ -26,19 +26,28 @@ public class ToggleImageButton extends ImageButton {
     }
 
     @Override
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderTexture(0, this.resourceLocation);
         int startX = xTexStart;
         if (toggle) {
             // Just for simplicity's sake, using the yDiffText for the x-axis
             startX += yDiffTex;
         }
-        int i = this.getYImage(this.isHovered);
-
         RenderSystem.enableDepthTest();
-        blit(matrixStack, this.x, this.y, startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
-        if (this.isHovered) {
-            this.renderToolTip(matrixStack, mouseX, mouseY);
+
+        int i = this.getTextureY();
+        blit(matrixStack, getX(), getY(), startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
+    }
+
+    //Copied from vanilla because for some reason it's private access in AbstractButton
+    private int getTextureY() {
+        int i = 1;
+        if (!this.active) {
+            i = 0;
+        } else if (this.isHoveredOrFocused()) {
+            i = 2;
         }
+
+        return i;
     }
 }

@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.nether.return_to_sender",
   "id": "titles:_minecraft/nether/return_to_sender",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.nether.return_to_sender"
+  "isPrefix": false,
+  "rarity": "rare"
 }

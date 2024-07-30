@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.husbandry.balanced_diet",
   "id": "titles:_minecraft/husbandry/balanced_diet",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.husbandry.balanced_diet"
+  "isPrefix": false,
+  "rarity": "rare"
 }

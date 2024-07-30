@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.captain",
   "id": "titles:captain",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.captain"
+  "isPrefix": true,
+  "rarity": "common"
 }

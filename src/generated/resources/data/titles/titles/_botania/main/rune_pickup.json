@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.botania.main.rune_pickup",
   "id": "titles:_botania/main/rune_pickup",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.botania.main.rune_pickup"
+  "isPrefix": false,
+  "rarity": "common"
 }

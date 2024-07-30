@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.adventure.arbalistic",
   "id": "titles:_minecraft/adventure/arbalistic",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.adventure.arbalistic"
+  "isPrefix": false,
+  "rarity": "rare"
 }

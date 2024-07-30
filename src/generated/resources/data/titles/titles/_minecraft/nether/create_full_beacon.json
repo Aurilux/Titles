@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.nether.create_full_beacon",
   "id": "titles:_minecraft/nether/create_full_beacon",
-  "rarity": "uncommon",
-  "defaultDisplay": "title.titles.minecraft.nether.create_full_beacon"
+  "isPrefix": false,
+  "rarity": "uncommon"
 }

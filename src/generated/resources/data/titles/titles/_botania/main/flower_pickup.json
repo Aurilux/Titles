@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.botania.main.flower_pickup",
   "id": "titles:_botania/main/flower_pickup",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.botania.main.flower_pickup"
+  "isPrefix": true,
+  "rarity": "common"
 }

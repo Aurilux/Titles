@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.minecraft.husbandry.fishy_business",
   "id": "titles:_minecraft/husbandry/fishy_business",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.husbandry.fishy_business"
+  "isPrefix": true,
+  "rarity": "common"
 }

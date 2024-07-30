@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": false,
+  "defaultDisplay": "title.titles.minecraft.adventure.fall_from_world_height",
   "id": "titles:_minecraft/adventure/fall_from_world_height",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.minecraft.adventure.fall_from_world_height"
+  "isPrefix": false,
+  "rarity": "common"
 }

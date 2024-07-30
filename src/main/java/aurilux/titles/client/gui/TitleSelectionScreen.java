@@ -15,6 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -31,13 +32,6 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class TitleSelectionScreen extends Screen {
     private final ResourceLocation bgTexture = TitlesMod.prefix("textures/gui/title_selection.png");
-    private final Button.OnTooltip titleWithFlavorText = (button, matrixStack, mouseX, mouseY) -> {
-        String titleButtonFlavorText = ((TitleButton) button).getTitle().getFlavorText();
-        if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
-            this.renderTooltip(matrixStack,this.minecraft.font.split(Component.translatable(titleButtonFlavorText),
-                    Math.max(this.width / 2 - 43, 170)), mouseX, mouseY);
-        }
-    };
 
     private final int NUM_COLS = 2;
     private final int NUM_ROWS = 6;
@@ -104,6 +98,7 @@ public class TitleSelectionScreen extends Screen {
         buttonSecondRowStart = buttonTitleRowStart + 123;
 
         search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, Component.literal("search"));
+        search.setTooltip(Tooltip.create(Component.translatable("gui.titles.search_tooltip")));
         addRenderableWidget(search);
 
         // Action buttons
@@ -159,9 +154,9 @@ public class TitleSelectionScreen extends Screen {
         // Draw the page counter
         drawCenteredString(matrixStack, this.font, String.format("%s/%s", page, maxPages), this.width / 2, guiTop + 189, 0xFFFFFF);
 
-        if (titlesListFiltered.size() == 0) {
+        if (titlesListFiltered.isEmpty()) {
             String emptyText = "gui.titles.titleselection.empty";
-            if (titlesListCache.size() > 0) {
+            if (!titlesListCache.isEmpty()) {
                 emptyText += ".filter";
             }
             drawCenteredString(matrixStack, this.font, I18n.get(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
@@ -228,11 +223,11 @@ public class TitleSelectionScreen extends Screen {
         String rarityFilter = "";
         for (Iterator<String> iter = parts.iterator(); iter.hasNext(); ) {
             String part = iter.next();
-            if (part.startsWith("@") && modFilter.equals("")) {
+            if (part.startsWith("@") && modFilter.isEmpty()) {
                 modFilter = part.substring(1);
                 iter.remove();
             }
-            if (part.startsWith("#") && rarityFilter.equals("")) {
+            if (part.startsWith("#") && rarityFilter.isEmpty()) {
                 rarityFilter = part.substring(1);
                 iter.remove();
             }
@@ -253,7 +248,7 @@ public class TitleSelectionScreen extends Screen {
                     return false;
                 })
                 .filter(t -> {
-                    if (parts.size() < 1) {
+                    if (parts.isEmpty()) {
                         return true;
                     }
                     String titleString = t.getTextComponent(temporaryGender).getString().toLowerCase();
@@ -292,7 +287,7 @@ public class TitleSelectionScreen extends Screen {
             forwardButtons.forEach(b -> b.active = true);
         }
 
-        // Add all of the displayed title buttons
+        // Add all the displayed title buttons
         List<Title> titlesToDisplay = titlesListFiltered.subList((page - 1) * MAX_PER_PAGE, maxIndex);
         int titleButtonWidth = 120;
         for (int i = 0; i < titlesToDisplay.size(); i++) {
@@ -300,8 +295,12 @@ public class TitleSelectionScreen extends Screen {
             int row = i / NUM_COLS;
             int x = leftOffset + (titleButtonWidth * col);
             int y = buttonTitleRowStart + (row * buttonHeight);
-            Button button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
-                    temporaryGender, b -> temporaryTitle = ((TitleButton) b).getTitle(), titleWithFlavorText));
+            TitleButton button = addRenderableWidget(new TitleButton(x, y, titleButtonWidth, buttonHeight, titlesToDisplay.get(i),
+                    temporaryGender, b -> temporaryTitle = ((TitleButton) b).getTitle()));
+            String titleButtonFlavorText = button.getTitle().getFlavorText();
+            if (button.active && !StringUtil.isNullOrEmpty(titleButtonFlavorText)) {
+                button.setTooltip(Tooltip.create(Component.translatable(titleButtonFlavorText)));
+            }
             titleButtons.add(button);
         }
     }

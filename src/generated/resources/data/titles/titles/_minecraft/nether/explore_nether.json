@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.minecraft.nether.explore_nether",
   "id": "titles:_minecraft/nether/explore_nether",
-  "rarity": "rare",
-  "defaultDisplay": "title.titles.minecraft.nether.explore_nether"
+  "isPrefix": true,
+  "rarity": "rare"
 }

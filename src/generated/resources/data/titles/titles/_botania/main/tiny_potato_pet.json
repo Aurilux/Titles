@@ -1,7 +1,7 @@
 {
   "type": "advancement",
-  "isPrefix": true,
+  "defaultDisplay": "title.titles.botania.main.tiny_potato_pet",
   "id": "titles:_botania/main/tiny_potato_pet",
-  "rarity": "common",
-  "defaultDisplay": "title.titles.botania.main.tiny_potato_pet"
+  "isPrefix": true,
+  "rarity": "common"
 }
