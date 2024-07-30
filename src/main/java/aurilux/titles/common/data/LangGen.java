@@ -44,6 +44,7 @@ public class LangGen extends LanguageProvider {
         add(keyPath + "close", "Close");
         add(keyPath + "titleselection.empty", "Unlock advancements to earn titles");
         add(keyPath + "titleselection.empty.filter", "Your filter has returned no results");
+        add(keyPath + "search_tooltip", "# to search rarity (#rare or #r)\n@ to search mod id (@titles)");
 
         // Items
         add("itemGroup.titles", TitlesMod.MOD_ID);

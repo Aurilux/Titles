@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.sniper_duel",
+  "id": "titles:_minecraft/adventure/sniper_duel",
+  "isPrefix": true,
+  "rarity": "rare"
+}

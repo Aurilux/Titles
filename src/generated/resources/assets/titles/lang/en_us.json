@@ -1,4 +1,5 @@
 {
+  "Titles": "titles",
   "advancement.titles.captain": "You are the Captain Now",
   "advancement.titles.captain.desc": "Get in a boat",
   "advancement.titles.chicken_chaser": "Do you Chase Chickens?",
@@ -31,6 +32,7 @@
   "gui.titles.none": "None",
   "gui.titles.purchase": "Purchase",
   "gui.titles.random": "Random",
+  "gui.titles.search_tooltip": "# to search rarity (#rare or #r)\n@ to search mod id (@titles)",
   "gui.titles.titleselection.empty": "Unlock advancements to earn titles",
   "gui.titles.titleselection.empty.filter": "Your filter has returned no results",
   "item.titles.title_fragment": "Title Fragment",
@@ -39,7 +41,6 @@
   "item.titles.title_scroll_uncommon": "Uncommon Title Scroll",
   "itemGroup.titles": "titles",
   "key.titles.openTitleSelection": "Open Title Selection Screen",
-  "keybind.titles.category": "titles",
   "title.titles.botania.challenge.alf_portal_bread": "the Midgardian Baker",
   "title.titles.botania.challenge.alf_portal_bread.flavor": "WHAT IS YOUR PROFESSION?!",
   "title.titles.botania.challenge.gaia_guardian_hardmode": "Gaia Slayer",

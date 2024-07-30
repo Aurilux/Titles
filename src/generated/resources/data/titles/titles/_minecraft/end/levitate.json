@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.end.levitate",
+  "id": "titles:_minecraft/end/levitate",
+  "isPrefix": false,
+  "rarity": "rare"
+}

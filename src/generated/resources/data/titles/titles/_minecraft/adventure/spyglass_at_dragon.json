@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.spyglass_at_dragon",
+  "id": "titles:_minecraft/adventure/spyglass_at_dragon",
+  "isPrefix": false,
+  "rarity": "common"
+}

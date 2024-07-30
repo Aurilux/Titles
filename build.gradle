@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.1+", changing: true
+        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "6.0+", changing: true
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
@@ -162,9 +162,9 @@ jar {
         attributes([
                 "Specification-Title": mod_name,
                 "Specification-Vendor": mod_author,
-                "Specification-Version": getArchiveName(),
+                "Specification-Version": getArchiveFileName(),
                 "Implementation-Title": mod_name,
-                "Implementation-Version": getArchiveName(),
+                "Implementation-Version": getArchiveFileName(),
                 "Implementation-Vendor" : mod_author,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
@@ -173,7 +173,7 @@ jar {
 
 task srcJar(type: Jar) {
     from(sourceSets.main.java)
-    classifier = 'sources'
+    setArchiveClassifier('sources')
 }
 
 task apiJar(type: Jar) {
@@ -181,7 +181,7 @@ task apiJar(type: Jar) {
     from(sourceSets.main.allJava)
     from(sourceSets.main.output)
     include "aurilux/${mod_id}/api/**"
-    classifier = 'api'
+    setArchiveClassifier('api')
 }
 
 artifacts {

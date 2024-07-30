@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.end.dragon_breath",
+  "flavorText": "title.titles.minecraft.end.dragon_breath.flavor",
+  "id": "titles:_minecraft/end/dragon_breath",
+  "isPrefix": false,
+  "rarity": "uncommon"
+}

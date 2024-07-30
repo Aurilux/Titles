@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.walk_on_powder_snow_with_leather_boots",
+  "id": "titles:_minecraft/adventure/walk_on_powder_snow_with_leather_boots",
+  "isPrefix": false,
+  "rarity": "common"
+}

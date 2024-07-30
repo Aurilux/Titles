@@ -25,10 +25,11 @@ public class SimpleButtonOverride extends Button {
         //Minecraft minecraft = Minecraft.getInstance();
         RenderSystem.setShaderTexture(0, guiLoc);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getTextureY();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
+
+        int i = this.getTextureY();
         blit(matrixStack, getX(), getY(), 0, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
         blit(matrixStack, getX() + this.width / 2, getY(), 200 - this.width / 2, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
         //this.renderBg(matrixStack, minecraft, mouseX, mouseY);
@@ -49,6 +50,6 @@ public class SimpleButtonOverride extends Button {
             i = 2;
         }
 
-        return 46 + i * 20;
+        return i;
     }
 }

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.hero_of_the_village",
+  "id": "titles:_minecraft/adventure/hero_of_the_village",
+  "isPrefix": true,
+  "rarity": "rare"
+}

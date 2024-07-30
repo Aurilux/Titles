@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.bullseye",
+  "id": "titles:_minecraft/adventure/bullseye",
+  "isPrefix": false,
+  "rarity": "rare"
+}

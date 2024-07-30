@@ -98,6 +98,7 @@ public class TitleSelectionScreen extends Screen {
         buttonSecondRowStart = buttonTitleRowStart + 123;
 
         search = new EditBox(this.font, leftOffset + 65, buttonFirstRowStart + 1, 110, 18, Component.literal("search"));
+        search.setTooltip(Tooltip.create(Component.translatable("gui.titles.search_tooltip")));
         addRenderableWidget(search);
 
         // Action buttons
@@ -222,11 +223,11 @@ public class TitleSelectionScreen extends Screen {
         String rarityFilter = "";
         for (Iterator<String> iter = parts.iterator(); iter.hasNext(); ) {
             String part = iter.next();
-            if (part.startsWith("@") && modFilter.equals("")) {
+            if (part.startsWith("@") && modFilter.isEmpty()) {
                 modFilter = part.substring(1);
                 iter.remove();
             }
-            if (part.startsWith("#") && rarityFilter.equals("")) {
+            if (part.startsWith("#") && rarityFilter.isEmpty()) {
                 rarityFilter = part.substring(1);
                 iter.remove();
             }
@@ -247,7 +248,7 @@ public class TitleSelectionScreen extends Screen {
                     return false;
                 })
                 .filter(t -> {
-                    if (parts.size() < 1) {
+                    if (parts.isEmpty()) {
                         return true;
                     }
                     String titleString = t.getTextComponent(temporaryGender).getString().toLowerCase();

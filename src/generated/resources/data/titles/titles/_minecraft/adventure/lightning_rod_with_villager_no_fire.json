@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.lightning_rod_with_villager_no_fire",
+  "id": "titles:_minecraft/adventure/lightning_rod_with_villager_no_fire",
+  "isPrefix": false,
+  "rarity": "common"
+}

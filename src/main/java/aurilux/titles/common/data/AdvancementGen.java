@@ -3,22 +3,18 @@ package aurilux.titles.common.data;
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.init.ModItems;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.worldgen.DimensionTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
 
@@ -50,44 +46,44 @@ public class AdvancementGen extends ForgeAdvancementProvider {
                 ))
                 .save(consumer, TitlesMod.prefix("root").toString());
 
-        Advancement captain = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.OAK_BOAT, "captain", FrameType.TASK))
                 .parent(root)
                 .addCriterion("code_triggered", new ImpossibleTrigger.TriggerInstance())
                 .save(consumer, TitlesMod.prefix("captain").toString());
 
-        Advancement chicken_chaser = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.EGG, "chicken_chaser", FrameType.TASK))
                 .parent(root)
                 .addCriterion("chicken_kill", KilledTrigger.TriggerInstance
                         .playerKilledEntity(EntityPredicate.Builder.entity().of(EntityType.CHICKEN)))
                 .save(consumer, TitlesMod.prefix("chicken_chaser").toString());
 
-        Advancement frigid = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.POWDER_SNOW_BUCKET, "frigid", FrameType.TASK))
                 .parent(root)
                 .addCriterion("code_triggered", new ImpossibleTrigger.TriggerInstance())
                 .save(consumer, TitlesMod.prefix("frigid").toString());
 
-        Advancement melon_lord = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.CARVED_PUMPKIN, "melon_lord", FrameType.TASK))
                 .parent(root)
                 .addCriterion("code_triggered", new ImpossibleTrigger.TriggerInstance())
                 .save(consumer, TitlesMod.prefix("melon_lord").toString());
 
-        Advancement opulent = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.DIAMOND_BLOCK, "opulent", FrameType.CHALLENGE))
                 .parent(root)
                 .addCriterion("code_triggered", new ImpossibleTrigger.TriggerInstance())
                 .save(consumer, TitlesMod.prefix("opulent").toString());
 
-        Advancement pincushion = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.ARROW, "pincushion", FrameType.GOAL))
                 .parent(root)
                 .addCriterion("code_triggered", new ImpossibleTrigger.TriggerInstance())
                 .save(consumer, TitlesMod.prefix("pincushion").toString());
 
-        Advancement spelunker = Advancement.Builder.advancement()
+        Advancement.Builder.advancement()
                 .display(simpleDisplay(Items.DEEPSLATE, "spelunker", FrameType.GOAL))
                 .parent(root)
                 .addCriterion("spelunking", PlayerTrigger.TriggerInstance.located(

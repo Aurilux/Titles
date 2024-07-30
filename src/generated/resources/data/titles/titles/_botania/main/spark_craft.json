@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.main.spark_craft",
+  "id": "titles:_botania/main/spark_craft",
+  "isPrefix": false,
+  "rarity": "common"
+}

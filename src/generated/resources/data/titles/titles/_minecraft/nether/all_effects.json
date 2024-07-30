@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.nether.all_effects",
+  "id": "titles:_minecraft/nether/all_effects",
+  "isPrefix": false,
+  "rarity": "rare"
+}

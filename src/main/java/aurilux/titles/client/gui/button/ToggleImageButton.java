@@ -33,9 +33,9 @@ public class ToggleImageButton extends ImageButton {
             // Just for simplicity's sake, using the yDiffText for the x-axis
             startX += yDiffTex;
         }
-        int i = this.getTextureY();
-
         RenderSystem.enableDepthTest();
+
+        int i = this.getTextureY();
         blit(matrixStack, getX(), getY(), startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
     }
 
@@ -48,6 +48,6 @@ public class ToggleImageButton extends ImageButton {
             i = 2;
         }
 
-        return 46 + i * 20;
+        return i;
     }
 }

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.nether.netherite_armor",
+  "id": "titles:_minecraft/nether/netherite_armor",
+  "isPrefix": false,
+  "rarity": "rare"
+}
