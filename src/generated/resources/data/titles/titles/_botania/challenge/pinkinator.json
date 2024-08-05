@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.challenge.pinkinator",
+  "id": "titles:_botania/challenge/pinkinator",
+  "isPrefix": false,
+  "rarity": "rare"
+}

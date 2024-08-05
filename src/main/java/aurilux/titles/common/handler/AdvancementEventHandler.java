@@ -73,7 +73,7 @@ public class AdvancementEventHandler {
             return;
         }
 
-        if (verifyBeaconLevelAndComposition(event.getPos(), player.level, placedBlock)) {
+        if (verifyBeaconLevelAndComposition(event.getPos(), player.level(), placedBlock)) {
             grantCriterion((ServerPlayer) player, "opulent");
         }
     }
@@ -127,7 +127,7 @@ public class AdvancementEventHandler {
 
     private static void grantCriterion(ServerPlayer player, String advancementId) {
         var advancements = player.getAdvancements();
-        var manager = player.getLevel().getServer().getAdvancements();
+        var manager = player.level().getServer().getAdvancements();
         var advancement = manager.getAdvancement(TitlesMod.prefix(advancementId));
         if(advancement != null) {
             advancements.award(advancement, "code_triggered");

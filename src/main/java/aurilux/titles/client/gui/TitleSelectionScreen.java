@@ -13,6 +13,7 @@ import aurilux.titles.common.network.messages.PacketSyncDisplayTitle;
 import aurilux.titles.common.network.messages.PacketSyncGenderSetting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
@@ -138,28 +139,26 @@ public class TitleSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         // Renders the background tint
-        renderBackground(matrixStack);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShaderTexture(0, bgTexture);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize, 512, 512);
+        renderBackground(graphics);
+        graphics.blit(bgTexture, guiLeft, guiTop, 0, 0, xSize, ySize, 512, 512);
         // Renders all the buttons (and the search bar since I added it with 'addButton')
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(graphics, mouseX, mouseY, partialTicks);
 
         // Draw the player's name with their selected title
         Component titledPlayerName = TitleManager.getFormattedDisplayName(temporaryTitle, player, cap, temporaryGender);
-        drawCenteredString(matrixStack, this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, titledPlayerName, this.width / 2, guiTop + 17, 0xFFFFFF);
 
         // Draw the page counter
-        drawCenteredString(matrixStack, this.font, String.format("%s/%s", page, maxPages), this.width / 2, guiTop + 189, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, String.format("%s/%s", page, maxPages), this.width / 2, guiTop + 189, 0xFFFFFF);
 
         if (titlesListFiltered.isEmpty()) {
             String emptyText = "gui.titles.titleselection.empty";
             if (!titlesListCache.isEmpty()) {
                 emptyText += ".filter";
             }
-            drawCenteredString(matrixStack, this.font, I18n.get(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
+            graphics.drawCenteredString(this.font, I18n.get(emptyText), this.width / 2, guiTop + 109, 0xFFFFFF);
         }
     }
 
@@ -321,7 +320,7 @@ public class TitleSelectionScreen extends Screen {
             temporaryTitle = Title.NULL_TITLE;
         }
         else {
-            temporaryTitle = titlesListFiltered.get(player.level.random.nextInt(titlesListFiltered.size()));
+            temporaryTitle = titlesListFiltered.get(player.level().random.nextInt(titlesListFiltered.size()));
         }
     }
 }

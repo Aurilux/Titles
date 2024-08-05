@@ -2,6 +2,7 @@ package aurilux.titles.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.resources.ResourceLocation;
@@ -26,8 +27,7 @@ public class ToggleImageButton extends ImageButton {
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.setShaderTexture(0, this.resourceLocation);
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         int startX = xTexStart;
         if (toggle) {
             // Just for simplicity's sake, using the yDiffText for the x-axis
@@ -36,7 +36,7 @@ public class ToggleImageButton extends ImageButton {
         RenderSystem.enableDepthTest();
 
         int i = this.getTextureY();
-        blit(matrixStack, getX(), getY(), startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
+        graphics.blit(this.resourceLocation, getX(), getY(), startX, this.yTexStart + (i * 20), this.width, this.height, this.textureWidth, this.textureHeight);
     }
 
     //Copied from vanilla because for some reason it's private access in AbstractButton

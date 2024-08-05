@@ -4,6 +4,7 @@ import aurilux.titles.common.TitlesMod;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -21,23 +22,23 @@ public class SimpleButtonOverride extends Button {
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         //Minecraft minecraft = Minecraft.getInstance();
-        RenderSystem.setShaderTexture(0, guiLoc);
+        /*RenderSystem.setShaderTexture(0, guiLoc);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
+        RenderSystem.enableDepthTest();*/
 
         int i = this.getTextureY();
-        blit(matrixStack, getX(), getY(), 0, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
-        blit(matrixStack, getX() + this.width / 2, getY(), 200 - this.width / 2, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
+        graphics.blit(guiLoc, getX(), getY(), 0, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
+        graphics.blit(guiLoc, getX() + this.width / 2, getY(), 200 - this.width / 2, buttonStartY + (i * 20), this.width / 2, this.height, 512, 512);
         //this.renderBg(matrixStack, minecraft, mouseX, mouseY);
-        renderContents(matrixStack);
+        renderContents(graphics);
     }
 
-    public void renderContents(PoseStack matrixStack) {
-        drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage(),
+    public void renderContents(GuiGraphics graphics) {
+        graphics.drawCenteredString(Minecraft.getInstance().font, this.getMessage(),
                 getX() + this.width / 2, getY() + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 

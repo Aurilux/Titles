@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.progress_glacier",
+  "id": "titles:_twilightforest/progress_glacier",
+  "isPrefix": true,
+  "rarity": "uncommon"
+}

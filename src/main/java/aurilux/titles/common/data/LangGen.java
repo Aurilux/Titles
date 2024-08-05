@@ -149,6 +149,7 @@ public class LangGen extends LanguageProvider {
         add(minecraftKeyPath + "complete_catalogue", "the Ailurophile");
         add(minecraftKeyPath + "balanced_diet", "the Epicure");
         add(minecraftKeyPath + "obtain_netherite_hoe", "the Green Thumb");
+        add(minecraftKeyPath + "obtain_sniffer_egg", "the Paleontologist");
 
         minecraftKeyPath = keyPath + "minecraft.adventure.";
         addTitle(minecraftKeyPath + "kill_a_mob", "Huntsman", "Huntress", "");
@@ -156,16 +157,18 @@ public class LangGen extends LanguageProvider {
         add(minecraftKeyPath + "trade", "Haggler");
         add(minecraftKeyPath + "shoot_arrow", "Bowman");
         add(minecraftKeyPath + "fall_from_world_height", "the Base Jumper");
+        add(minecraftKeyPath + "trim_with_any_armor_pattern", "the Stylish");
         add(minecraftKeyPath + "lightning_rod_with_villager_no_fire", "the Shocking");
         add(minecraftKeyPath + "kill_all_mobs", "Predator");
         add(minecraftKeyPath + "totem_of_undying", "the Deathless");
         add(minecraftKeyPath + "summon_iron_golem", "the Samaritan");
         add(minecraftKeyPath + "two_birds_one_arrow", "the Opportunist");
         add(minecraftKeyPath + "arbalistic", "the Patient");
+        add(minecraftKeyPath + "craft_decorated_pot_using_only_sherds", "the Archaeologist");
         add(minecraftKeyPath + "adventuring_time", "the Globetrotter");
         add(minecraftKeyPath + "hero_of_the_village", "Defender");
         add(minecraftKeyPath + "spyglass_at_ghast", "the Watcher");
-        add(minecraftKeyPath + "walk_on_powder_snow_with_leather_boots", "the Light-footed");
+        addTitle(minecraftKeyPath + "walk_on_powder_snow_with_leather_boots", "the Light-footed", "", "Durned light-footed elf!");
         add(minecraftKeyPath + "spyglass_at_dragon", "the Beholder");
         add(minecraftKeyPath + "sniper_duel", "Marksman");
         add(minecraftKeyPath + "bullseye", "the Unerring");

@@ -30,5 +30,6 @@
     "recipes": [
       "titles:fragment_to_paper"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

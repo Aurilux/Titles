@@ -3,6 +3,7 @@ package aurilux.titles.client.gui.button;
 import aurilux.titles.api.Title;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -23,12 +24,12 @@ public class TitleButton extends SimpleButtonOverride {
     }
 
     @Override
-    public void renderContents(PoseStack matrixStack) {
+    public void renderContents(GuiGraphics graphics) {
         if (StringUtil.isNullOrEmpty(title.getFlavorText())) {
-            super.renderContents(matrixStack);
+            super.renderContents(graphics);
         }
         else {
-            drawCenteredString(matrixStack, Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.withUnderlined(true)),
+            graphics.drawCenteredString(Minecraft.getInstance().font, this.getMessage().copy().withStyle(Style.EMPTY.withUnderlined(true)),
                     getX() + this.width / 2, getY() + (this.height - 8) / 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
         }
     }

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.kill_naga",
+  "id": "titles:_twilightforest/kill_naga",
+  "isPrefix": true,
+  "rarity": "uncommon"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.immersiveengineering.main.craft_workbench",
+  "id": "titles:_immersiveengineering/main/craft_workbench",
+  "isPrefix": true,
+  "rarity": "common"
+}

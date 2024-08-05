@@ -8,11 +8,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.trading.MerchantOffer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 public record TitleForEmeraldsAndFragmentsTrade(Rarity titleRarity, int maxUses, int xpValue) implements VillagerTrades.ItemListing {
-    @Nullable
     @Override
     public MerchantOffer getOffer(Entity trader, RandomSource rand) {
         ItemStack firstInput = new ItemStack(Items.EMERALD);

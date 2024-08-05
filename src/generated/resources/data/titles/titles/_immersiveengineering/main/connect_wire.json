@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.immersiveengineering.main.connect_wire",
+  "id": "titles:_immersiveengineering/main/connect_wire",
+  "isPrefix": false,
+  "rarity": "common"
+}

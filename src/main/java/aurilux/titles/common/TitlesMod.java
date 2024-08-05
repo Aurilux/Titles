@@ -7,6 +7,7 @@ import aurilux.titles.common.core.TitlesConfig;
 import aurilux.titles.common.data.*;
 import aurilux.titles.common.handler.ConfigEventHandler;
 import aurilux.titles.common.init.ModArgumentTypes;
+import aurilux.titles.common.init.ModCreativeTabs;
 import aurilux.titles.common.init.ModItems;
 import aurilux.titles.common.network.TitlesNetwork;
 import net.minecraft.network.chat.Component;
@@ -15,13 +16,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +37,13 @@ public class TitlesMod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TitlesConfig.COMMON_SPEC);
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(this::commonSetup);
-        modBus.addListener(this::clientSetup);
-        modBus.addListener(this::makeCreativeTab);
+        //modBus.addListener(this::clientSetup);
         modBus.addListener(this::gatherData);
         modBus.addListener(this::registerCapabilities);
+
         ModItems.register(modBus);
         ModArgumentTypes.register(modBus);
+        ModCreativeTabs.register(modBus);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -51,17 +53,9 @@ public class TitlesMod {
         var forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(TitleRegistry::register);
         forgeBus.addListener(this::registerCommands);
-
-        event.enqueueWork(() -> {
-            if (TitlesConfig.COMMON.fragmentLoot.get()) {
-                forgeBus.addListener(ConfigEventHandler::addLoot);
-                forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
-            }
-
-            if (TitlesConfig.SERVER.showInTablist.get()) {
-                forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
-            }
-        });
+        forgeBus.addListener(ConfigEventHandler::addLoot);
+        forgeBus.addListener(ConfigEventHandler::onVillagerTrades);
+        forgeBus.addListener(ConfigEventHandler::onTabListNameFormat);
     }
 
     private void clientSetup(FMLClientSetupEvent event) {
@@ -81,14 +75,6 @@ public class TitlesMod {
         gen.addProvider(event.includeServer(), new AdvancementGen(packoutput, lookup, fileHelper));
         gen.addProvider(event.includeServer(), new RecipeGen(packoutput));
         gen.addProvider(event.includeServer(), new TagGen.BlockTags(packoutput, lookup, fileHelper));
-    }
-
-    private void makeCreativeTab(CreativeModeTabEvent.Register event) {
-        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "main"), builder ->
-                builder.title(Component.translatable("itemGroup.titles"))
-                .icon(() -> new ItemStack(ModItems.TITLE_SCROLL_COMMON.get()))
-                .displayItems((params, output) ->
-                        ModItems.getAllItems().forEach(e -> output.accept(e.get()))));
     }
 
     private void registerCommands(RegisterCommandsEvent event) {

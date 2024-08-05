@@ -33,7 +33,7 @@ public class CommandDisplay {
 
                 MutableComponent feedback = Component.translatable("commands.display.success",
                         title.getTextComponent(cap.getGenderSetting()));
-                ctx.getSource().sendSuccess(feedback, true);
+                ctx.getSource().sendSuccess(() -> feedback, true);
             });
         }
         catch (CommandSyntaxException ex) {

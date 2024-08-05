@@ -2,6 +2,7 @@ package aurilux.titles.common.handler;
 
 import aurilux.titles.common.TitlesMod;
 import aurilux.titles.common.core.TitleManager;
+import aurilux.titles.common.core.TitlesConfig;
 import aurilux.titles.common.entity.merchant.villager.TitleForEmeraldsAndFragmentsTrade;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;

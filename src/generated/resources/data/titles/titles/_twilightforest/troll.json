@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.troll",
+  "id": "titles:_twilightforest/troll",
+  "isPrefix": true,
+  "rarity": "common"
+}

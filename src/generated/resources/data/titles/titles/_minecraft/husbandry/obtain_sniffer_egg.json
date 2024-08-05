@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.husbandry.obtain_sniffer_egg",
+  "id": "titles:_minecraft/husbandry/obtain_sniffer_egg",
+  "isPrefix": false,
+  "rarity": "common"
+}

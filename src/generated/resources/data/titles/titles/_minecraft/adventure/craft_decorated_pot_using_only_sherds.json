@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.craft_decorated_pot_using_only_sherds",
+  "id": "titles:_minecraft/adventure/craft_decorated_pot_using_only_sherds",
+  "isPrefix": false,
+  "rarity": "common"
+}

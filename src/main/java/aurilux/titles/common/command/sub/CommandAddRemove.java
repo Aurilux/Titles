@@ -52,7 +52,7 @@ public class CommandAddRemove {
             }
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
         });
-        context.getSource().sendSuccess(response[0], false);
+        context.getSource().sendSuccess(() -> response[0], false);
         return Command.SINGLE_SUCCESS;
     }
 }

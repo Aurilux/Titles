@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.trim_with_any_armor_pattern",
+  "id": "titles:_minecraft/adventure/trim_with_any_armor_pattern",
+  "isPrefix": false,
+  "rarity": "common"
+}

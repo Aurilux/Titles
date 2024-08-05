@@ -78,6 +78,7 @@ public class TitlesGen extends TitleProvider {
         genWithName(builder, subfolder + "breed_an_animal").setPrefix().save(consumer);
         genWithName(builder, subfolder + "fishy_business").setPrefix().save(consumer);
         genWithName(builder, subfolder + "make_a_sign_glow").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "obtain_sniffer_egg").save(consumer);
 
         builder.rarity(Rarity.RARE);
         genWithName(builder, subfolder + "bred_all_animals").setPrefix().save(consumer);
@@ -93,7 +94,9 @@ public class TitlesGen extends TitleProvider {
         genWithName(builder, subfolder + "shoot_arrow").setPrefix().save(consumer);
         genWithName(builder, subfolder + "lightning_rod_with_villager_no_fire").save(consumer);
         genWithName(builder, subfolder + "fall_from_world_height").save(consumer);
-        genWithName(builder, subfolder + "walk_on_powder_snow_with_leather_boots").save(consumer);
+        genWithName(builder, subfolder + "trim_with_any_armor_pattern").save(consumer);
+        genWithName(builder, subfolder + "walk_on_powder_snow_with_leather_boots", false, true).save(consumer);
+        genWithName(builder, subfolder + "craft_decorated_pot_using_only_sherds").save(consumer);
         genWithName(builder, subfolder + "spyglass_at_dragon").save(consumer);
 
         builder.rarity(Rarity.UNCOMMON);

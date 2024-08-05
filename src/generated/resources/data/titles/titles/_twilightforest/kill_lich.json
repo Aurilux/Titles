@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.kill_lich",
+  "id": "titles:_twilightforest/kill_lich",
+  "isPrefix": true,
+  "rarity": "uncommon"
+}

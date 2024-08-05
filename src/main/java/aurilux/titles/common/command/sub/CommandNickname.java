@@ -31,13 +31,16 @@ public class CommandNickname {
     private static int run(CommandContext<CommandSourceStack> ctx, String nickname) {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
-            MutableComponent feedback = Component.translatable("commands.nickname.success", nickname);
+            MutableComponent feedback;
             if (nickname.isEmpty()) {
                 feedback = Component.translatable("commands.nickname.empty", nickname);
             }
-            else if (!Pattern.matches("^[a-zA-Z0-9_]{3,16}$", nickname)) {
-                ctx.getSource().sendSuccess(Component.translatable("commands.nickname.error.pattern", nickname).withStyle(ChatFormatting.RED), true);
-                return 0;
+            else {
+                feedback = Component.translatable("commands.nickname.success", nickname);
+                if (!Pattern.matches("^[a-zA-Z0-9_]{3,16}$", nickname)) {
+                    ctx.getSource().sendSuccess(() -> Component.translatable("commands.nickname.error.pattern", nickname).withStyle(ChatFormatting.RED), true);
+                    return 0;
+                }
             }
 
             TitleManager.doIfPresent(player, cap -> {
@@ -45,7 +48,7 @@ public class CommandNickname {
                 TitlesNetwork.toAll(new PacketSyncNickname(player.getUUID(), nickname));
             });
 
-            ctx.getSource().sendSuccess(feedback, true);
+            ctx.getSource().sendSuccess(() -> feedback, true);
         }
         catch (CommandSyntaxException ex) {
             TitlesMod.LOG.warn("Exception in titles command: nickname. {}", ex.getMessage());

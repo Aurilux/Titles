@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.challenge.king_key",
+  "id": "titles:_botania/challenge/king_key",
+  "isPrefix": false,
+  "rarity": "rare"
+}
