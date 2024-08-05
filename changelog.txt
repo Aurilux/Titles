@@ -2,6 +2,9 @@
 - 1.20.1 update
 - Added titles for some new advancements
 
+## 1.19.4 - 3.7.1
+- Fixed an issue where the title data generator wasn't properly generating titles
+
 ## 1.19.4 - 3.7.0
 - 1.19.4 Update
 - Added data generators for advancements, tags, and recipes
