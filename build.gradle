@@ -39,7 +39,7 @@ group = mod_group
 archivesBaseName = mod_name
 version = minecraft_version + "-" + mod_version
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 // Load in the repositories for mods useful in the dev process. To add or remove mods, just update the repos.json file.
 def repos = new JsonSlurper().parse(file("repos.json"))
