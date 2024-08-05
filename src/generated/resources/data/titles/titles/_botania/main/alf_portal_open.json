@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.main.alf_portal_open",
+  "id": "titles:_botania/main/alf_portal_open",
+  "isPrefix": false,
+  "rarity": "common"
+}

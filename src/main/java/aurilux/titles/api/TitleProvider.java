@@ -28,7 +28,7 @@ public abstract class TitleProvider implements DataProvider {
                 list.add(DataProvider.saveStable(cache, title.serialize(), pathProvider.json(title.getID())));
             }
         });
-        return CompletableFuture.allOf();
+        return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
     }
 
     protected abstract void registerTitles(Consumer<Title> consumer);

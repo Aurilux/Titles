@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.giants",
+  "id": "titles:_twilightforest/giants",
+  "isPrefix": true,
+  "rarity": "common"
+}

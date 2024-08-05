@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.main.heisei_dream_pickup",
+  "id": "titles:_botania/main/heisei_dream_pickup",
+  "isPrefix": false,
+  "rarity": "common"
+}

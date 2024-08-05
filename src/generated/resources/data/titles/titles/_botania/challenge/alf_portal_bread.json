@@ -1,0 +1,8 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.botania.challenge.alf_portal_bread",
+  "flavorText": "title.titles.botania.challenge.alf_portal_bread.flavor",
+  "id": "titles:_botania/challenge/alf_portal_bread",
+  "isPrefix": false,
+  "rarity": "rare"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.twilightforest.quest_ram",
+  "id": "titles:_twilightforest/quest_ram",
+  "isPrefix": false,
+  "rarity": "common"
+}

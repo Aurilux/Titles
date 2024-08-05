@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.immersiveengineering.main.place_windmill",
+  "id": "titles:_immersiveengineering/main/place_windmill",
+  "isPrefix": false,
+  "rarity": "common"
+}

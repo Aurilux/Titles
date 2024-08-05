@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.immersiveengineering.main.mb_fermenter",
+  "id": "titles:_immersiveengineering/main/mb_fermenter",
+  "isPrefix": false,
+  "rarity": "common"
+}
