@@ -94,6 +94,8 @@ public class TitlesGen extends TitleProvider {
         genWithName(builder, subfolder + "shoot_arrow").setPrefix().save(consumer);
         genWithName(builder, subfolder + "lightning_rod_with_villager_no_fire").save(consumer);
         genWithName(builder, subfolder + "fall_from_world_height").save(consumer);
+        genWithName(builder, subfolder + "kill_mob_near_sculk_catalyst").setPrefix().save(consumer);
+        genWithName(builder, subfolder + "avoid_vibration").save(consumer);
         genWithName(builder, subfolder + "trim_with_any_armor_pattern").save(consumer);
         genWithName(builder, subfolder + "walk_on_powder_snow_with_leather_boots", false, true).save(consumer);
         genWithName(builder, subfolder + "craft_decorated_pot_using_only_sherds").save(consumer);

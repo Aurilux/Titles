@@ -157,6 +157,7 @@ public class LangGen extends LanguageProvider {
         add(minecraftKeyPath + "trade", "Haggler");
         add(minecraftKeyPath + "shoot_arrow", "Bowman");
         add(minecraftKeyPath + "fall_from_world_height", "the Base Jumper");
+        add(minecraftKeyPath + "avoid_vibration", "the Stealthy");
         add(minecraftKeyPath + "trim_with_any_armor_pattern", "the Stylish");
         add(minecraftKeyPath + "lightning_rod_with_villager_no_fire", "the Shocking");
         add(minecraftKeyPath + "kill_all_mobs", "Predator");
@@ -167,6 +168,7 @@ public class LangGen extends LanguageProvider {
         add(minecraftKeyPath + "craft_decorated_pot_using_only_sherds", "the Archaeologist");
         add(minecraftKeyPath + "adventuring_time", "the Globetrotter");
         add(minecraftKeyPath + "hero_of_the_village", "Defender");
+        add(minecraftKeyPath + "kill_mob_near_sculk_catalyst", "Super Spreader");
         add(minecraftKeyPath + "spyglass_at_ghast", "the Watcher");
         addTitle(minecraftKeyPath + "walk_on_powder_snow_with_leather_boots", "the Light-footed", "", "Durned light-footed elf!");
         add(minecraftKeyPath + "spyglass_at_dragon", "the Beholder");
