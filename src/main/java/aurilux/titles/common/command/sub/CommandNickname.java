@@ -24,13 +24,13 @@ public class CommandNickname {
         return Commands.literal("nickname")
                 .requires(s -> TitlesConfig.COMMON.nickname.get())
                 .executes(ctx -> run(ctx, ""))
-                .then(Commands.argument("nickname", StringArgumentType.word())
-                        .executes(ctx -> run(ctx, StringArgumentType.getString(ctx, "nickname"))));
+                        .then(Commands.argument("nickname", StringArgumentType.word())
+                                .executes(ctx -> run(ctx, StringArgumentType.getString(ctx, "nickname"))));
     }
 
     private static int run(CommandContext<CommandSourceStack> ctx, String nickname) {
         try {
-            ServerPlayer player = ctx.getSource().getPlayerOrException();
+            var player = ctx.getSource().getPlayerOrException();
             MutableComponent feedback;
             if (nickname.isEmpty()) {
                 feedback = Component.translatable("commands.nickname.empty", nickname);

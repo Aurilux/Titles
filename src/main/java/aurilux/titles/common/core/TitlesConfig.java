@@ -36,6 +36,7 @@ public final class TitlesConfig {
     public static class Common {
         public final ForgeConfigSpec.BooleanValue fragmentLoot;
         public final ForgeConfigSpec.BooleanValue nickname;
+        public final ForgeConfigSpec.BooleanValue holidayTitles;
 
         public Common(ForgeConfigSpec.Builder builder) {
             fragmentLoot = builder
@@ -45,6 +46,10 @@ public final class TitlesConfig {
             nickname = builder
                     .comment("Set to false to disable players from setting nicknames.")
                     .define("nickname", true);
+
+            holidayTitles = builder
+                    .comment("Set to false to prevent holiday starter titles being available")
+                    .define("holidayTitles", true);
         }
     }
 

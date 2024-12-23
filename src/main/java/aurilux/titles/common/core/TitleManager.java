@@ -23,13 +23,35 @@ public class TitleManager {
         });
     }
 
-    public static Map<ResourceLocation, Title> getTitlesOfType(Title.AwardType awardType) {
-        return TitleRegistry.get().getTitles().entrySet().stream()
-                .filter(entry -> entry.getValue().getType().equals(awardType))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue
-                ));
+    public static Map<ResourceLocation, Title> getAllTitles() {
+        return flatten(TitleRegistry.get().getTitles());
+    }
+
+    public static Map<ResourceLocation, Title> getAllObtainableTitles() {
+        return getAllTitlesExcept(Title.AwardType.STARTING, Title.AwardType.CONTRIBUTOR);
+    }
+
+    public static Map<ResourceLocation, Title> getAllTitlesExcept(Title.AwardType... awardType) {
+        Map<Title.AwardType, Map<ResourceLocation, Title>> temp = TitleRegistry.get().getTitles();
+        for (Title.AwardType t : awardType) {
+            temp.remove(t);
+        }
+        return flatten(temp);
+    }
+
+    public static Map<ResourceLocation, Title> getTitlesOfType(Title.AwardType... awardType) {
+        Map<Title.AwardType, Map<ResourceLocation, Title>> temp = TitleRegistry.get().getTitles();
+        Map<Title.AwardType, Map<ResourceLocation, Title>> holder = TitleRegistry.get().getTitles();
+        for (Title.AwardType t : awardType) {
+            holder.put(t, temp.get(t));
+        }
+        return flatten(holder);
+    }
+
+    private static Map<ResourceLocation, Title> flatten(Map<Title.AwardType, Map<ResourceLocation, Title>> mapToFlatten) {
+        return mapToFlatten.values().stream()
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static void setDisplayTitle(Player player, ResourceLocation id) {
@@ -55,7 +77,7 @@ public class TitleManager {
     }
 
     public static Title getTitle(ResourceLocation id) {
-        return TitleRegistry.get().getTitles().getOrDefault(id, Title.NULL_TITLE);
+        return TitleManager.getAllTitles().getOrDefault(id, Title.NULL_TITLE);
     }
 
     public static void doIfPresent(Player player, NonNullConsumer<TitlesCapability> toDo) {

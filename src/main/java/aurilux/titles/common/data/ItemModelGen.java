@@ -14,13 +14,13 @@ public class ItemModelGen extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        generated(ModItems.TITLE_FRAGMENT.getId().getPath(), modLoc("item/title_fragment"));
-        generated(ModItems.TITLE_SCROLL_COMMON.getId().getPath(), modLoc("item/title_scroll_common"));
-        generated(ModItems.TITLE_SCROLL_UNCOMMON.getId().getPath(), modLoc("item/title_scroll_uncommon"));
-        generated(ModItems.TITLE_SCROLL_RARE.getId().getPath(), modLoc("item/title_scroll_rare"));
+        generated(ModItems.TITLE_FRAGMENT.getId().getPath());
+        generated(ModItems.TITLE_SCROLL_COMMON.getId().getPath());
+        generated(ModItems.TITLE_SCROLL_UNCOMMON.getId().getPath());
+        generated(ModItems.TITLE_SCROLL_RARE.getId().getPath());
     }
 
-    private void generated(String name, ResourceLocation texture) {
-        singleTexture(name, mcLoc("item/generated"), "layer0", texture);
+    private void generated(String name) {
+        singleTexture(name, mcLoc("item/generated"), "layer0", modLoc("item/" + name));
     }
 }

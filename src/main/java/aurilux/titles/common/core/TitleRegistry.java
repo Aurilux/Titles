@@ -22,14 +22,15 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TitleRegistry extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    private final Map<ResourceLocation, Title> titles = new HashMap<>();
-    private final Map<ResourceLocation, Title> contributorTitles = new HashMap<>();
+    private final Map<Title.AwardType, Map<ResourceLocation, Title>> titles = new HashMap<>();
 
     private static final TitleRegistry INSTANCE = new TitleRegistry();
 
@@ -67,19 +68,32 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
             return true;
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        // Filter out holiday starter titles depending on config and date
+        filteredData = filteredData.entrySet().stream().filter(e -> {
+            if (!TitlesConfig.COMMON.holidayTitles.get()) {
+                return !e.getKey().getPath().startsWith("holiday");
+            }
+
+            //TODO for later holidays
+            LocalDateTime now = LocalDateTime.now();
+            boolean isXmasTime = now.getMonth() == Month.DECEMBER && now.getDayOfMonth() >= 16
+                    || now.getMonth() == Month.JANUARY && now.getDayOfMonth() <= 2;
+            return true;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+
         Set<String> modsWithNativeTitles = determineModsWithNativeTitles();
         filteredData.forEach((location, element) -> {
             try {
                 ResourceLocation processedLocation = processTemplateResource(location, modsWithNativeTitles);
                 Title title = loadTitle(processedLocation, element.getAsJsonObject());
-                titles.put(processedLocation, title);
+                titles.computeIfAbsent(title.getType(), k -> new HashMap<>()).put(processedLocation, title);
             }
             catch (IllegalArgumentException | JsonParseException ex) {
                 TitlesMod.LOG.error("Parsing error loading title {}: {}", location, ex.getMessage());
             }
         });
         TitlesMod.LOG.debug("Loaded {} titles", titles.size());
-        titles.putAll(contributorTitles);
 
         profilerIn.pop();
     }
@@ -128,14 +142,18 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         return builder.build();
     }
 
-    public Map<ResourceLocation, Title> getTitles() {
+    public Map<Title.AwardType, Map<ResourceLocation, Title>> getTitles() {
         return new HashMap<>(titles);
     }
 
     @OnlyIn(Dist.CLIENT)
     public void processServerData(PacketSyncDatapack msg) {
         titles.clear();
-        titles.putAll(msg.getAllLoadedTitles());
+        for (Map.Entry<ResourceLocation, Title> entry : msg.getAllLoadedTitles().entrySet()) {
+            var res = entry.getKey();
+            var title = entry.getValue();
+            titles.computeIfAbsent(title.getType(), k -> new HashMap<>()).put(res, title);
+        }
         TitlesMod.LOG.debug("Synced {} titles from server", titles.size());
     }
 
@@ -164,6 +182,8 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         Title.Builder contributorBuilder = Title.Builder.create(TitlesMod.MOD_ID)
                 .type(Title.AwardType.CONTRIBUTOR)
                 .rarity(Rarity.EPIC);
+
+        Map<ResourceLocation, Title> contributorTitles = new HashMap<>();
         for(String contributorName : props.stringPropertyNames()) {
             String contributorTitle = props.getProperty(contributorName);
             contributorBuilder.id(TitlesMod.prefix(contributorName.toLowerCase(Locale.ROOT)))
@@ -171,6 +191,7 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
             Title title = contributorBuilder.build();
             contributorTitles.put(title.getID(), title);
         }
+        titles.put(Title.AwardType.CONTRIBUTOR, contributorTitles);
         TitlesMod.LOG.info("Loaded {} contributor titles", contributorTitles.size());
     }
 }

@@ -16,6 +16,7 @@ public class TitlesGen extends TitleProvider {
 
     @Override
     protected void registerTitles(Consumer<Title> consumer) {
+        registerStartingTitles(consumer);
         registerLootTitles(consumer);
         registerAdvancementTitles(consumer);
         registerMinecraftTemplate(consumer);
@@ -24,8 +25,25 @@ public class TitlesGen extends TitleProvider {
         registerTFTemplate(consumer);
     }
 
+    private void registerStartingTitles(Consumer<Title> consumer) {
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
+                .type(Title.AwardType.STARTING);
+
+        builder.id("beginner").defaultDisplay("the Beginner").save(consumer);
+
+        var subfolder = "holiday/christmas/";
+        builder.id(subfolder + "thankful").defaultDisplay("the Thankful ❤").save(consumer);
+        builder.id(subfolder + "nutcracker").defaultDisplay("the Nutcracker").save(consumer);
+        builder.id(subfolder + "sugar_plum").defaultDisplay("§dSugar Plum").setPrefix().save(consumer);
+        builder.id(subfolder + "jolly").defaultDisplay("§2J§4o§2l§4l§2y").setPrefix().save(consumer);
+        builder.id(subfolder + "gift_giver").defaultDisplay("the Gift Giver").save(consumer);
+        builder.id(subfolder + "festive").defaultDisplay("the Festive ❄").save(consumer);
+        builder.id(subfolder + "chimney_climber").defaultDisplay("the §cChimney §fClimber").save(consumer);
+        builder.id(subfolder + "frosty").defaultDisplay("the Frosty ⛄").save(consumer);
+    }
+
     private void registerLootTitles(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID)
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
                 .type(Title.AwardType.LOOT);
 
         builder.id("brute").defaultDisplay("the Brute").save(consumer);
@@ -44,7 +62,7 @@ public class TitlesGen extends TitleProvider {
     }
 
     private void registerAdvancementTitles(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID);
+        var builder = Title.Builder.create(TitlesMod.MOD_ID);
 
         genWithName(builder, "captain").setPrefix().save(consumer);
         genWithName(builder, "chicken_chaser", false, true).save(consumer);
@@ -60,10 +78,10 @@ public class TitlesGen extends TitleProvider {
     }
 
     private void registerMinecraftTemplate(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID)
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
                 .rarity(Rarity.COMMON);
 
-        String subfolder = "_minecraft/story/";
+        var subfolder = "_minecraft/story/";
         genWithName(builder, subfolder + "iron_tools").setPrefix().save(consumer);
         genWithName(builder, subfolder + "obtain_armor").setPrefix().save(consumer);
         genWithName(builder, subfolder + "deflect_arrow", true, true).setPrefix().save(consumer);
@@ -149,10 +167,10 @@ public class TitlesGen extends TitleProvider {
     }
 
     private void registerBotaniaTemplate(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID)
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
                 .rarity(Rarity.COMMON);
 
-        String subfolder = "_botania/main/";
+        var subfolder = "_botania/main/";
         genWithName(builder, subfolder + "flower_pickup").setPrefix().save(consumer);
         genWithName(builder, subfolder + "cacophonium_craft", false, true).save(consumer);
         genWithName(builder, subfolder + "rune_pickup").save(consumer);
@@ -177,10 +195,10 @@ public class TitlesGen extends TitleProvider {
     }
 
     private void registerIETemplate(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID)
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
                 .rarity(Rarity.COMMON);
 
-        String subfolder = "_immersiveengineering/main/";
+        var subfolder = "_immersiveengineering/main/";
         genWithName(builder, subfolder + "connect_wire").save(consumer);
         genWithName(builder, subfolder + "craft_workbench").setPrefix().save(consumer);
         genWithName(builder, subfolder + "place_windmill").save(consumer);
@@ -194,10 +212,10 @@ public class TitlesGen extends TitleProvider {
     }
 
     private void registerTFTemplate(Consumer<Title> consumer) {
-        Title.Builder builder = Title.Builder.create(TitlesMod.MOD_ID)
+        var builder = Title.Builder.create(TitlesMod.MOD_ID)
                 .rarity(Rarity.COMMON);
 
-        String subfolder = "_twilightforest/";
+        var subfolder = "_twilightforest/";
         genWithName(builder, subfolder + "quest_ram").save(consumer);
         genWithName(builder, subfolder + "troll").setPrefix().save(consumer);
         genWithName(builder, subfolder + "giants").setPrefix().save(consumer);
@@ -218,7 +236,7 @@ public class TitlesGen extends TitleProvider {
     }
 
     private Title.Builder genWithName(Title.Builder builder, String name, boolean variant, boolean flavor) {
-        String defaultDisplay = String.format("title.%s.%s", builder.getModId(), convertToLang(name));
+        var defaultDisplay = String.format("title.%s.%s", builder.getModId(), convertToLang(name));
         builder.id(new ResourceLocation(builder.getModId(), name))
                 .defaultDisplay(defaultDisplay);
 
@@ -234,7 +252,7 @@ public class TitlesGen extends TitleProvider {
     }
 
     private String convertToLang(String name) {
-        String conversion = name;
+        var conversion = name;
         if (conversion.startsWith("_")) {
             conversion = conversion.substring(1);
         }

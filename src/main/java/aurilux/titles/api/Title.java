@@ -20,7 +20,8 @@ public class Title {
         ADVANCEMENT,
         COMMAND,
         CONTRIBUTOR,
-        LOOT
+        LOOT,
+        STARTING
     }
 
     private final AwardType type;

@@ -21,17 +21,16 @@ public class CommandDisplay {
         return Commands.literal("display")
                 .then(Commands.argument("title", TitleArgument.display())
                         .executes(ctx -> run(ctx, TitleArgument.getTitle(ctx, "title"))));
-
     }
 
     private static int run(CommandContext<CommandSourceStack> ctx, Title title) {
         try {
-            ServerPlayer player = ctx.getSource().getPlayerOrException();
+            var player = ctx.getSource().getPlayerOrException();
             TitleManager.doIfPresent(player, cap -> {
                 TitleManager.setDisplayTitle(player, title.getID());
                 TitlesNetwork.toAll(new PacketSyncDisplayTitle(player.getUUID(), title.getID()));
 
-                MutableComponent feedback = Component.translatable("commands.display.success",
+                var feedback = Component.translatable("commands.display.success",
                         title.getTextComponent(cap.getGenderSetting()));
                 ctx.getSource().sendSuccess(() -> feedback, true);
             });

@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.avoid_vibration",
+  "id": "titles:_minecraft/adventure/avoid_vibration",
+  "isPrefix": false,
+  "rarity": "common"
+}

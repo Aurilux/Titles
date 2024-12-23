@@ -1,4 +1,5 @@
 {
+  // WARNING: If you copy this entire file to your own json, be sure to remove all the lines that begin with "//" or else your titles won't appear.
   // For advancement-unlocked titles, the name of this json must match the advancement's resource location.
   // For example, to make a title for the advancement "mine_stone", there must be a subfolder in the "titles" folder called
   // "story", with a title json also called "mine_stone". You can find further examples in this mod's data folder, or
@@ -8,6 +9,7 @@
   // "advancement": The title will automatically be unlocked when the player completes the associated advancement.
   // "loot": The title can only be obtained by purchasing it from villagers or defeating Titled mobs
   // "command": The title can only be unlocked using the "/titles add" command. Good for quest mods or other rewards.
+  // "starting": The title is available to all players by default.
   "type": "loot",
 
   // Whether the title is rendered before or after the player's name. This boolean value is an optional entry, and if it
@@ -26,7 +28,7 @@
   // since it would be easier for them.
   "defaultDisplay": "The Tester",
 
-  // For gendered languages, this follows the same rules as "default". While default is considered the masculine/neutral
+  // For gendered languages, this follows the same rules as defaultDisplay. While default is considered the masculine/neutral
   // translation, this is for feminine variants. This is an optional entry and does not have to be in the json.
   // Yes, this is a subtle Loki reference.
   "variantDisplay": "The Testeress",

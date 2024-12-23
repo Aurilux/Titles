@@ -24,6 +24,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,7 @@ public class TitlesMod {
         // Nothing yet
     }
 
-    private void gatherData(GatherDataEvent event) {
+    private void gatherData(@NotNull GatherDataEvent event) {
         var gen = event.getGenerator();
         var packoutput = gen.getPackOutput();
         var lookup = event.getLookupProvider();
@@ -77,15 +79,16 @@ public class TitlesMod {
         gen.addProvider(event.includeServer(), new TagGen.BlockTags(packoutput, lookup, fileHelper));
     }
 
-    private void registerCommands(RegisterCommandsEvent event) {
+    private void registerCommands(@NotNull RegisterCommandsEvent event) {
         CommandTitles.register(event.getDispatcher());
     }
 
-    private void registerCapabilities(RegisterCapabilitiesEvent event) {
+    private void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
         event.register(TitlesCapability.class);
     }
 
-    public static ResourceLocation prefix(String path) {
+    @Contract("_ -> new")
+    public static @NotNull ResourceLocation prefix(String path) {
         return new ResourceLocation(TitlesMod.MOD_ID, path);
     }
 }

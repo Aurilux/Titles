@@ -1,0 +1,7 @@
+{
+  "type": "starting",
+  "defaultDisplay": "the §cChimney §fClimber",
+  "id": "titles:holiday/christmas/chimney_climber",
+  "isPrefix": false,
+  "rarity": "common"
+}

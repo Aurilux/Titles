@@ -81,6 +81,7 @@ public class TitleSelectionScreen extends Screen {
         if (!possibleContributor.isNull()) {
             titlesListCache.add(possibleContributor);
         }
+        titlesListCache.addAll(TitleManager.getTitlesOfType(Title.AwardType.STARTING).values());
         titlesListCache.sort(new Title.RarityComparator());
         titlesListFiltered = new ArrayList<>(titlesListCache);
     }

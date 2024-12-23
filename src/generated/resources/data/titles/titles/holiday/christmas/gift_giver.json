@@ -1,0 +1,7 @@
+{
+  "type": "starting",
+  "defaultDisplay": "the Gift Giver",
+  "id": "titles:holiday/christmas/gift_giver",
+  "isPrefix": false,
+  "rarity": "common"
+}

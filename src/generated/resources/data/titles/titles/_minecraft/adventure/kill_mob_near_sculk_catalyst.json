@@ -1,0 +1,7 @@
+{
+  "type": "advancement",
+  "defaultDisplay": "title.titles.minecraft.adventure.kill_mob_near_sculk_catalyst",
+  "id": "titles:_minecraft/adventure/kill_mob_near_sculk_catalyst",
+  "isPrefix": true,
+  "rarity": "common"
+}

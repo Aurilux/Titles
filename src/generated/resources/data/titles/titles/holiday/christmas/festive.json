@@ -1,0 +1,7 @@
+{
+  "type": "starting",
+  "defaultDisplay": "the Festive ❄",
+  "id": "titles:holiday/christmas/festive",
+  "isPrefix": false,
+  "rarity": "common"
+}

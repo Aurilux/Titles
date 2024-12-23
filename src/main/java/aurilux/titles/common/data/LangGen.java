@@ -25,6 +25,10 @@ public class LangGen extends LanguageProvider {
         add("commands.titles.addremove.fail", "This command failed for an unknown reason");
         add("commands.titles.add", "Added title [%s] to player %s.");
         add("commands.titles.remove", "Removed title [%s] from player %s.");
+        add("commands.titles.addremovetype.fail", "This command failed for an unknown reason");
+        add("commands.titles.addtype", "Added titles of type [%s] to player %s.");
+        add("commands.titles.removetype", "Removed title of type [%s] from player %s.");
+        add("commands.titles.addremovetype.invalid_awards", "Unable to choose 'contributor' or 'starting' title award types");
         add("commands.display.success", "Changed your display title to [%s]");
         add("commands.nickname.success", "Nickname changed to [%s]");
         add("commands.nickname.empty", "Nickname reset!");

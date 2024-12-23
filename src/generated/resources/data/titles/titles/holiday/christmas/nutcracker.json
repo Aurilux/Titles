@@ -1,0 +1,7 @@
+{
+  "type": "starting",
+  "defaultDisplay": "the Nutcracker",
+  "id": "titles:holiday/christmas/nutcracker",
+  "isPrefix": false,
+  "rarity": "common"
+}

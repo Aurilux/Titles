@@ -1,6 +1,7 @@
 package aurilux.titles.common.network.messages;
 
 import aurilux.titles.api.Title;
+import aurilux.titles.common.core.TitleManager;
 import aurilux.titles.common.core.TitleRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +17,7 @@ public class PacketSyncDatapack {
     private final int count;
 
     public PacketSyncDatapack() {
-        this(TitleRegistry.get().getTitles());
+        this(TitleManager.getAllTitles());
     }
 
     public PacketSyncDatapack(Map<ResourceLocation, Title> allLoadedTitles) {

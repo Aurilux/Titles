@@ -17,28 +17,28 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.command.EnumArgument;
 
 public class CommandAddRemove {
-    public enum CommandType {
+    private enum CommandType {
         remove,
         add
     }
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.argument("command", EnumArgument.enumArgument(CommandType.class))
-            .requires(s -> s.hasPermission(2))
-                    .then(Commands.argument("player", EntityArgument.player())
-                            .then(Commands.argument("title", TitleArgument.any())
-                                    .executes(ctx -> run(ctx,
-                                            EntityArgument.getPlayer(ctx, "player"),
-                                            TitleArgument.getTitle(ctx, "title")))));
+                .requires(s -> s.hasPermission(2))
+                .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("title", TitleArgument.any())
+                                .executes(ctx -> run(ctx,
+                                        ctx.getArgument("command", CommandType.class),
+                                        EntityArgument.getPlayer(ctx, "player"),
+                                        TitleArgument.getTitle(ctx, "title")))));
     }
 
-    private static int run(CommandContext<CommandSourceStack> context, ServerPlayer player, Title title) {
-        final CommandType commandType = context.getArgument("command", CommandType.class);
+    private static int run(CommandContext<CommandSourceStack> ctx, CommandType commandType, ServerPlayer player, Title title) {
         // This is an array as a workaround of variables needing to be final when accessed inside a lambda.
         final MutableComponent[] response = {Component.translatable("commands.titles.addremove.fail")};
         TitleManager.doIfPresent(player, cap -> {
-            Component formattedTitle = title.getTextComponent(cap.getGenderSetting());
-            if (title.getType().equals(Title.AwardType.CONTRIBUTOR)) {
+            var formattedTitle = title.getTextComponent(cap.getGenderSetting());
+            if (title.getType().equals(Title.AwardType.CONTRIBUTOR) || title.getType().equals(Title.AwardType.STARTING)) {
                 return;
             }
 
@@ -52,7 +52,7 @@ public class CommandAddRemove {
             }
             TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
         });
-        context.getSource().sendSuccess(() -> response[0], false);
+        ctx.getSource().sendSuccess(() -> response[0], false);
         return Command.SINGLE_SUCCESS;
     }
 }

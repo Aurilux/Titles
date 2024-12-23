@@ -64,7 +64,7 @@ public class TitleArgument implements ArgumentType<Title> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return SharedSuggestionProvider.suggest(TitleRegistry.get().getTitles().values().stream()
+        return SharedSuggestionProvider.suggest(TitleManager.getAllObtainableTitles().values().stream()
                 .filter(predicate)
                 .map(t -> t.getID().toString()), builder);
     }

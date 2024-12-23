@@ -25,14 +25,14 @@ public class CommandRefresh {
         return Commands.literal("refresh").executes(CommandRefresh::run);
     }
 
-    private static int run(CommandContext<CommandSourceStack> context) {
+    private static int run(CommandContext<CommandSourceStack> ctx) {
         try {
-            ServerPlayer player = context.getSource().getPlayerOrException();
+            var player = ctx.getSource().getPlayerOrException();
             TitleManager.doIfPresent(player, cap -> {
                 TitleManager.setDisplayTitle(player, Title.NULL_TITLE.getID());
                 cap.getObtainedTitles().removeIf(t -> t.getType().equals(Title.AwardType.ADVANCEMENT));
-                PlayerAdvancements playerAdvancements = player.getAdvancements();
-                Collection<Advancement> allAdvancements = context.getSource().getServer().getAdvancements().getAllAdvancements();
+                var playerAdvancements = player.getAdvancements();
+                Collection<Advancement> allAdvancements = ctx.getSource().getServer().getAdvancements().getAllAdvancements();
                 allAdvancements = allAdvancements.stream()
                         .filter(advancement -> playerAdvancements.getOrStartProgress(advancement).isDone()
                                 && !TitleManager.getTitle(advancement.getId()).isNull())
@@ -41,7 +41,7 @@ public class CommandRefresh {
                             TitlesMod.LOG.debug("Re-awarding title for advancement {}", advancement.getId());
                             cap.add(TitleManager.getTitle(advancement.getId()));
                         });
-                context.getSource().sendSuccess(() -> Component.literal("Finished refreshing advancement titles!"), true);
+                ctx.getSource().sendSuccess(() -> Component.literal("Finished refreshing advancement titles!"), true);
                 TitlesNetwork.toPlayer(new PacketSyncTitlesCapability(cap.serializeNBT()), player);
             });
         }
