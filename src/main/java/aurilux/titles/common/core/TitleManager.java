@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class TitleManager {
 
     public static Map<ResourceLocation, Title> getTitlesOfType(Title.AwardType... awardType) {
         Map<Title.AwardType, Map<ResourceLocation, Title>> temp = TitleRegistry.get().getTitles();
-        Map<Title.AwardType, Map<ResourceLocation, Title>> holder = TitleRegistry.get().getTitles();
+        Map<Title.AwardType, Map<ResourceLocation, Title>> holder = new HashMap<>();
         for (Title.AwardType t : awardType) {
             holder.put(t, temp.get(t));
         }

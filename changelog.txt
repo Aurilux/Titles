@@ -1,3 +1,6 @@
+## 1.20.1 - 3.8.3
+- Fixed the issue where all titles were available to everyone from the start
+
 ## 1.20.1 - 3.8.2
 - Added a new title award type: "starting", which are available to all players by default.
 - Added new holiday themed titles to take advantage of the new award type
