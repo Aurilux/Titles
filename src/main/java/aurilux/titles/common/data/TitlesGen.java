@@ -178,7 +178,7 @@ public class TitlesGen extends TitleProvider {
         genWithName(builder, subfolder + "pollidisiac_pickup").setPrefix().save(consumer);
         genWithName(builder, subfolder + "manaweave_armor_craft").setPrefix().save(consumer);
         genWithName(builder, subfolder + "spark_craft").save(consumer);
-        genWithName(builder, subfolder + "alf_portal_open").save(consumer);
+        genWithName(builder, subfolder + "elf_portal_open").save(consumer);
         genWithName(builder, subfolder + "heisei_dream_pickup").save(consumer);
         genWithName(builder, subfolder + "dandelifeon_pickup", false, true).setPrefix().save(consumer);
         genWithName(builder, subfolder + "luminizer_ride").setPrefix().save(consumer);

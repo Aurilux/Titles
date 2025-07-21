@@ -48,7 +48,7 @@ public final class TitlesConfig {
                     .define("nickname", true);
 
             holidayTitles = builder
-                    .comment("Set to false to prevent holiday starter titles being available")
+                    .comment("Set to false to disable holiday starter titles being available")
                     .define("holidayTitles", true);
         }
     }

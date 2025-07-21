@@ -1,5 +1,6 @@
 ## 1.20.1 - 3.8.4
 - Got the "addtype" and "removetype" commands working how I intended
+- Fixed a Botania template title looking for the wrong resource. Fixes #43.
 
 ## 1.20.1 - 3.8.3
 - Fixed the issue where all titles were available to everyone from the start
