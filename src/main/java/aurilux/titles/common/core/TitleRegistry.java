@@ -36,6 +36,9 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
 
     private TitleRegistry() {
         super(GSON, TitlesMod.MOD_ID);
+        for (Title.AwardType t : Title.AwardType.values()) {
+            titles.put(t, new HashMap<>());
+        }
     }
 
     public static TitleRegistry get() {
@@ -46,13 +49,19 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         event.addListener(INSTANCE);
     }
 
+    public Map<Title.AwardType, Map<ResourceLocation, Title>> getTitles() {
+        return new HashMap<>(titles);
+    }
+
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> dataFromMods, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         profilerIn.push("titleLoader");
 
-        //Filter the data so that we don't add titles from templates if the mod doesn't exist or has native titles
+        // Filter the data so that we don't add titles from templates if the mod either doesn't exist or has native titles.
         Map<ResourceLocation, JsonElement> filteredData = dataFromMods.entrySet().stream().filter(e -> {
             String path = e.getKey().getPath();
+
+            // Template title directories are found under Title's data folder, and they all start with an underscore to mark them.
             boolean isTemplate = e.getKey().getNamespace().equals(TitlesMod.MOD_ID) && path.startsWith("_");
             if (isTemplate) {
                 int slashIndex = path.indexOf("/");
@@ -82,12 +91,13 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 
+        // Perform final title processing and add them to the appropriate hashmap.
         Set<String> modsWithNativeTitles = determineModsWithNativeTitles();
         filteredData.forEach((location, element) -> {
             try {
                 ResourceLocation processedLocation = processTemplateResource(location, modsWithNativeTitles);
                 Title title = loadTitle(processedLocation, element.getAsJsonObject());
-                titles.computeIfAbsent(title.getType(), k -> new HashMap<>()).put(processedLocation, title);
+                titles.get(title.getType()).put(processedLocation, title);
             }
             catch (IllegalArgumentException | JsonParseException ex) {
                 TitlesMod.LOG.error("Parsing error loading title {}: {}", location, ex.getMessage());
@@ -142,17 +152,13 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
         return builder.build();
     }
 
-    public Map<Title.AwardType, Map<ResourceLocation, Title>> getTitles() {
-        return new HashMap<>(titles);
-    }
-
     @OnlyIn(Dist.CLIENT)
     public void processServerData(PacketSyncDatapack msg) {
         titles.clear();
         for (Map.Entry<ResourceLocation, Title> entry : msg.getAllLoadedTitles().entrySet()) {
             var res = entry.getKey();
             var title = entry.getValue();
-            titles.computeIfAbsent(title.getType(), k -> new HashMap<>()).put(res, title);
+            titles.get(title.getType()).put(res, title);
         }
         TitlesMod.LOG.debug("Synced {} titles from server", titles.size());
     }
