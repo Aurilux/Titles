@@ -26,9 +26,17 @@ public class CommandAddRemoveType {
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.argument("commandtype", EnumArgument.enumArgument(CommandType.class))
-                .requires(s -> s.hasPermission(0))
+                .requires(s -> s.hasPermission(2))
                 .then(Commands.argument("player", EntityArgument.player())
                         .then(Commands.argument("awards", EnumArgument.enumArgument(Title.AwardType.class))
+                        .suggests((ctx, builder) -> {
+                            for (Title.AwardType type : Title.AwardType.values()) {
+                                if (type != Title.AwardType.STARTING && type != Title.AwardType.CONTRIBUTOR) {
+                                    builder.suggest(type.name());
+                                }
+                            }
+                            return builder.buildFuture();
+                        })
                         .executes(ctx -> run(ctx,
                                 ctx.getArgument("commandtype", CommandType.class),
                                 EntityArgument.getPlayer(ctx, "player"),
@@ -50,7 +58,7 @@ public class CommandAddRemoveType {
                     cap.add(TitleManager.getTitle(title.getID()));
                     response[0] = Component.translatable("commands.titles.addtype", award.toString(), player.getName());
                 }
-                else { //command == CommandType.removetype
+                else if (command == CommandType.removetype) {
                     TitlesMod.LOG.debug("Removing title type {}", award);
                     cap.remove(TitleManager.getTitle(title.getID()));
                     response[0] = Component.translatable("commands.titles.removetype", award.toString(), player.getName());
