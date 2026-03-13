@@ -34,20 +34,20 @@ public final class TitlesConfig {
     // For both client and server. These options will be available for single-player and server worlds. Most config
     // options should be here.
     public static class Common {
-        public final ForgeConfigSpec.BooleanValue fragmentLoot;
-        public final ForgeConfigSpec.BooleanValue nickname;
-        public final ForgeConfigSpec.BooleanValue holidayTitles;
+        public final ForgeConfigSpec.BooleanValue enableFragmentLoot;
+        public final ForgeConfigSpec.BooleanValue enableNickname;
+        public final ForgeConfigSpec.BooleanValue enableHolidayTitles;
 
         public Common(ForgeConfigSpec.Builder builder) {
-            fragmentLoot = builder
+            enableFragmentLoot = builder
                     .comment("Set to false to disable title fragments from generating as loot.")
                     .define("fragmentLoot", true);
 
-            nickname = builder
+            enableNickname = builder
                     .comment("Set to false to disable players from setting nicknames.")
                     .define("nickname", true);
 
-            holidayTitles = builder
+            enableHolidayTitles = builder
                     .comment("Set to false to disable holiday starter titles being available")
                     .define("holidayTitles", true);
         }

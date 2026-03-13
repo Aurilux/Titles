@@ -15,14 +15,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.regex.Pattern;
 
 public class CommandNickname {
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.literal("nickname")
-                .requires(s -> TitlesConfig.COMMON.nickname.get())
+                .requires(s -> TitlesConfig.COMMON.enableNickname.get())
                 .executes(ctx -> run(ctx, ""))
                         .then(Commands.argument("nickname", StringArgumentType.word())
                                 .executes(ctx -> run(ctx, StringArgumentType.getString(ctx, "nickname"))));

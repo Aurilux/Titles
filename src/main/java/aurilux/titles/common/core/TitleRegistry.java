@@ -79,15 +79,22 @@ public class TitleRegistry extends SimpleJsonResourceReloadListener {
 
         // Filter out holiday starter titles depending on config and date
         filteredData = filteredData.entrySet().stream().filter(e -> {
-            if (!TitlesConfig.COMMON.holidayTitles.get()) {
+            if (!TitlesConfig.COMMON.enableHolidayTitles.get()) {
                 return !e.getKey().getPath().startsWith("holiday");
             }
 
             //TODO for later holidays
             LocalDateTime now = LocalDateTime.now();
             boolean isXmasTime = now.getMonth() == Month.DECEMBER && now.getDayOfMonth() >= 16
-                    || now.getMonth() == Month.JANUARY && now.getDayOfMonth() <= 2;
-            return true;
+                    || now.getMonth() == Month.JANUARY && now.getDayOfMonth() <= 15;
+            boolean isHalloweenTime = now.getMonth() == Month.OCTOBER && now.getDayOfMonth() >= 16
+                    || now.getMonth() == Month.NOVEMBER && now.getDayOfMonth() <= 15;
+
+            if (!e.getKey().getPath().startsWith("holiday")) {
+                return true;
+            }
+            return ((isXmasTime && e.getKey().getPath().contains("christmas"))
+                    || (isHalloweenTime) && e.getKey().getPath().contains("halloween"));
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 
