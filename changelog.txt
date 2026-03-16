@@ -2,6 +2,7 @@
 - Got the "addtype" and "removetype" commands working how I intended.
 - Fixed a Botania template title looking for the wrong resource. Fixes #43.
 - Fixed a crash from having no titles of a specific award type.
+- Merged a PR from TalBun54 that prevents the use of Contributor and Starting types from the addType and removeType commands.
 
 ## 1.20.1 - 3.8.3
 - Fixed the issue where all titles were available to everyone from the start
